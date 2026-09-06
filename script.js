@@ -1,361 +1,94 @@
 const communities = [
+  ["Owerri Municipal", "Imo State, Nigeria", "https://chat.whatsapp.com/FPKsQOW3Ja91NPOlk7ANRU"],
+  ["Owerri North", "Imo State, Nigeria", "https://chat.whatsapp.com/ElPpaTeC42BHeNoMjGhWx7"],
+  ["Owerri West", "Imo State, Nigeria", "https://chat.whatsapp.com/FaUfsJvtRfaCe9MaqYxjVd"],
+  ["Mbaitoli", "Imo State, Nigeria", "https://chat.whatsapp.com/Hgh0Z1zagiSJ9nBRcouIwN"],
+  ["Ikeduru", "Imo State, Nigeria", "https://chat.whatsapp.com/GmwMcMDh3vRFFEf6HIDbt1"],
+  ["Ngor Okpala", "Imo State, Nigeria", "https://chat.whatsapp.com/IruhSXQSYt5IWQII6sYvh8"],
+  ["Aboh Mbaise", "Imo State, Nigeria", "https://chat.whatsapp.com/LIJ6rPrDr5y3A42ZqpMJs5"],
+  ["Ahiazu Mbaise", "Imo State, Nigeria", "https://chat.whatsapp.com/G9IcXJjbOWvGA8lMnfPfaY"],
+  ["Ezinihitte Mbaise", "Imo State, Nigeria", "https://chat.whatsapp.com/IHqyB15TaId3VvtoFsjaHO"],
+  ["Obowo", "Imo State, Nigeria", "https://chat.whatsapp.com/IPgJwDmvNAz2ehHpKIgsJ3"],
+  ["Okigwe", "Imo State, Nigeria", "https://chat.whatsapp.com/CPVAT57iI2kC0d6y3V1oU0"],
+  ["Onuimo", "Imo State, Nigeria", "https://chat.whatsapp.com/HZRQjTn1XNbCLMBg3g58UC"],
+  ["Isiala Mbano", "Imo State, Nigeria", "https://chat.whatsapp.com/Dl5o4XP9Zb11Vz7mGmzimK"],
+  ["Ehime Mbano", "Imo State, Nigeria", "https://chat.whatsapp.com/IWIOPu9om51D49kk2C4DLy"],
+  ["Ihitte Uboma", "Imo State, Nigeria", "https://chat.whatsapp.com/LEzDYMsCAzxFFLQ94PKZZb"],
+  ["Ideato North", "Imo State, Nigeria", "https://chat.whatsapp.com/HU145ZKbzpmDuqEGb6T39W"],
+  ["Ideato South", "Imo State, Nigeria", "https://chat.whatsapp.com/GRmXDsGgOjfHJNzqQJwhCu"],
+  ["Orlu", "Imo State, Nigeria", "https://chat.whatsapp.com/KPad30ipb8F4vl7LEJk5Ld"],
+  ["Orlu East", "Imo State, Nigeria", "https://chat.whatsapp.com/IsU7Xzm4JWn1YZ0JP8tGWj"],
+  ["Orsu", "Imo State, Nigeria", "https://chat.whatsapp.com/E8USOKKOfVx8YR73CEXEJo"],
+  ["Oru East", "Imo State, Nigeria", "https://chat.whatsapp.com/HrLaetq5qCR16t8FUWu56Z"],
+  ["Oru West", "Imo State, Nigeria", "https://chat.whatsapp.com/KaDyu9OesMl2laMhG8q8Vc"],
+  ["Oguta", "Imo State, Nigeria", "https://chat.whatsapp.com/BVbuY466t3j7R11GKciXeA"],
+  ["Ohaji Egbema", "Imo State, Nigeria", "https://chat.whatsapp.com/DHFJOEcVrygCv2h7pgvGd9"],
+  ["Njaba", "Imo State, Nigeria", "https://chat.whatsapp.com/CCQtBsv2rOY1UZ03l93NIl"],
+  ["Nwangele", "Imo State, Nigeria", "https://chat.whatsapp.com/LxXHoK2gxon21NYn600uNq"],
+  ["Isu", "Imo State, Nigeria", "https://chat.whatsapp.com/DdpBEjQs5ZDE15BJWJeyqM"],
 
-    {
-        name: "Owerri Municipal",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/FPKsQOW3Ja91NPOlk7ANRU",
-        active: true
-    },
+  ["Abuja", "Federal Capital Territory, Nigeria", "https://chat.whatsapp.com/Ihe6NS3a0lpFW5YFtVzKvo"],
+  ["Lagos", "Lagos State, Nigeria", "https://chat.whatsapp.com/KAsAsYac7wbAzXgbmVw55H"],
 
-    {
-        name: "Owerri North",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/ElPpaTeC42BHeNoMjGhWx7",
-        active: true
-    },
-
-    {
-        name: "Owerri West",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/FaUfsJvtRfaCe9MaqYxjVd",
-        active: true
-    },
-
-    {
-        name: "Mbaitoli",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/Hgh0Z1zagiSJ9nBRcouIwN",
-        active: true
-    },
-
-    {
-        name: "Ikeduru",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/GmwMcMDh3vRFFEf6HIDbt1",
-        active: true
-    },
-
-    {
-        name: "Ngor Okpala",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/IruhSXQSYt5IWQII6sYvh8",
-        active: true
-    },
-
-    {
-        name: "Aboh Mbaise",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/LIJ6rPrDr5y3A42ZqpMJs5",
-        active: true
-    },
-
-    {
-        name: "Ahiazu Mbaise",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/G9IcXJjbOWvGA8lMnfPfaY",
-        active: true
-    },
-
-    {
-        name: "Ezinihitte Mbaise",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/IHqyB15TaId3VvtoFsjaHO",
-        active: true
-    },
-
-    {
-        name: "Obowo",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/IPgJwDmvNAz2ehHpKIgsJ3",
-        active: true
-    },
-
-    {
-        name: "Okigwe",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/CPVAT57iI2kC0d6y3V1oU0",
-        active: true
-    },
-
-    {
-        name: "Onuimo",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/HZRQjTn1XNbCLMBg3g58UC",
-        active: true
-    },
-
-    {
-        name: "Isiala Mbano",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/Dl5o4XP9Zb11Vz7mGmzimK",
-        active: true
-    },
-
-    {
-        name: "Ehime Mbano",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/IWIOPu9om51D49kk2C4DLy",
-        active: true
-    },
-
-    {
-        name: "Ihitte Uboma",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/LEzDYMsCAzxFFLQ94PKZZb",
-        active: true
-    },
-
-    {
-        name: "Ideato North",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/HU145ZKbzpmDuqEGb6T39W",
-        active: true
-    },
-
-    {
-        name: "Ideato South",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/GRmXDsGgOjfHJNzqQJwhCu",
-        active: true
-    },
-
-    {
-        name: "Orlu",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/KPad30ipb8F4vl7LEJk5Ld",
-        active: true
-    },
-
-    {
-        name: "Orlu East",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/IsU7Xzm4JWn1YZ0JP8tGWj",
-        active: true
-    },
-
-    {
-        name: "Orsu",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/E8USOKKOfVx8YR73CEXEJo",
-        active: true
-    },
-
-    {
-        name: "Oru East",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/HrLaetq5qCR16t8FUWu56Z",
-        active: true
-    },
-
-    {
-        name: "Oru West",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/KaDyu9OesMl2laMhG8q8Vc",
-        active: true
-    },
-
-    {
-        name: "Oguta",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/BVbuY466t3j7R11GKciXeA",
-        active: true
-    },
-
-    {
-        name: "Ohaji Egbema",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/DHFJOEcVrygCv2h7pgvGd9",
-        active: true
-    },
-
-    {
-        name: "Njaba",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/CCQtBsv2rOY1UZ03l93NIl",
-        active: true
-    },
-
-    {
-        name: "Nwangele",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/LxXHoK2gxon21NYn600uNq",
-        active: true
-    },
-
-    {
-        name: "Isu",
-        location: "Imo State, Nigeria",
-        link: "https://chat.whatsapp.com/DdpBEjQs5ZDE15BJWJeyqM",
-        active: true
-    },
-
-
-    /* OTHER NIGERIAN CITIES */
-
-    {
-        name: "Abuja",
-        location: "Federal Capital Territory, Nigeria",
-        link: "https://chat.whatsapp.com/Ihe6NS3a0lpFW5YFtVzKvo",
-        active: true
-    },
-
-    {
-        name: "Lagos",
-        location: "Lagos State, Nigeria",
-        link: "https://chat.whatsapp.com/KAsAsYac7wbAzXgbmVw55H",
-        active: true
-    },
-
-
-    /* INTERNATIONAL COMMUNITIES */
-
-    {
-        name: "Port Harcourt",
-        location: "Rivers State, Nigeria",
-        link: "",
-        active: false
-    },
-
-    {
-        name: "London",
-        location: "United Kingdom",
-        link: "",
-        active: false
-    },
-
-    {
-        name: "Houston",
-        location: "Texas, United States",
-        link: "",
-        active: false
-    },
-
-    {
-        name: "Atlanta",
-        location: "Georgia, United States",
-        link: "",
-        active: false
-    },
-
-    {
-        name: "Toronto",
-        location: "Ontario, Canada",
-        link: "",
-        active: false
-    },
-
-    {
-        name: "Dublin",
-        location: "Ireland",
-        link: "",
-        active: false
-    },
-
-    {
-        name: "Germany",
-        location: "Europe",
-        link: "",
-        active: false
-    },
-
-    {
-        name: "South Africa",
-        location: "Africa",
-        link: "",
-        active: false
-    }
-
+  ["Port Harcourt", "Rivers State, Nigeria", ""],
+  ["London", "United Kingdom", ""],
+  ["Houston", "Texas, USA", ""],
+  ["Atlanta", "Georgia, USA", ""],
+  ["Toronto", "Ontario, Canada", ""],
+  ["Dublin", "Ireland", ""],
+  ["Germany", "Europe", ""],
+  ["South Africa", "Africa", ""]
 ];
 
 
 const grid = document.getElementById("grid");
-const search = document.getElementById("search");
 
 
-function renderCommunities(items) {
+function renderCommunities(list) {
 
-    grid.innerHTML = "";
+  grid.innerHTML = "";
 
-    items.forEach(community => {
+  list.forEach(function(community) {
 
-        const card = document.createElement("div");
+    const name = community[0];
+    const location = community[1];
+    const link = community[2];
 
-        card.className = community.active
-            ? "card"
-            : "card pending";
+    const card = document.createElement("div");
 
+    card.className = "card";
 
-        if (community.active) {
+    if (link) {
 
-            card.innerHTML = `
+      card.innerHTML = `
+        <div>
+          <h3>${name}</h3>
+          <small>${location}</small>
+        </div>
 
-                <div class="community-info">
+        <a href="${link}" target="_blank">
+          Join Group
+        </a>
+      `;
 
-                    <div class="community-icon">
-                        📍
-                    </div>
+    } else {
 
-                    <div>
+      card.classList.add("pending");
 
-                        <h3>${community.name}</h3>
+      card.innerHTML = `
+        <div>
+          <h3>${name}</h3>
+          <small>${location}</small>
+        </div>
 
-                        <small>
-                            ${community.location}
-                        </small>
+        <span>Coming Soon</span>
+      `;
 
-                    </div>
+    }
 
-                </div>
+    grid.appendChild(card);
 
-
-                <a
-                    href="${community.link}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="community-btn"
-                >
-                    Join Group
-                </a>
-
-            `;
-
-        } else {
-
-            card.innerHTML = `
-
-                <div class="community-info">
-
-                    <div class="community-icon">
-                        🌍
-                    </div>
-
-                    <div>
-
-                        <h3>${community.name}</h3>
-
-                        <small>
-                            ${community.location}
-                        </small>
-
-                    </div>
-
-                </div>
-
-
-                <span class="coming-soon">
-
-                    Coming Soon
-
-                </span>
-
-            `;
-
-        }
-
-
-        grid.appendChild(card);
-
-    });
+  });
 
 }
 
@@ -363,39 +96,39 @@ function renderCommunities(items) {
 renderCommunities(communities);
 
 
-/* SEARCH FUNCTION */
+const search = document.getElementById("search");
 
-search.addEventListener("input", function () {
+if (search) {
 
-    const term = this.value.toLowerCase();
+  search.addEventListener("input", function() {
 
+    const searchTerm = this.value.toLowerCase();
 
-    const filtered = communities.filter(community =>
+    const filtered = communities.filter(function(community) {
 
-        community.name.toLowerCase().includes(term) ||
+      return (
+        community[0].toLowerCase().includes(searchTerm) ||
+        community[1].toLowerCase().includes(searchTerm)
+      );
 
-        community.location.toLowerCase().includes(term)
-
-    );
-
+    });
 
     renderCommunities(filtered);
 
-});
+  });
 
+}
 
-/* MOBILE MENU */
 
 const menuButton = document.querySelector(".menu");
-const navigation = document.querySelector("nav");
+const nav = document.querySelector("nav");
 
+if (menuButton && nav) {
 
-if (menuButton && navigation) {
+  menuButton.addEventListener("click", function() {
 
-    menuButton.addEventListener("click", function () {
+    nav.classList.toggle("open");
 
-        navigation.classList.toggle("open");
-
-    });
+  });
 
 }
