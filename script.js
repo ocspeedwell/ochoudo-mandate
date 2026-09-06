@@ -13,6 +13,63 @@ const communities=[['Owerri Municipal','https://chat.whatsapp.com/FPKsQOW3Ja91NP
         link: "https://chat.whatsapp.com/KAsAsYac7wbAzXgbmVw55H",
         active: true
    ],    ['Port Harcourt'],['London'],['Houston'],['Atlanta'],['Toronto'],['Dublin'],['Germany'],['South Africa']];const grid=document.querySelector('#grid');function render(list){grid.innerHTML=list.map(([n,l])=>`<div class="card ${l?'':'pending'}"><div><h3>${n}</h3><small>${l?'WhatsApp Community':'Coming Soon'}</small></div>${l?`<a target="_blank" href="${l}">Join</a>`:'<a href="#join">Soon</a>'}</div>`).join('')}render(communities);document.querySelector('#search').oninput=e=>render(communities.filter(x=>x[0].toLowerCase().includes(e.target.value.toLowerCase())));document.querySelector('.menu').onclick=()=>document.querySelector('nav').classList.toggle('open');document.querySelector('#ndc').onclick=e=>{e.preventDefault();alert('The NDC membership registration portal link will be added here.')};
+
+const grid = document.getElementById("grid");
+const search = document.getElementById("search");
+
+function renderCommunities(items) {
+
+    grid.innerHTML = "";
+
+    items.forEach(community => {
+
+        const card = document.createElement("div");
+
+        card.className = "community-card";
+
+        if (community.active) {
+
+            card.innerHTML = `
+                <div class="community-icon">📍</div>
+
+                <h3>${community.name}</h3>
+
+                <p>${community.location}</p>
+
+                <a 
+                    href="${community.link}" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="community-btn"
+                >
+                    Join WhatsApp Group
+                </a>
+            `;
+
+        } else {
+
+            card.innerHTML = `
+                <div class="community-icon">🌍</div>
+
+                <h3>${community.name}</h3>
+
+                <p>${community.location}</p>
+
+                <span class="coming-soon">
+                    Coming Soon
+                </span>
+            `;
+
+        }
+
+        grid.appendChild(card);
+
+    });
+
+}
+
+renderCommunities(communities);
+
 search.addEventListener("input", function () {
 
     const term = this.value.toLowerCase();
