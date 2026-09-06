@@ -13,3 +13,15 @@ const communities=[['Owerri Municipal','https://chat.whatsapp.com/FPKsQOW3Ja91NP
         link: "https://chat.whatsapp.com/KAsAsYac7wbAzXgbmVw55H",
         active: true
    ],    ['Port Harcourt'],['London'],['Houston'],['Atlanta'],['Toronto'],['Dublin'],['Germany'],['South Africa']];const grid=document.querySelector('#grid');function render(list){grid.innerHTML=list.map(([n,l])=>`<div class="card ${l?'':'pending'}"><div><h3>${n}</h3><small>${l?'WhatsApp Community':'Coming Soon'}</small></div>${l?`<a target="_blank" href="${l}">Join</a>`:'<a href="#join">Soon</a>'}</div>`).join('')}render(communities);document.querySelector('#search').oninput=e=>render(communities.filter(x=>x[0].toLowerCase().includes(e.target.value.toLowerCase())));document.querySelector('.menu').onclick=()=>document.querySelector('nav').classList.toggle('open');document.querySelector('#ndc').onclick=e=>{e.preventDefault();alert('The NDC membership registration portal link will be added here.')};
+search.addEventListener("input", function () {
+
+    const term = this.value.toLowerCase();
+
+    const filtered = communities.filter(community =>
+        community.name.toLowerCase().includes(term) ||
+        community.location.toLowerCase().includes(term)
+    );
+
+    renderCommunities(filtered);
+
+});
