@@ -351,3 +351,258 @@
 .start-community-btn:hover {
     background: #243247;
 }
+/* ==========================================
+   COMMUNITY PAGE FINAL POLISH
+========================================== */
+
+/* Main community section */
+#communities {
+    padding: 80px 0 100px;
+}
+
+#communities .container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 35px;
+}
+
+
+/* Centre the heading area */
+#communities .section-head,
+#communities .communities-intro {
+    text-align: center;
+    justify-content: center;
+}
+
+#communities .section-head {
+    display: block;
+}
+
+#communities .section-head h2,
+#communities h2 {
+    margin-bottom: 18px;
+}
+
+
+/* Description */
+#communities .muted {
+    max-width: 850px;
+    margin: 0 auto;
+    text-align: center;
+    line-height: 1.7;
+}
+
+
+/* Statistics */
+.community-stats,
+.stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 35px;
+    margin: 35px auto 30px;
+    flex-wrap: wrap;
+}
+
+.community-stats span,
+.stats span {
+    color: #5d6875;
+    font-size: 15px;
+}
+
+
+/* FILTER BUTTON AREA */
+
+.community-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 25px 0 18px;
+    flex-wrap: wrap;
+}
+
+
+/* Style every filter button */
+
+.community-tabs button,
+.filters button,
+.filter-btn {
+    border: 1px solid #d8dde3;
+    background: #ffffff;
+    color: #26364a;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .25s ease;
+}
+
+
+/* Hover */
+
+.community-tabs button:hover,
+.filters button:hover,
+.filter-btn:hover {
+    background: #26364a;
+    color: #ffffff;
+    border-color: #26364a;
+}
+
+
+/* Active */
+
+.community-tabs button.active,
+.filters button.active,
+.filter-btn.active {
+    background: #b9913d;
+    color: #ffffff;
+    border-color: #b9913d;
+}
+
+
+/* SEARCH */
+
+.search-wrapper {
+    max-width: 720px;
+    margin: 0 auto 50px;
+}
+
+#search {
+    display: block;
+    width: 100%;
+    height: 52px;
+    padding: 0 20px;
+    border: 1px solid #d8dde3;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #26364a;
+    font-size: 15px;
+    outline: none;
+    box-sizing: border-box;
+    transition: all .25s ease;
+}
+
+#search::placeholder {
+    color: #9aa3ad;
+}
+
+#search:focus {
+    border-color: #b9913d;
+    box-shadow: 0 0 0 3px rgba(185, 145, 61, 0.12);
+}
+
+
+/* COMMUNITY GRID */
+
+#grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
+}
+
+
+/* COMMUNITY CARDS */
+
+.community-card {
+    background: #ffffff;
+    border: 1px solid #e1e5e9;
+    padding: 24px;
+    min-height: 130px;
+    border-radius: 5px;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    transition: transform .25s ease,
+                box-shadow .25s ease,
+                border-color .25s ease;
+}
+
+
+.community-card:hover {
+    transform: translateY(-4px);
+    border-color: #b9913d;
+    box-shadow: 0 10px 30px rgba(0,0,0,.08);
+}
+
+
+.community-card h3 {
+    color: #26364a;
+    font-size: 18px;
+    margin: 0 0 7px;
+}
+
+
+.community-card p {
+    color: #77818d;
+    font-size: 14px;
+    margin: 0 0 18px;
+}
+
+
+/* JOIN BUTTON */
+
+.community-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: fit-content;
+
+    padding: 11px 18px;
+
+    background: #26364a;
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    border-radius: 3px;
+
+    transition: all .25s ease;
+}
+
+
+.community-btn:hover {
+    background: #b9913d;
+    color: #ffffff;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+
+    #grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    #communities .container {
+        padding: 0 20px;
+    }
+
+    #grid {
+        grid-template-columns: 1fr;
+    }
+
+    .community-stats,
+    .stats {
+        gap: 15px;
+    }
+
+    .community-tabs {
+        gap: 8px;
+    }
+
+}
