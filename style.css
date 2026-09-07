@@ -606,3 +606,86 @@
     }
 
 }
+/* =========================================
+   COMMUNITIES SECTION ALIGNMENT
+========================================= */
+
+.communities-section {
+    text-align: center;
+}
+
+.community-intro {
+    max-width: 850px;
+    margin: 0 auto 45px;
+    text-align: center;
+}
+
+.community-intro .eyebrow {
+    text-align: center;
+}
+
+.community-intro h2 {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.community-intro p {
+    text-align: center;
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* Statistics */
+
+.community-stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 55px;
+    margin: 30px auto 35px;
+}
+
+
+/* Filter Tabs */
+
+.community-tabs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 0 auto 20px;
+}
+
+
+/* Search */
+
+.search-wrapper {
+    max-width: 850px;
+    margin: 0 auto 45px;
+}
+
+
+/* Mobile Responsiveness */
+
+@media (max-width: 768px) {
+
+    .community-intro {
+        text-align: left;
+    }
+
+    .community-intro .eyebrow,
+    .community-intro h2,
+    .community-intro p {
+        text-align: left;
+    }
+
+    .community-stats {
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+}
