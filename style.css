@@ -101,32 +101,29 @@
 .community-stats {
     display: flex;
     justify-content: center;
-    gap: 18px;
-    flex-wrap: wrap;
-    margin: 40px 0 30px;
-}
-
-.stat-item {
-    background: #ffffff;
-    border: 1px solid #e6e8ec;
-    padding: 16px 25px;
-    border-radius: 6px;
-    min-width: 180px;
+    align-items: center;
+    gap: 60px;
+    margin: 45px 0 35px;
     text-align: center;
 }
 
-.stat-item strong {
-    display: block;
-    font-size: 26px;
-    color: #b8963e;
-    margin-bottom: 4px;
+.stat-card {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
 }
 
-.stat-item span {
-    font-size: 14px;
-    color: #667085;
+.stat-card strong {
+    font-size: 28px;
+    font-weight: 700;
+    color: #243246;
 }
 
+.stat-card span {
+    font-size: 17px;
+    color: #5f6875;
+    font-weight: 500;
+}
 
 /* FILTER AREA */
 
