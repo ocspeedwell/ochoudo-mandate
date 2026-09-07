@@ -320,3 +320,34 @@
     }
 
 }
+.community-footer {
+    text-align: center;
+    margin-top: 70px;
+    padding-top: 50px;
+    border-top: 1px solid #e2e6eb;
+}
+
+.community-footer h3 {
+    font-size: 24px;
+    color: #243247;
+    margin-bottom: 12px;
+}
+
+.community-footer p {
+    color: #667085;
+    margin-bottom: 25px;
+}
+
+.start-community-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    background: #b8963e;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 3px;
+}
+
+.start-community-btn:hover {
+    background: #243247;
+}
