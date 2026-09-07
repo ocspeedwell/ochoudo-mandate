@@ -52,3 +52,248 @@
         height: 42px;
     }
 }
+/* =========================================
+   COMMUNITIES SECTION
+   SAFE STYLES
+========================================= */
+
+#communities {
+    background: #f7f6f3;
+}
+
+#communities .container {
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+/* Heading */
+
+#communities .eyebrow {
+    color: #b48a3c;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+#communities h2 {
+    font-size: 56px;
+    line-height: 1.1;
+    color: #243247;
+    margin-bottom: 18px;
+}
+
+/* Intro text */
+
+#communities .community-intro,
+#communities .section-head + p,
+#communities .muted {
+    font-size: 17px;
+    line-height: 1.7;
+    color: #5f6875;
+    max-width: 780px;
+}
+
+/* Statistics */
+
+.community-stats {
+    display: flex;
+    gap: 35px;
+    margin: 28px 0 22px;
+    flex-wrap: wrap;
+}
+
+.community-stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.community-stat strong {
+    font-size: 24px;
+    color: #243247;
+}
+
+.community-stat span {
+    font-size: 14px;
+    color: #697386;
+    margin-top: 4px;
+}
+
+/* Filter buttons */
+
+.community-filters {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.community-filter {
+    border: 1px solid #d5d9df;
+    background: #ffffff;
+    color: #243247;
+    padding: 10px 18px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.community-filter:hover,
+.community-filter.active {
+    background: #243247;
+    color: #ffffff;
+    border-color: #243247;
+}
+
+/* Search */
+
+#communities #search {
+    width: 100%;
+    max-width: 420px;
+    padding: 14px 18px;
+    border: 1px solid #d7dce2;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #243247;
+    font-size: 15px;
+    margin: 10px 0 35px;
+    outline: none;
+}
+
+#communities #search:focus {
+    border-color: #b48a3c;
+}
+
+/* Community grid */
+
+#communities .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+/* Community card */
+
+#communities .card {
+    background: #ffffff;
+    border: 1px solid #e1e4e8;
+    padding: 22px;
+    min-height: 125px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+#communities .card:hover {
+    border-color: #b48a3c;
+    transform: translateY(-2px);
+}
+
+#communities .card h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+    color: #243247;
+}
+
+#communities .card small {
+    color: #748091;
+    font-size: 13px;
+}
+
+/* Join button */
+
+#communities .card a {
+    background: #27ae60;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+#communities .card a:hover {
+    background: #1f9250;
+}
+
+/* Pending communities */
+
+#communities .card.pending {
+    opacity: 0.75;
+}
+
+#communities .card.pending a {
+    background: #e5e7eb;
+    color: #6b7280;
+}
+
+/* Don't see your location */
+
+.community-request {
+    margin-top: 50px;
+    padding: 35px;
+    background: #243247;
+    color: white;
+}
+
+.community-request h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.community-request p {
+    color: rgba(255,255,255,0.75);
+}
+
+.community-request a {
+    display: inline-block;
+    margin-top: 15px;
+    background: #b48a3c;
+    color: white;
+    text-decoration: none;
+    padding: 12px 22px;
+    font-weight: 700;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+
+    #communities h2 {
+        font-size: 42px;
+    }
+
+    #communities .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    #communities {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    #communities h2 {
+        font-size: 34px;
+    }
+
+    #communities .grid {
+        grid-template-columns: 1fr;
+    }
+
+    #communities .card {
+        padding: 18px;
+    }
+
+    .community-stats {
+        gap: 20px;
+    }
+
+}
