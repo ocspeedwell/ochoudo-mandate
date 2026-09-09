@@ -415,128 +415,459 @@
 
                 <!-- ================= LOCATION ================= -->
 
-                <section class="form-section location-section">
+               <!-- ================= POLITICAL LOCATION ================= -->
+
+<section class="form-section location-section">
+
+    <div class="form-section-header">
+
+        <div class="section-number">
+            03
+        </div>
+
+        <div>
+
+            <p class="form-eyebrow">
+                YOUR POLITICAL LOCATION
+            </p>
+
+            <h2>
+                Voting Information
+            </h2>
+
+            <p>
+                Help us understand where you are politically registered
+                and connected.
+            </p>
+
+        </div>
+
+    </div>
 
 
-                    <div class="form-section-header">
+    <div class="form-group full-width">
+
+        <label>
+            Are you registered to vote in Imo State?
+        </label>
+
+        <div class="radio-group">
+
+            <label class="radio-option">
+
+                <input
+                    type="radio"
+                    name="registered_in_imo"
+                    value="Yes"
+                    required>
+
+                <span>Yes</span>
+
+            </label>
 
 
-                        <div class="section-number">
-                            03
-                        </div>
+            <label class="radio-option">
+
+                <input
+                    type="radio"
+                    name="registered_in_imo"
+                    value="No">
+
+                <span>No</span>
+
+            </label>
+
+        </div>
+
+    </div>
 
 
-                        <div>
-
-                            <p class="form-eyebrow">
-                                WHERE YOU ARE
-                            </p>
-
-                            <h2>
-                                Location Information
-                            </h2>
-
-                            <p>
-                                Tell us where you live and participate.
-                            </p>
-
-                        </div>
+    <div id="politicalLocationFields">
 
 
-                    </div>
+        <div class="form-row">
+
+            <div class="form-group">
+
+                <label for="political_state">
+                    State of Political Registration
+                </label>
+
+                <select
+                    id="political_state"
+                    name="political_state">
+
+                    <option value="">
+                        Select State
+                    </option>
+
+                    <option value="Imo">
+                        Imo State
+                    </option>
+
+                </select>
+
+            </div>
 
 
+            <div class="form-group">
 
-                    <div class="form-row three-columns">
+                <label for="lga">
+                    Local Government Area
+                </label>
 
+                <select
+                    id="lga"
+                    name="lga"
+                    disabled>
 
-                        <div class="form-group">
+                    <option value="">
+                        Select LGA
+                    </option>
 
-                            <label for="polling_unit">
-                                Polling Unit
-                            </label>
+                </select>
 
-                            <input
-                                type="text"
-                                id="polling_unit"
-                                name="polling_unit">
+            </div>
 
-                        </div>
-
-
-
-                        <div class="form-group">
-
-                            <label for="ward">
-                                Ward
-                            </label>
-
-                            <input
-                                type="text"
-                                id="ward"
-                                name="ward">
-
-                        </div>
-
-
-
-                        <div class="form-group">
-
-                            <label for="lga">
-                                LGA
-                            </label>
-
-                            <input
-                                type="text"
-                                id="lga"
-                                name="lga">
-
-                        </div>
-
-
-                    </div>
-
-
-
-                    <div class="form-row">
-
-
-                        <div class="form-group">
-
-                            <label for="state">
-                                State
-                            </label>
-
-                            <input
-                                type="text"
-                                id="state"
-                                name="state"
-                                required>
-
-                        </div>
+        </div>
 
 
 
-                        <div class="form-group">
-
-                            <label for="city">
-                                City / Town of Residence
-                            </label>
-
-                            <input
-                                type="text"
-                                id="city"
-                                name="city"
-                                required>
-
-                        </div>
+        <div class="form-row">
 
 
-                    </div>
+            <div class="form-group">
+
+                <label for="ward">
+                    Ward
+                </label>
+
+                <select
+                    id="ward"
+                    name="ward"
+                    disabled>
+
+                    <option value="">
+                        Select Ward
+                    </option>
+
+                </select>
+
+            </div>
 
 
-                </section>
 
+            <div class="form-group">
+
+                <label for="polling_unit">
+                    Polling Unit
+                </label>
+
+                <select
+                    id="polling_unit"
+                    name="polling_unit"
+                    disabled>
+
+                    <option value="">
+                        Select Polling Unit
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= CURRENT RESIDENCE ================= -->
+
+<section class="form-section residence-section">
+
+    <div class="form-section-header">
+
+        <div class="section-number red-number">
+            04
+        </div>
+
+        <div>
+
+            <p class="form-eyebrow">
+                WHERE YOU LIVE
+            </p>
+
+            <h2>
+                Current Residence
+            </h2>
+
+            <p>
+                Tell us where you currently live.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="form-row three-columns">
+
+
+        <div class="form-group">
+
+            <label for="country">
+                Country of Residence
+            </label>
+
+            <input
+                type="text"
+                id="country"
+                name="country"
+                required>
+
+        </div>
+
+
+
+        <div class="form-group">
+
+            <label for="residence_state">
+                State / Province
+            </label>
+
+            <input
+                type="text"
+                id="residence_state"
+                name="residence_state">
+
+        </div>
+
+
+
+        <div class="form-group">
+
+            <label for="city">
+                City / Town of Residence
+            </label>
+
+            <input
+                type="text"
+                id="city"
+                name="city"
+                required>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= SKILLS AND PARTICIPATION ================= -->
+
+<section class="form-section additional-section">
+
+    <div class="form-section-header">
+
+        <div class="section-number">
+            05
+        </div>
+
+        <div>
+
+            <p class="form-eyebrow">
+                GET INVOLVED
+            </p>
+
+            <h2>
+                Skills and Participation
+            </h2>
+
+            <p>
+                Tell us about your skills and how you would like
+                to support the movement.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="form-row">
+
+
+        <div class="form-group">
+
+            <label for="occupation">
+                Occupation
+            </label>
+
+            <input
+                type="text"
+                id="occupation"
+                name="occupation">
+
+        </div>
+
+
+
+        <div class="form-group">
+
+            <label for="professional_skills">
+                Professional Skills
+            </label>
+
+            <input
+                type="text"
+                id="professional_skills"
+                name="professional_skills">
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="form-group full-width">
+
+        <label>
+            Areas You Would Like to Support
+        </label>
+
+
+        <div class="interest-grid">
+
+
+            <label>
+
+                <input
+                    type="checkbox"
+                    name="interest"
+                    value="Community Mobilisation">
+
+                Community Mobilisation
+
+            </label>
+
+
+            <label>
+
+                <input
+                    type="checkbox"
+                    name="interest"
+                    value="Media and Publicity">
+
+                Media and Publicity
+
+            </label>
+
+
+            <label>
+
+                <input
+                    type="checkbox"
+                    name="interest"
+                    value="Social Media">
+
+                Social Media
+
+            </label>
+
+
+            <label>
+
+                <input
+                    type="checkbox"
+                    name="interest"
+                    value="Youth Engagement">
+
+                Youth Engagement
+
+            </label>
+
+
+            <label>
+
+                <input
+                    type="checkbox"
+                    name="interest"
+                    value="Women Mobilisation">
+
+                Women Mobilisation
+
+            </label>
+
+
+            <label>
+
+                <input
+                    type="checkbox"
+                    name="interest"
+                    value="Professional Network">
+
+                Professional Network
+
+            </label>
+
+
+            <label>
+
+                <input
+                    type="checkbox"
+                    name="interest"
+                    value="Election Day Support">
+
+                Election Day Support
+
+            </label>
+
+
+            <label>
+
+                <input
+                    type="checkbox"
+                    name="interest"
+                    value="Other">
+
+                Other
+
+            </label>
+
+
+        </div>
+
+    </div>
+
+
+
+    <div class="form-group full-width">
+
+        <label for="reason">
+
+            Why do you want to join the
+            Ochoudo Mandate Group?
+
+        </label>
+
+
+        <textarea
+            id="reason"
+            name="reason"
+            rows="6"></textarea>
+
+    </div>
+
+
+</section>
 
 
                 <!-- ================= ADDITIONAL ================= -->
