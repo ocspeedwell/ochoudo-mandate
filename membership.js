@@ -12,8 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
-});
-/* ==========================================
+});/* ==========================================
    IMO ELECTORAL LOCATION SYSTEM
 ========================================== */
 
@@ -32,10 +31,7 @@ async function loadImoElectoralData() {
 
     try {
 
-        const response = await fetch(
-            "data/imo-electoral-data.json"
-        );
-
+        const response = await fetch("data/imo.json");
 
         if (!response.ok) {
 
@@ -45,12 +41,9 @@ async function loadImoElectoralData() {
 
         }
 
-
         imoElectoralData = await response.json();
 
-
         populateLGAs();
-
 
     } catch (error) {
 
@@ -70,28 +63,44 @@ async function loadImoElectoralData() {
 
 function populateLGAs() {
 
-    if (!imoElectoralData) return;
+    if (
+        !imoElectoralData ||
+        !imoElectoralData.state ||
+        !imoElectoralData.state.lgas
+    ) {
+
+        return;
+
+    }
 
 
-    lgaSelect.innerHTML = `
-        <option value="">
-            Select LGA
-        </option>
-    `;
+    lgaSelect.innerHTML = "";
+
+    const defaultOption =
+        document.createElement("option");
+
+    defaultOption.value = "";
+
+    defaultOption.textContent =
+        "Select Local Government Area";
+
+    lgaSelect.appendChild(defaultOption);
 
 
-    imoElectoralData.lgas.forEach(function (lga) {
+    imoElectoralData.state.lgas.forEach(
+        function (lga) {
 
-        const option = document.createElement("option");
+            const option =
+                document.createElement("option");
 
-        option.value = lga.name;
+            option.value = lga.id;
 
-        option.textContent = lga.name;
+            option.textContent = formatName(lga.name);
 
-        lgaSelect.appendChild(option);
+            lgaSelect.appendChild(option);
 
-    });
-
+        }
+    );
 
 }
 
@@ -104,49 +113,65 @@ lgaSelect.addEventListener(
     "change",
     function () {
 
-        const selectedLGA = this.value;
+        const selectedLGAId = this.value;
 
 
         /* Reset Ward */
 
-        wardSelect.innerHTML = `
-            <option value="">
-                Select Ward
-            </option>
-        `;
+        wardSelect.innerHTML = "";
 
+        const wardDefault =
+            document.createElement("option");
+
+        wardDefault.value = "";
+
+        wardDefault.textContent =
+            "Select Ward";
+
+        wardSelect.appendChild(wardDefault);
 
         wardSelect.disabled = true;
 
 
         /* Reset Polling Unit */
 
-        pollingUnitSelect.innerHTML = `
-            <option value="">
-                Select Polling Unit
-            </option>
-        `;
+        pollingUnitSelect.innerHTML = "";
 
+        const pollingDefault =
+            document.createElement("option");
+
+        pollingDefault.value = "";
+
+        pollingDefault.textContent =
+            "Select Polling Unit";
+
+        pollingUnitSelect.appendChild(
+            pollingDefault
+        );
 
         pollingUnitSelect.disabled = true;
 
 
-        if (!selectedLGA) return;
+        if (!selectedLGAId) {
+
+            return;
+
+        }
 
 
-        const lgaData = imoElectoralData.lgas.find(
-            function (lga) {
+        const selectedLGA =
+            imoElectoralData.state.lgas.find(
+                function (lga) {
 
-                return lga.name === selectedLGA;
+                    return lga.id === selectedLGAId;
 
-            }
-        );
+                }
+            );
 
 
         if (
-            !lgaData ||
-            !lgaData.wards ||
-            lgaData.wards.length === 0
+            !selectedLGA ||
+            !selectedLGA.wards
         ) {
 
             return;
@@ -154,17 +179,21 @@ lgaSelect.addEventListener(
         }
 
 
-        lgaData.wards.forEach(function (ward) {
+        selectedLGA.wards.forEach(
+            function (ward) {
 
-            const option = document.createElement("option");
+                const option =
+                    document.createElement("option");
 
-            option.value = ward.name;
+                option.value = ward.id;
 
-            option.textContent = ward.name;
+                option.textContent =
+                    formatName(ward.name);
 
-            wardSelect.appendChild(option);
+                wardSelect.appendChild(option);
 
-        });
+            }
+        );
 
 
         wardSelect.disabled = false;
@@ -181,52 +210,35 @@ wardSelect.addEventListener(
     "change",
     function () {
 
-        const selectedLGA = lgaSelect.value;
+        const selectedLGAId =
+            lgaSelect.value;
 
-        const selectedWard = this.value;
+        const selectedWardId =
+            this.value;
 
 
-        pollingUnitSelect.innerHTML = `
-            <option value="">
-                Select Polling Unit
-            </option>
-        `;
+        /* Reset Polling Units */
 
+        pollingUnitSelect.innerHTML = "";
+
+        const pollingDefault =
+            document.createElement("option");
+
+        pollingDefault.value = "";
+
+        pollingDefault.textContent =
+            "Select Polling Unit";
+
+        pollingUnitSelect.appendChild(
+            pollingDefault
+        );
 
         pollingUnitSelect.disabled = true;
 
 
         if (
-            !selectedLGA ||
-            !selectedWard
-        ) return;
-
-
-        const lgaData = imoElectoralData.lgas.find(
-            function (lga) {
-
-                return lga.name === selectedLGA;
-
-            }
-        );
-
-
-        if (!lgaData) return;
-
-
-        const wardData = lgaData.wards.find(
-            function (ward) {
-
-                return ward.name === selectedWard;
-
-            }
-        );
-
-
-        if (
-            !wardData ||
-            !wardData.polling_units ||
-            wardData.polling_units.length === 0
+            !selectedLGAId ||
+            !selectedWardId
         ) {
 
             return;
@@ -234,16 +246,64 @@ wardSelect.addEventListener(
         }
 
 
-        wardData.polling_units.forEach(
+        const selectedLGA =
+            imoElectoralData.state.lgas.find(
+                function (lga) {
+
+                    return lga.id === selectedLGAId;
+
+                }
+            );
+
+
+        if (!selectedLGA) {
+
+            return;
+
+        }
+
+
+        const selectedWard =
+            selectedLGA.wards.find(
+                function (ward) {
+
+                    return ward.id === selectedWardId;
+
+                }
+            );
+
+
+        if (
+            !selectedWard ||
+            !selectedWard.pollingUnits
+        ) {
+
+            return;
+
+        }
+
+
+        selectedWard.pollingUnits.forEach(
             function (pollingUnit) {
 
                 const option =
                     document.createElement("option");
 
+                /*
+                 Store official INEC delimitation code
+                */
 
-                option.value = pollingUnit;
+                option.value =
+                    pollingUnit.delimitation;
 
-                option.textContent = pollingUnit;
+
+                /*
+                 Display polling unit name
+                */
+
+                option.textContent =
+                    formatName(pollingUnit.name);
+
 
                 pollingUnitSelect.appendChild(option);
 
@@ -255,6 +315,28 @@ wardSelect.addEventListener(
 
     }
 );
+
+
+/* ==========================================
+   FORMAT NAMES
+========================================== */
+
+function formatName(name) {
+
+    if (!name) return "";
+
+    return name
+        .toLowerCase()
+        .replace(
+            /\b\w/g,
+            function (letter) {
+
+                return letter.toUpperCase();
+
+            }
+        );
+
+}
 
 
 /* ==========================================
