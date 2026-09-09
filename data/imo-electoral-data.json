@@ -1,1 +1,117 @@
-
+{
+  "state": "Imo",
+  "lgas": [
+    {
+      "name": "Aboh Mbaise",
+      "wards": []
+    },
+    {
+      "name": "Ahiazu Mbaise",
+      "wards": []
+    },
+    {
+      "name": "Ehime Mbano",
+      "wards": []
+    },
+    {
+      "name": "Ezinihitte Mbaise",
+      "wards": []
+    },
+    {
+      "name": "Ideato North",
+      "wards": []
+    },
+    {
+      "name": "Ideato South",
+      "wards": []
+    },
+    {
+      "name": "Ihitte/Uboma",
+      "wards": []
+    },
+    {
+      "name": "Ikeduru",
+      "wards": []
+    },
+    {
+      "name": "Isiala Mbano",
+      "wards": []
+    },
+    {
+      "name": "Isu",
+      "wards": []
+    },
+    {
+      "name": "Mbaitoli",
+      "wards": []
+    },
+    {
+      "name": "Ngor Okpala",
+      "wards": []
+    },
+    {
+      "name": "Njaba",
+      "wards": []
+    },
+    {
+      "name": "Nkwerre",
+      "wards": []
+    },
+    {
+      "name": "Nwangele",
+      "wards": []
+    },
+    {
+      "name": "Obowo",
+      "wards": []
+    },
+    {
+      "name": "Oguta",
+      "wards": []
+    },
+    {
+      "name": "Ohaji/Egbema",
+      "wards": []
+    },
+    {
+      "name": "Okigwe",
+      "wards": []
+    },
+    {
+      "name": "Onuimo",
+      "wards": []
+    },
+    {
+      "name": "Orlu",
+      "wards": []
+    },
+    {
+      "name": "Orlu East",
+      "wards": []
+    },
+    {
+      "name": "Orsu",
+      "wards": []
+    },
+    {
+      "name": "Oru East",
+      "wards": []
+    },
+    {
+      "name": "Oru West",
+      "wards": []
+    },
+    {
+      "name": "Owerri Municipal",
+      "wards": []
+    },
+    {
+      "name": "Owerri North",
+      "wards": []
+    },
+    {
+      "name": "Owerri West",
+      "wards": []
+    }
+  ]
+}
