@@ -415,7 +415,7 @@
 
                 <!-- ================= LOCATION ================= -->
 
-               <!-- ================= POLITICAL LOCATION ================= -->
+              <!-- ================= IMO CONNECTION ================= -->
 
 <section class="form-section location-section">
 
@@ -428,16 +428,16 @@
         <div>
 
             <p class="form-eyebrow">
-                YOUR POLITICAL LOCATION
+                YOUR IMO CONNECTION
             </p>
 
             <h2>
-                Voting Information
+                Your Political Location in Imo
             </h2>
 
             <p>
-                Help us understand where you are politically registered
-                and connected.
+                Please select the Local Government Area, Ward and Polling
+                Unit where you are politically connected in Imo State.
             </p>
 
         </div>
@@ -445,147 +445,94 @@
     </div>
 
 
-    <div class="form-group full-width">
+    <div class="form-row">
 
-        <label>
-            Are you registered to vote in Imo State?
-        </label>
+        <!-- LGA -->
 
-        <div class="radio-group">
+        <div class="form-group">
 
-            <label class="radio-option">
-
-                <input
-                    type="radio"
-                    name="registered_in_imo"
-                    value="Yes"
-                    required>
-
-                <span>Yes</span>
-
+            <label for="lga">
+                Local Government Area
             </label>
 
+            <select
+                id="lga"
+                name="lga"
+                required
+            >
 
-            <label class="radio-option">
+                <option value="">
+                    Select LGA
+                </option>
 
-                <input
-                    type="radio"
-                    name="registered_in_imo"
-                    value="No">
+            </select>
 
-                <span>No</span>
+        </div>
 
+
+        <!-- WARD -->
+
+        <div class="form-group">
+
+            <label for="ward">
+                Ward
             </label>
+
+            <select
+                id="ward"
+                name="ward"
+                required
+                disabled
+            >
+
+                <option value="">
+                    Select Ward
+                </option>
+
+            </select>
 
         </div>
 
     </div>
 
 
-    <div id="politicalLocationFields">
+    <!-- POLLING UNIT -->
+
+    <div class="form-group full-width">
+
+        <label for="polling_unit">
+            Polling Unit
+        </label>
+
+        <select
+            id="polling_unit"
+            name="polling_unit"
+            required
+            disabled
+        >
+
+            <option value="">
+                Select Polling Unit
+            </option>
+
+        </select>
+
+    </div>
 
 
-        <div class="form-row">
+    <div class="imo-location-note">
 
-            <div class="form-group">
+        <strong>Imo State Only</strong>
 
-                <label for="political_state">
-                    State of Political Registration
-                </label>
-
-                <select
-                    id="political_state"
-                    name="political_state">
-
-                    <option value="">
-                        Select State
-                    </option>
-
-                    <option value="Imo">
-                        Imo State
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="lga">
-                    Local Government Area
-                </label>
-
-                <select
-                    id="lga"
-                    name="lga"
-                    disabled>
-
-                    <option value="">
-                        Select LGA
-                    </option>
-
-                </select>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="form-row">
-
-
-            <div class="form-group">
-
-                <label for="ward">
-                    Ward
-                </label>
-
-                <select
-                    id="ward"
-                    name="ward"
-                    disabled>
-
-                    <option value="">
-                        Select Ward
-                    </option>
-
-                </select>
-
-            </div>
-
-
-
-            <div class="form-group">
-
-                <label for="polling_unit">
-                    Polling Unit
-                </label>
-
-                <select
-                    id="polling_unit"
-                    name="polling_unit"
-                    disabled>
-
-                    <option value="">
-                        Select Polling Unit
-                    </option>
-
-                </select>
-
-            </div>
-
-
-        </div>
-
+        <p>
+            This information helps us organise and understand our
+            grassroots network across the 27 Local Government Areas,
+            wards and polling units of Imo State.
+        </p>
 
     </div>
 
 </section>
-
-
-
 <!-- ================= CURRENT RESIDENCE ================= -->
 
 <section class="form-section residence-section">
