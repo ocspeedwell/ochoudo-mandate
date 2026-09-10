@@ -193,33 +193,108 @@
        MEMBER PHOTO
        ========================================================= */
 
-    async function loadMemberPhoto(
-        passportUrl
-    ) {
+async function loadMemberPhoto(
+    phone,
+    memberId
+) {
 
-        const photo =
-            document.getElementById(
-                "verifiedMemberPhoto"
+    const photo =
+        document.getElementById(
+            "verifiedMemberPhoto"
+        );
+
+    const placeholder =
+        document.getElementById(
+            "verificationPhotoPlaceholder"
+        );
+
+    photo.removeAttribute("src");
+
+    photo.style.display = "none";
+
+    placeholder.textContent =
+        "LOADING MEMBER PHOTO...";
+
+    placeholder.style.display = "block";
+
+    try {
+
+        const { data, error } =
+            await db.functions.invoke(
+                "get-member-photo",
+                {
+                    body: {
+                        phone: phone,
+                        member_id: memberId
+                    }
+                }
             );
 
-        const placeholder =
-            document.getElementById(
-                "verificationPhotoPlaceholder"
+        if (error) {
+
+            console.error(
+                "Photo function error:",
+                error
             );
 
+            throw error;
+        }
 
-        if (!passportUrl) {
+        if (
+            !data ||
+            !data.photo_url
+        ) {
 
-            photo.removeAttribute("src");
-
-            photo.style.display =
-                "none";
-
-            placeholder.style.display =
-                "block";
+            placeholder.innerHTML =
+                "MEMBER PHOTO<br>NOT AVAILABLE";
 
             return;
         }
+
+        photo.onload =
+            function () {
+
+                photo.style.display =
+                    "block";
+
+                placeholder.style.display =
+                    "none";
+            };
+
+        photo.onerror =
+            function () {
+
+                photo.removeAttribute(
+                    "src"
+                );
+
+                photo.style.display =
+                    "none";
+
+                placeholder.innerHTML =
+                    "MEMBER PHOTO<br>NOT AVAILABLE";
+
+                placeholder.style.display =
+                    "block";
+            };
+
+        photo.src =
+            data.photo_url;
+
+    } catch (error) {
+
+        console.error(
+            "Unable to load member photo:",
+            error
+        );
+
+        placeholder.innerHTML =
+            "MEMBER PHOTO<br>NOT AVAILABLE";
+
+        placeholder.style.display =
+            "block";
+    }
+}
 
 
         /*
