@@ -2125,3 +2125,76 @@
         font-size: 17px;
     }
 }
+
+
+/* =========================================================
+   CARD 1.0 FINAL VISUAL POLISH
+   ========================================================= */
+
+/* The official logo already contains the OCHOUDO / MANDATE GROUP
+   wording, so remove the duplicate text beside/below it. */
+.id-card-brand {
+    display: flex;
+    align-items: center;
+}
+
+.id-card-brand .membership-brand-text {
+    display: none !important;
+}
+
+/* Give the official logo a little more presence while keeping
+   the header balanced. */
+.id-card-brand img {
+    width: 205px;
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Cleaner membership number presentation */
+.membership-id-display {
+    min-height: 44px;
+    padding: 10px 16px;
+}
+
+.membership-id-display span {
+    font-size: 8px;
+    letter-spacing: 1.4px;
+}
+
+.membership-id-display strong {
+    font-size: 18px;
+    letter-spacing: 0.7px;
+    white-space: nowrap;
+}
+
+/* Improve spacing and visual hierarchy of the member details */
+.member-name-block {
+    margin-top: 14px;
+}
+
+.member-details-grid {
+    margin-top: 10px;
+}
+
+.member-detail {
+    min-height: 39px;
+    padding: 7px 10px;
+}
+
+.member-detail span {
+    margin-bottom: 3px;
+    font-size: 7px;
+    letter-spacing: 1.2px;
+}
+
+.member-detail strong {
+    font-size: 12px;
+    line-height: 1.25;
+}
+
+/* Keep the polling unit and registration date comfortably visible */
+.member-detail.full-detail {
+    grid-column: 1 / -1;
+}
+
