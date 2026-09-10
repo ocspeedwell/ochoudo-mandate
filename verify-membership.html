@@ -8,765 +8,420 @@
     <meta name="description" content="Verify your Ochoudo Mandate Group membership and print your membership card.">
 
     <link rel="icon" type="image/png" href="assets/ochoudo-favicon.png">
+    <link rel="apple-touch-icon" href="assets/ochoudo-favicon.png">
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="membership.css">
 
-<style>
-
-    /* =========================================================
-       VERIFICATION PAGE
-       ========================================================= */
-
-    .verification-page {
-        min-height: 100vh;
-        padding: 60px 20px 80px;
-        background: #f5f7fb;
-    }
-
-
-    .verification-wrapper {
-        width: min(100%, 900px);
-        margin: 0 auto;
-    }
-
-
-    /* =========================================================
-       INTRO
-       ========================================================= */
-
-    .verification-intro {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-
-    .verification-logo {
-        width: 210px;
-        max-width: 80%;
-        height: auto;
-        margin: 0 auto 20px;
-        display: block;
-    }
-
-
-    .verification-intro h1 {
-        margin: 0 0 10px;
-        color: #071b49;
-        font-size: clamp(28px, 5vw, 42px);
-        line-height: 1.1;
-    }
-
-
-    .verification-intro p {
-        margin: 0 auto;
-        max-width: 650px;
-        color: #5b6472;
-        line-height: 1.7;
-    }
-
-
-    /* =========================================================
-       VERIFICATION FORM
-       ========================================================= */
-
-    .verification-form-card {
-        background: #ffffff;
-        border-radius: 18px;
-        padding: 32px;
-        box-shadow:
-            0 15px 45px rgba(7, 27, 73, 0.10);
-        border: 1px solid rgba(7, 27, 73, 0.08);
-    }
-
-
-    .verification-fields {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-    }
-
-
-    .verification-field {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-
-    .verification-field label {
-        font-weight: 700;
-        color: #071b49;
-        font-size: 14px;
-    }
-
-
-    .verification-field input {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 14px 15px;
-        border: 1px solid #ccd3df;
-        border-radius: 9px;
-        background: #fff;
-        color: #071b49;
-        font-size: 16px;
-        outline: none;
-    }
-
-
-    .verification-field input:focus {
-        border-color: #071b49;
-        box-shadow:
-            0 0 0 3px rgba(7, 27, 73, 0.10);
-    }
-
-
-    #verifyMembershipButton {
-        width: 100%;
-        margin-top: 24px;
-        padding: 15px 20px;
-        border: 0;
-        border-radius: 9px;
-        background: #071b49;
-        color: #fff;
-        font-size: 15px;
-        font-weight: 800;
-        letter-spacing: .5px;
-        cursor: pointer;
-    }
-
-
-    #verifyMembershipButton:disabled {
-        opacity: .65;
-        cursor: wait;
-    }
-
-
-    .verification-message {
-        display: none;
-        margin-top: 18px;
-        padding: 14px 16px;
-        border-radius: 9px;
-        font-size: 14px;
-        line-height: 1.5;
-    }
-
-
-    .verification-message.show {
-        display: block;
-    }
-
-
-    .verification-message.error {
-        background: #fff0f0;
-        color: #a00000;
-        border: 1px solid #f1b5b5;
-    }
-
-
-    .verification-message.success {
-        background: #eef9f1;
-        color: #176b35;
-        border: 1px solid #b8dfc3;
-    }
-
-
-    .verification-help {
-        margin-top: 14px;
-        text-align: center;
-        color: #6b7280;
-        font-size: 13px;
-    }
-
-
-    .verification-back {
-        text-align: center;
-        margin-top: 25px;
-    }
-
-
-    .verification-back a {
-        color: #071b49;
-        font-weight: 700;
-        text-decoration: none;
-    }
-
-
-    /* =========================================================
-       VERIFIED RESULT
-       ========================================================= */
-
-    .verified-result {
-        display: none;
-        margin-top: 40px;
-    }
-
-
-    .verified-result.show {
-        display: block;
-    }
-
-
-    .verified-heading {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-
-    .verified-heading .check {
-        width: 52px;
-        height: 52px;
-        margin: 0 auto 12px;
-        border-radius: 50%;
-        background: #159447;
-        color: #fff;
-        display: grid;
-        place-items: center;
-        font-size: 28px;
-        font-weight: 800;
-    }
-
-
-    .verified-heading h2 {
-        margin: 0;
-        color: #071b49;
-        font-size: 28px;
-    }
-
-
-    .verified-heading p {
-        color: #5b6472;
-        margin: 8px 0 0;
-    }
-
-
-    /* =========================================================
-       MEMBERSHIP CARD
-       ALWAYS LANDSCAPE
-       ========================================================= */
-
-    .verification-card-wrap {
-        width: 100%;
-        overflow-x: auto;
-        overflow-y: hidden;
-        display: flex;
-        justify-content: center;
-        padding: 5px 0 15px;
-    }
-
-
-    .verification-membership-card {
-        /*
-         * Fixed landscape card.
-         * Do NOT allow this to become portrait.
-         */
-        width: 760px;
-        min-width: 760px;
-        height: 400px;
-
-        box-sizing: border-box;
-
-        background: #ffffff;
-
-        border-radius: 18px;
-
-        overflow: hidden;
-
-        border: 1px solid #dfe4ec;
-
-        box-shadow:
-            0 18px 50px rgba(7, 27, 73, .13);
-
-        display: flex;
-        flex-direction: column;
-    }
-
-
-    /* =========================================================
-       CARD HEADER
-       ========================================================= */
-
-    .verification-card-header {
-        height: 78px;
-        min-height: 78px;
-
-        padding: 14px 26px;
-
-        box-sizing: border-box;
-
-        background: #071b49;
-
-        border-bottom: 5px solid #d71920;
-
-        display: flex;
-        align-items: center;
-    }
-
-
-    .verification-card-header img {
-        width: 205px;
-        max-width: 100%;
-        height: auto;
-        display: block;
-    }
-
-
-    /* =========================================================
-       CARD BODY
-       ========================================================= */
-
-    .verification-card-body {
-        flex: 1;
-
-        padding: 20px 24px;
-
-        box-sizing: border-box;
-    }
-
-
-    /*
-     * IMPORTANT:
-     * This remains two columns on ALL screen sizes.
-     */
-
-    .verification-card-top {
-        display: grid;
-
-        grid-template-columns:
-            135px minmax(0, 1fr);
-
-        gap: 24px;
-
-        align-items: start;
-    }
-
-
-    /* =========================================================
-       MEMBER PHOTO
-       ========================================================= */
-
-    .verification-photo {
-        width: 135px;
-        height: 165px;
-
-        flex-shrink: 0;
-
-        border-radius: 8px;
-
-        overflow: hidden;
-
-        border: 2px solid #dfe4ec;
-
-        background: #f1f3f7;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-
-    .verification-photo img {
-        width: 100%;
-        height: 100%;
-
-        object-fit: cover;
-
-        display: none;
-    }
-
-
-    .verification-photo-placeholder {
-        text-align: center;
-
-        color: #8a93a3;
-
-        font-size: 12px;
-
-        padding: 12px;
-
-        line-height: 1.4;
-    }
-
-
-    /* =========================================================
-       MEMBER NAME
-       ========================================================= */
-
-    .verification-member-name {
-        color: #071b49;
-
-        font-size: 24px;
-
-        line-height: 1.15;
-
-        font-weight: 800;
-
-        text-transform: uppercase;
-
-        margin-bottom: 12px;
-    }
-
-
-    /* =========================================================
-       MEMBERSHIP ID
-       ========================================================= */
-
-    .verification-member-id {
-        display: inline-flex;
-
-        flex-direction: column;
-
-        gap: 4px;
-
-        padding: 8px 13px;
-
-        border-radius: 8px;
-
-        background: #f1f4f9;
-
-        margin-bottom: 12px;
-    }
-
-
-    .verification-member-id span {
-        font-size: 8px;
-
-        font-weight: 700;
-
-        letter-spacing: 1.3px;
-
-        color: #6b7280;
-    }
-
-
-    .verification-member-id strong {
-        color: #071b49;
-
-        font-size: 18px;
-
-        letter-spacing: .6px;
-    }
-
-
-    /* =========================================================
-       DETAILS
-       ALWAYS TWO COLUMNS
-       ========================================================= */
-
-    .verification-details {
-        display: grid;
-
-        grid-template-columns:
-            1fr 1fr;
-
-        gap: 8px;
-    }
-
-
-    .verification-detail {
-        min-height: 39px;
-
-        padding: 7px 10px;
-
-        box-sizing: border-box;
-
-        border-radius: 6px;
-
-        background: #f8f9fb;
-    }
-
-
-    .verification-detail.full {
-        grid-column: 1 / -1;
-    }
-
-
-    .verification-detail span {
-        display: block;
-
-        margin-bottom: 3px;
-
-        font-size: 7px;
-
-        font-weight: 700;
-
-        letter-spacing: 1.1px;
-
-        color: #747d8c;
-    }
-
-
-    .verification-detail strong {
-        display: block;
-
-        color: #071b49;
-
-        font-size: 12px;
-
-        line-height: 1.25;
-
-        text-transform: uppercase;
-    }
-
-
-    /* =========================================================
-       CARD FOOTER
-       ========================================================= */
-
-    .verification-card-footer {
-        height: 48px;
-        min-height: 48px;
-
-        padding: 12px 26px;
-
-        box-sizing: border-box;
-
-        background: #f7f8fa;
-
-        border-top: 1px solid #e4e7ed;
-
-        text-align: center;
-
-        color: #687181;
-
-        font-size: 11px;
-    }
-
-
-    /* =========================================================
-       BUTTONS
-       ========================================================= */
-
-    .verification-actions {
-        display: flex;
-
-        justify-content: center;
-
-        gap: 12px;
-
-        margin-top: 24px;
-    }
-
-
-    .verification-actions button {
-        border: 0;
-
-        border-radius: 8px;
-
-        padding: 13px 18px;
-
-        font-weight: 800;
-
-        font-size: 13px;
-
-        cursor: pointer;
-    }
-
-
-    #printVerifiedCard {
-        background: #071b49;
-        color: #fff;
-    }
-
-
-    #verifyAnother {
-        background: #d71920;
-        color: #fff;
-    }
-
-
-    /* =========================================================
-       MOBILE
-       CARD STAYS LANDSCAPE
-       ========================================================= */
-
-    @media (max-width: 700px) {
+    <style>
+        /* =========================================================
+           OCHOUDO MANDATE GROUP
+           MEMBERSHIP VERIFICATION PAGE
+           ========================================================= */
 
         .verification-page {
-            padding: 35px 12px 60px;
+            min-height: 100vh;
+            padding: 70px 20px 90px;
+            background: #f4f6f9;
         }
 
+        .verification-wrapper {
+            width: 100%;
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        /* =========================================================
+           INTRO
+           ========================================================= */
+
+        .verification-intro {
+            max-width: 760px;
+            margin: 0 auto 35px;
+            text-align: center;
+        }
+
+        .verification-logo {
+            width: 210px;
+            max-width: 80%;
+            height: auto;
+            display: block;
+            margin: 0 auto 22px;
+        }
+
+        .verification-intro h1 {
+            margin: 0 0 12px;
+            color: #082b52;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            line-height: 1.1;
+        }
+
+        .verification-intro p {
+            max-width: 680px;
+            margin: 0 auto;
+            color: #667085;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* =========================================================
+           FORM
+           ========================================================= */
 
         .verification-form-card {
-            padding: 22px 18px;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 34px;
+            background: #ffffff;
+            border: 1px solid #dfe4ec;
+            border-radius: 16px;
+            box-shadow: 0 15px 45px rgba(8, 43, 82, 0.09);
         }
-
 
         .verification-fields {
-            grid-template-columns: 1fr;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
 
-
-        /*
-         * Do NOT change the card to portrait.
-         *
-         * The card remains 760 x 400.
-         * The browser provides horizontal scrolling
-         * when necessary.
-         */
-
-        .verification-card-wrap {
-            justify-content: flex-start;
-
-            margin-left: 0;
-
-            margin-right: 0;
-
-            -webkit-overflow-scrolling: touch;
+        .verification-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-
-        .verification-membership-card {
-            flex-shrink: 0;
+        .verification-field label {
+            color: #082b52;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1px;
         }
 
+        .verification-field input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px 15px;
+            border: 1px solid #ccd3df;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #082b52;
+            font-family: inherit;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .verification-field input:focus {
+            border-color: #082b52;
+            box-shadow: 0 0 0 3px rgba(8, 43, 82, 0.10);
+        }
+
+        #verifyMembershipButton {
+            width: 100%;
+            margin-top: 24px;
+            padding: 15px 20px;
+            border: 0;
+            border-radius: 8px;
+            background: #082b52;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: .7px;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        #verifyMembershipButton:hover:not(:disabled) {
+            background: #061f3b;
+            transform: translateY(-1px);
+        }
+
+        #verifyMembershipButton:disabled {
+            opacity: .65;
+            cursor: wait;
+        }
+
+        .verification-message {
+            display: none;
+            margin-top: 18px;
+            padding: 14px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .verification-message.show {
+            display: block;
+        }
+
+        .verification-message.error {
+            background: #fff0f0;
+            color: #a00000;
+            border: 1px solid #f1b5b5;
+        }
+
+        .verification-message.success {
+            background: #eef9f1;
+            color: #176b35;
+            border: 1px solid #b8dfc3;
+        }
+
+        .verification-help {
+            margin: 14px 0 0;
+            text-align: center;
+            color: #7a8494;
+            font-size: 13px;
+        }
+
+        .verification-back {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .verification-back a {
+            color: #082b52;
+            font-size: 13px;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .verification-back a:hover {
+            color: #d71920;
+        }
+
+        /* =========================================================
+           VERIFIED RESULT
+           Uses the same Card 1.0 markup/classes as membership.html
+           ========================================================= */
+
+        .verified-result {
+            margin-top: 55px;
+        }
+
+        .verified-heading {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .verified-heading .check {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: #082b52;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .verified-heading .success-eyebrow {
+            margin: 0 0 8px;
+            color: #d71920;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 3px;
+        }
+
+        .verified-heading h2 {
+            margin: 0;
+            color: #082b52;
+            font-size: 32px;
+            line-height: 1.15;
+        }
+
+        .verified-heading p {
+            margin: 8px 0 0;
+            color: #667085;
+            font-size: 14px;
+        }
+
+        /* Verification-only status line */
+        .verified-status {
+            max-width: 850px;
+            margin: 20px auto 0;
+            padding: 14px 18px;
+            background: #ffffff;
+            border-left: 4px solid #082b52;
+            border-radius: 7px;
+            box-shadow: 0 5px 18px rgba(8, 43, 82, 0.06);
+            color: #667085;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .verified-status strong {
+            color: #082b52;
+        }
+
+        /* =========================================================
+           ACTIONS
+           ========================================================= */
 
         .verification-actions {
-            flex-direction: column;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 25px;
         }
-
 
         .verification-actions button {
-            width: 100%;
+            min-width: 220px;
+            padding: 13px 20px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: .2s ease;
         }
-    }
 
+        #printVerifiedCard {
+            border: 0;
+            background: #082b52;
+            color: #ffffff;
+        }
 
-    /* =========================================================
-       PRINT
-       ========================================================= */
+        #printVerifiedCard:hover {
+            background: #061f3b;
+        }
 
-    @page {
-        size: landscape;
-        margin: 0;
-    }
-
-
-    @media print {
-
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
+        #verifyAnother {
+            border: 2px solid #082b52;
             background: #ffffff;
+            color: #082b52;
         }
 
-
-        /*
-         * Hide everything except the verified card.
-         */
-
-        body * {
-            visibility: hidden !important;
+        #verifyAnother:hover {
+            background: #082b52;
+            color: #ffffff;
         }
 
+        /* =========================================================
+           MOBILE
+           ========================================================= */
 
-        #verifiedResult,
-        #verifiedResult * {
-            visibility: visible !important;
+        @media (max-width: 700px) {
+            .verification-page {
+                padding: 40px 12px 60px;
+            }
+
+            .verification-form-card {
+                padding: 24px 18px;
+            }
+
+            .verification-fields {
+                grid-template-columns: 1fr;
+            }
+
+            .verification-intro h1 {
+                font-size: 2rem;
+            }
+
+            .verified-heading h2 {
+                font-size: 27px;
+            }
+
+            .verification-actions {
+                flex-direction: column;
+            }
+
+            .verification-actions button {
+                width: 100%;
+            }
         }
 
+        /* =========================================================
+           PRINT
+           ========================================================= */
 
-        #verifiedResult {
-            display: block !important;
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 12mm;
+            }
 
-            position: absolute;
+            body * {
+                visibility: hidden !important;
+            }
 
-            left: 0;
-            top: 0;
+            #registrationSuccess,
+            #registrationSuccess * {
+                visibility: visible !important;
+            }
 
-            width: 100%;
+            #registrationSuccess {
+                display: block !important;
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+            }
 
-            margin: 0;
-            padding: 0;
+            #registrationSuccess .success-heading,
+            #registrationSuccess .verified-status,
+            #registrationSuccess .verification-actions {
+                display: none !important;
+            }
 
-            background: #ffffff;
+            #registrationSuccess .membership-id-card {
+                display: flex !important;
+                position: relative !important;
+                width: 160mm !important;
+                height: 100mm !important;
+                margin: 0 auto !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                overflow: hidden !important;
+            }
+
+            #registrationSuccess .membership-card-header {
+                background: #082b52 !important;
+                border-bottom-color: #d71920 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            #registrationSuccess .membership-card-body {
+                background: #ffffff !important;
+            }
+
+            #registrationSuccess .membership-card-footer {
+                background: #082b52 !important;
+                color: #ffffff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            #registrationSuccess .membership-number-box {
+                background: #ffffff !important;
+                border-color: #082b52 !important;
+            }
+
+            #registrationSuccess .membership-number-box strong {
+                color: #d71920 !important;
+            }
         }
-
-
-        .verified-heading,
-        .verification-actions {
-            display: none !important;
-        }
-
-
-        .verification-card-wrap {
-            display: block !important;
-
-            width: 100%;
-
-            padding: 0;
-            margin: 0;
-
-            overflow: visible;
-        }
-
-
-        /*
-         * IMPORTANT:
-         * Keep the exact same landscape dimensions
-         * used on screen.
-         */
-
-        .verification-membership-card {
-
-            width: 760px !important;
-
-            min-width: 760px !important;
-
-            height: 400px !important;
-
-            margin: 0 auto !important;
-
-            border-radius: 0;
-
-            box-shadow: none;
-
-            border: 1px solid #bfc5cf;
-
-            overflow: hidden;
-
-            transform: none !important;
-        }
-
-
-        .verification-card-header {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-
-
-        .verification-card-footer {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-
-
-        .verification-photo {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-
-
-        .verification-detail {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-    }
-
-</style>
-
-    
+    </style>
 </head>
 
 <body>
 
 <main class="verification-page">
+
     <div class="verification-wrapper">
 
+        <!-- =====================================================
+             INTRO
+             ===================================================== -->
+
         <section class="verification-intro">
+
             <img
                 class="verification-logo"
                 src="assets/ochoudo-logo3.png"
@@ -778,7 +433,13 @@
                 Enter your registered phone number and Membership ID to confirm
                 your Ochoudo Mandate Group membership and access your membership card.
             </p>
+
         </section>
+
+
+        <!-- =====================================================
+             VERIFICATION FORM
+             ===================================================== -->
 
         <section class="verification-form-card">
 
@@ -787,7 +448,10 @@
                 <div class="verification-fields">
 
                     <div class="verification-field">
-                        <label for="verifyPhone">PHONE NUMBER</label>
+
+                        <label for="verifyPhone">
+                            PHONE NUMBER
+                        </label>
 
                         <input
                             type="tel"
@@ -795,27 +459,37 @@
                             name="phone"
                             inputmode="tel"
                             autocomplete="tel"
+                            placeholder="08012345678"
                             required>
+
                     </div>
 
+
                     <div class="verification-field">
-                        <label for="verifyMemberId">MEMBERSHIP ID</label>
+
+                        <label for="verifyMemberId">
+                            MEMBERSHIP ID
+                        </label>
 
                         <input
                             type="text"
                             id="verifyMemberId"
                             name="member_id"
                             autocomplete="off"
+                            placeholder="OMG-2026-000001"
                             required>
+
                     </div>
 
                 </div>
+
 
                 <button
                     type="submit"
                     id="verifyMembershipButton">
                     VERIFY MEMBERSHIP
                 </button>
+
 
                 <div
                     id="verificationMessage"
@@ -824,11 +498,13 @@
                     aria-live="polite">
                 </div>
 
+
                 <p class="verification-help">
                     Use the same phone number you used when registering.
                 </p>
 
             </form>
+
 
             <div class="verification-back">
                 <a href="membership.html">
@@ -838,299 +514,284 @@
 
         </section>
 
-       <!-- =========================================================
-     VERIFIED MEMBERSHIP CARD
-========================================================= -->
 
-<!-- =========================================================
-     VERIFIED MEMBERSHIP
-========================================================= -->
+        <!-- =====================================================
+             VERIFIED MEMBERSHIP
+             ===================================================== -->
 
-<section
-    id="registrationSuccess"
-    class="registration-success"
-    hidden>
+        <section
+            id="registrationSuccess"
+            class="registration-success verified-result"
+            hidden>
 
-    <div class="success-heading">
+            <div class="verified-heading">
 
-        <div class="success-check">
-            ✓
-        </div>
+                <div class="check">
+                    ✓
+                </div>
 
-        <p class="success-eyebrow">
-            MEMBERSHIP VERIFIED
-        </p>
+                <p class="success-eyebrow">
+                    MEMBERSHIP VERIFIED
+                </p>
 
-        <h1>
-            Membership Verified
-        </h1>
+                <h2>
+                    Membership Verified
+                </h2>
 
-        <p class="success-message">
-            Your membership record has been successfully verified.
-        </p>
+                <p>
+                    Your membership record has been successfully verified.
+                </p>
 
-    </div>
+            </div>
 
 
-    <!-- =====================================================
-         EXACT CARD 1.0 FROM MEMBERSHIP REGISTRATION
-    ===================================================== -->
+            <!-- =================================================
+                 EXACT CARD 1.0 STRUCTURE
+                 ================================================= -->
 
-    <div
-        id="membershipCard"
-        class="membership-id-card">
+            <div
+                id="membershipCard"
+                class="membership-id-card">
+
+                <!-- CARD HEADER -->
+
+                <div class="membership-card-header">
+
+                    <div class="membership-brand">
+
+                        <img
+                            src="assets/ochoudo-logo3.png"
+                            alt="Ochoudo Mandate Group"
+                            class="membership-card-logo">
+
+                        <div class="membership-brand-text">
+                            <strong>OCHOUDO</strong>
+                            <span>MANDATE GROUP</span>
+                        </div>
+
+                    </div>
 
 
-        <!-- CARD HEADER -->
+                    <div class="membership-card-title">
 
-        <div class="membership-card-header">
+                        <span>MEMBERSHIP</span>
 
-            <div class="membership-brand">
+                        <strong>
+                            IDENTIFICATION CARD
+                        </strong>
 
-                <img
-                    src="assets/ochoudo-logo3.png"
-                    alt="Ochoudo Mandate Group"
-                    class="membership-card-logo">
+                    </div>
 
-                <div class="membership-brand-text">
+                </div>
 
-                    <strong>
-                        OCHOUDO
-                    </strong>
+
+                <!-- CARD BODY -->
+
+                <div class="membership-card-body">
+
+                    <!-- PHOTO -->
+
+                    <div class="membership-photo-area">
+
+                        <div class="membership-photo-frame">
+
+                            <img
+                                id="verifiedMemberPhoto"
+                                src=""
+                                alt="Member photograph">
+
+                            <div
+                                id="verificationPhotoPlaceholder"
+                                style="
+                                    display:none;
+                                    width:100%;
+                                    height:100%;
+                                    align-items:center;
+                                    justify-content:center;
+                                    text-align:center;
+                                    color:#8a93a3;
+                                    font-size:9px;
+                                    line-height:1.4;
+                                    font-weight:700;
+                                ">
+                                MEMBER PHOTO<br>
+                                NOT AVAILABLE
+                            </div>
+
+                        </div>
+
+                        <span class="member-label">
+                            MEMBER
+                        </span>
+
+                    </div>
+
+
+                    <!-- INFORMATION -->
+
+                    <div class="membership-information">
+
+                        <!-- MEMBERSHIP ID -->
+
+                        <div class="membership-number-box">
+
+                            <span>
+                                MEMBERSHIP ID
+                            </span>
+
+                            <strong id="verifiedMemberId">
+                                OMG-2026-000000
+                            </strong>
+
+                        </div>
+
+
+                        <!-- FULL NAME -->
+
+                        <div class="member-name-block">
+
+                            <span>
+                                FULL NAME
+                            </span>
+
+                            <strong id="verifiedMemberName">
+                                MEMBER NAME
+                            </strong>
+
+                        </div>
+
+
+                        <!-- DETAILS -->
+
+                        <div class="member-details-grid">
+
+                            <div class="member-detail">
+
+                                <span>
+                                    GENDER
+                                </span>
+
+                                <strong id="verifiedMemberGender">
+                                    -
+                                </strong>
+
+                            </div>
+
+
+                            <div class="member-detail">
+
+                                <span>
+                                    LGA
+                                </span>
+
+                                <strong id="verifiedMemberLga">
+                                    -
+                                </strong>
+
+                            </div>
+
+
+                            <div class="member-detail">
+
+                                <span>
+                                    WARD
+                                </span>
+
+                                <strong id="verifiedMemberWard">
+                                    -
+                                </strong>
+
+                            </div>
+
+
+                            <div class="member-detail member-detail-wide">
+
+                                <span>
+                                    POLLING UNIT
+                                </span>
+
+                                <strong id="verifiedMemberPollingUnit">
+                                    -
+                                </strong>
+
+                            </div>
+
+
+                            <div class="member-detail">
+
+                                <span>
+                                    REGISTRATION DATE
+                                </span>
+
+                                <strong id="verifiedRegistrationDate">
+                                    -
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CARD FOOTER -->
+
+                <div class="membership-card-footer">
 
                     <span>
-                        MANDATE GROUP
+                        TOGETHER, WE BUILD A NEW IMO THAT WORKS FOR ALL.
                     </span>
+
+                    <div class="card-accent"></div>
 
                 </div>
 
             </div>
 
 
-            <div class="membership-card-title">
+            <!-- =================================================
+                 STATUS
+                 ================================================= -->
 
-                <span>
-                    MEMBERSHIP
+            <div class="verified-status">
+
+                <strong>MEMBERSHIP STATUS:</strong>
+
+                <span id="verifiedMembershipStatus">
+                    PENDING
                 </span>
 
-                <strong>
-                    IDENTIFICATION CARD
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <!-- CARD BODY -->
-
-        <div class="membership-card-body">
-
-
-            <!-- PHOTO -->
-
-            <div class="membership-photo-area">
-
-                <div class="membership-photo-frame">
-
-                    <img
-                        id="successMemberPhoto"
-                        src=""
-                        alt="Member photograph">
-
-                </div>
-
-                <span class="member-label">
-                    MEMBER
-                </span>
-
             </div>
 
 
-            <!-- INFORMATION -->
+            <!-- =================================================
+                 ACTIONS
+                 ================================================= -->
 
-            <div class="membership-information">
+            <div class="verification-actions">
 
+                <button
+                    type="button"
+                    id="printVerifiedCard">
+                    PRINT MEMBERSHIP CARD
+                </button>
 
-                <!-- MEMBERSHIP ID -->
-
-                <div class="membership-number-box">
-
-                    <span>
-                        MEMBERSHIP ID
-                    </span>
-
-                    <strong id="successMemberId">
-                        OMG-2026-000000
-                    </strong>
-
-                </div>
-
-
-                <!-- FULL NAME -->
-
-                <div class="member-name-block">
-
-                    <span>
-                        FULL NAME
-                    </span>
-
-                    <strong id="successMemberName">
-                        MEMBER NAME
-                    </strong>
-
-                </div>
-
-
-                <!-- DETAILS -->
-
-                <div class="member-details-grid">
-
-
-                    <div class="member-detail">
-
-                        <span>
-                            GENDER
-                        </span>
-
-                        <strong id="successMemberGender">
-                            -
-                        </strong>
-
-                    </div>
-
-
-                    <div class="member-detail">
-
-                        <span>
-                            LGA
-                        </span>
-
-                        <strong id="successMemberLga">
-                            -
-                        </strong>
-
-                    </div>
-
-
-                    <div class="member-detail">
-
-                        <span>
-                            WARD
-                        </span>
-
-                        <strong id="successMemberWard">
-                            -
-                        </strong>
-
-                    </div>
-
-
-                    <div class="member-detail member-detail-wide">
-
-                        <span>
-                            POLLING UNIT
-                        </span>
-
-                        <strong id="successMemberPollingUnit">
-                            -
-                        </strong>
-
-                    </div>
-
-
-                    <div class="member-detail">
-
-                        <span>
-                            REGISTRATION DATE
-                        </span>
-
-                        <strong id="successRegistrationDate">
-                            -
-                        </strong>
-
-                    </div>
-
-
-                </div>
+                <button
+                    type="button"
+                    id="verifyAnother">
+                    VERIFY ANOTHER MEMBER
+                </button>
 
             </div>
 
-        </div>
-
-
-        <!-- CARD FOOTER -->
-
-        <div class="membership-card-footer">
-
-            <span>
-                TOGETHER, WE BUILD A NEW IMO THAT WORKS FOR ALL.
-            </span>
-
-            <div class="card-accent"></div>
-
-        </div>
-
+        </section>
 
     </div>
 
-
-    <!-- =====================================================
-         VERIFICATION NOTICE
-    ===================================================== -->
-
-    <div class="membership-verification-notice">
-
-        <div class="notice-icon">
-            ✓
-        </div>
-
-        <div>
-
-            <strong>
-                Membership Verified
-            </strong>
-
-            <p>
-                This membership record was successfully verified
-                using the registered phone number and Membership ID.
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         ACTION BUTTONS
-    ===================================================== -->
-
-    <div class="membership-card-actions">
-
-        <button
-            type="button"
-            id="printVerifiedCard"
-            class="membership-print-button">
-
-            PRINT MEMBERSHIP CARD
-
-        </button>
-
-
-        <button
-            type="button"
-            id="verifyAnother"
-            class="membership-home-button">
-
-            VERIFY ANOTHER MEMBER
-
-        </button>
-
-    </div>
-
-</section>
-    </div>
 </main>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="verify-membership.js"></script>
