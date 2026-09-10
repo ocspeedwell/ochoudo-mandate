@@ -2024,17 +2024,13 @@
         margin: 0 !important;
     }
 
-    .membership-id-card {
-        width: 100% !important;
-        max-width: 900px !important;
+         .membership-id-card {
+    display: flex !important;
 
-        margin: 0 auto !important;
+    position: relative !important;
 
-        border-radius: 0 !important;
-
-        box-shadow: none !important;
-
-        border: 1px solid #082b52 !important;
+    width: 160mm !important;
+    height: 100mm !important;
     }
 
     .id-card-header {
@@ -2136,8 +2132,9 @@
 .membership-id-card {
     position: relative;
 
-    width: 85.6mm;
-    height: 54mm;
+    width: 160mm;
+    height: 100mm;
+
 
     max-width: 100%;
     margin: 0 auto;
