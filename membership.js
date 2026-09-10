@@ -21,23 +21,20 @@
        SUPABASE
     ========================================================= */
 
-    const SUPABASE_URL =
-        "https://yopqftofkvwrpyyluffw.supabase.co";
+const SUPABASE_URL =
+    "https://yopqftofkvwrpyyluffw.supabase.co";
 
-    const SUPABASE_KEY =
-        "sb_publishable_k3whUGyuDbdQU6GA6egeuQ_k-g-nFoL";
+const SUPABASE_KEY =
+    "sb_publishable_k3whUGyuDbdQU6GA6egeuQ_k-g-nFoL";
 
-    let db = null;
+let db = null;
 
-    if (
-        typeof window.supabase !== "undefined" &&
-        SUPABASE_KEY !== "sb_publishable_k3whUGyuDbdQU6GA6egeuQ_k-g-nFoL"
-    ) {
-        db = window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY
-        );
-    }
+if (typeof window.supabase !== "undefined") {
+    db = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+}
 
 
     /* =========================================================
