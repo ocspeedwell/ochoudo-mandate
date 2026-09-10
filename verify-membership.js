@@ -3,14 +3,14 @@
    MEMBERSHIP VERIFICATION
    ========================================================= */
 
-document.addEventListener("DOMContentLoaded", function () {
+(function () {
 
     "use strict";
 
 
     /* =========================================================
        SUPABASE
-       ========================================================= */
+    ========================================================= */
 
     const SUPABASE_URL =
         "https://yopqftofkvwrpyyluffw.supabase.co";
@@ -18,31 +18,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const SUPABASE_ANON_KEY =
         "sb_publishable_k3whUGyuDbdQU6GA6egeuQ_k-g-nFoL";
 
-
-    if (!window.supabase) {
-
-        alert(
-            "Unable to load the membership verification system. Please refresh the page."
-        );
-
-        console.error(
-            "Supabase JavaScript library was not loaded."
-        );
-
-        return;
-    }
-
+    const { createClient } =
+        window.supabase;
 
     const db =
-        window.supabase.createClient(
+        createClient(
             SUPABASE_URL,
             SUPABASE_ANON_KEY
         );
 
 
     /* =========================================================
-       PAGE ELEMENTS
-       ========================================================= */
+       ELEMENTS
+    ========================================================= */
 
     const form =
         document.getElementById(
@@ -71,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const result =
         document.getElementById(
-            "verifiedResult"
+            "registrationSuccess"
         );
 
     const printButton =
@@ -86,33 +74,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================================================
-       CHECK REQUIRED ELEMENTS
-       ========================================================= */
-
-    if (
-        !form ||
-        !phoneInput ||
-        !memberIdInput ||
-        !button ||
-        !message ||
-        !result
-    ) {
-
-        console.error(
-            "Verification page elements are missing."
-        );
-
-        alert(
-            "There is a problem loading the verification form. Please refresh the page."
-        );
-
-        return;
-    }
-
-
-    /* =========================================================
-       NORMALIZE PHONE NUMBER
-       ========================================================= */
+       NORMALIZE NIGERIAN PHONE NUMBER
+    ========================================================= */
 
     function normalizePhone(phone) {
 
@@ -127,28 +90,32 @@ document.addEventListener("DOMContentLoaded", function () {
                 "234" +
                 digits.substring(1)
             );
+
         }
 
 
         if (/^234\d{10}$/.test(digits)) {
 
             return digits;
+
         }
 
 
         return null;
+
     }
 
 
     /* =========================================================
        TEXT HELPERS
-       ========================================================= */
+    ========================================================= */
 
     function cleanText(value) {
 
         return String(
             value ?? ""
         ).trim();
+
     }
 
 
@@ -157,17 +124,36 @@ document.addEventListener("DOMContentLoaded", function () {
         const text =
             cleanText(value);
 
-
         return text
             ? text.toUpperCase()
             : "NOT PROVIDED";
+
     }
 
+
+    function setText(id, value) {
+
+        const element =
+            document.getElementById(id);
+
+        if (!element) return;
+
+        element.textContent =
+            upper(value);
+
+    }
+
+
+    /* =========================================================
+       MESSAGE
+    ========================================================= */
 
     function showMessage(
         text,
         type
     ) {
+
+        if (!message) return;
 
         message.textContent =
             text;
@@ -175,54 +161,39 @@ document.addEventListener("DOMContentLoaded", function () {
         message.className =
             "verification-message show " +
             type;
+
     }
 
 
     function clearMessage() {
+
+        if (!message) return;
 
         message.textContent =
             "";
 
         message.className =
             "verification-message";
-    }
 
-
-    function setText(
-        id,
-        value
-    ) {
-
-        const element =
-            document.getElementById(id);
-
-
-        if (!element) {
-            return;
-        }
-
-
-        element.textContent =
-            upper(value);
     }
 
 
     /* =========================================================
        DATE FORMAT
-       ========================================================= */
+    ========================================================= */
 
     function formatDate(value) {
 
         if (!value) {
 
             return "NOT PROVIDED";
+
         }
 
 
         const date =
             new Date(
-                value +
-                "T00:00:00"
+                value + "T00:00:00"
             );
 
 
@@ -233,6 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
         ) {
 
             return upper(value);
+
         }
 
 
@@ -246,78 +218,71 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             )
             .toUpperCase();
+
     }
 
 
     /* =========================================================
        RESET CARD
-       ========================================================= */
+    ========================================================= */
 
-    function resetVerifiedCard() {
+    function resetCard() {
 
-        result.classList.remove(
-            "show"
-        );
+        if (result) {
 
+            result.hidden = true;
 
-        setText(
-            "verifiedMemberName",
-            ""
-        );
-
-        setText(
-            "verifiedMemberId",
-            ""
-        );
-
-        setText(
-            "verifiedMemberGender",
-            ""
-        );
-
-        setText(
-            "verifiedMemberLga",
-            ""
-        );
-
-        setText(
-            "verifiedMemberWard",
-            ""
-        );
-
-        setText(
-            "verifiedMemberPollingUnit",
-            ""
-        );
-
-        setText(
-            "verifiedMembershipStatus",
-            ""
-        );
-
-
-        const dateElement =
-            document.getElementById(
-                "verifiedRegistrationDate"
+            result.classList.remove(
+                "show"
             );
 
-
-        if (dateElement) {
-
-            dateElement.textContent =
-                "NOT PROVIDED";
         }
+
+
+        setText(
+            "successMemberId",
+            ""
+        );
+
+        setText(
+            "successMemberName",
+            ""
+        );
+
+        setText(
+            "successMemberGender",
+            ""
+        );
+
+        setText(
+            "successRegistrationDate",
+            ""
+        );
+
+        setText(
+            "successMemberLga",
+            ""
+        );
+
+        setText(
+            "successMemberWard",
+            ""
+        );
+
+        setText(
+            "successMemberPollingUnit",
+            ""
+        );
+
+        setText(
+            "successMembershipStatus",
+            ""
+        );
 
 
         const photo =
             document.getElementById(
-                "verifiedMemberPhoto"
-            );
-
-
-        const placeholder =
-            document.getElementById(
-                "verificationPhotoPlaceholder"
+                "successMemberPhoto"
             );
 
 
@@ -327,25 +292,121 @@ document.addEventListener("DOMContentLoaded", function () {
                 "src"
             );
 
-            photo.style.display =
-                "none";
         }
 
-
-        if (placeholder) {
-
-            placeholder.innerHTML =
-                "MEMBER PHOTO<br>NOT AVAILABLE";
-
-            placeholder.style.display =
-                "block";
-        }
     }
 
 
     /* =========================================================
-       VERIFY MEMBER WITH SUPABASE RPC
-       ========================================================= */
+       LOAD MEMBER PHOTO
+    ========================================================= */
+
+    async function loadMemberPhoto(
+        phone,
+        memberId
+    ) {
+
+        const photo =
+            document.getElementById(
+                "successMemberPhoto"
+            );
+
+
+        if (!photo) return;
+
+
+        photo.removeAttribute(
+            "src"
+        );
+
+
+        try {
+
+            const {
+                data,
+                error
+            } =
+                await db.functions.invoke(
+                    "get-member-photo",
+                    {
+                        body: {
+                            phone: phone,
+                            member_id: memberId
+                        }
+                    }
+                );
+
+
+            if (error) {
+
+                console.error(
+                    "Photo function error:",
+                    error
+                );
+
+                return;
+
+            }
+
+
+            if (
+                !data ||
+                !data.photo_url
+            ) {
+
+                console.warn(
+                    "No member photo returned."
+                );
+
+                return;
+
+            }
+
+
+            photo.onload =
+                function () {
+
+                    console.log(
+                        "Member photo loaded."
+                    );
+
+                };
+
+
+            photo.onerror =
+                function () {
+
+                    console.error(
+                        "Member photo could not be displayed."
+                    );
+
+                    photo.removeAttribute(
+                        "src"
+                    );
+
+                };
+
+
+            photo.src =
+                data.photo_url;
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Unable to load member photo:",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* =========================================================
+       VERIFY MEMBERSHIP
+    ========================================================= */
 
     async function verifyMembership(
         phone,
@@ -361,6 +422,7 @@ document.addEventListener("DOMContentLoaded", function () {
             throw new Error(
                 "Please enter a valid Nigerian phone number."
             );
+
         }
 
 
@@ -374,17 +436,14 @@ document.addEventListener("DOMContentLoaded", function () {
             throw new Error(
                 "Please enter your Membership ID."
             );
+
         }
 
 
-        console.log(
-            "Verifying:",
-            normalizedPhone,
-            cleanMemberId
-        );
-
-
-        const response =
+        const {
+            data,
+            error
+        } =
             await db.rpc(
                 "verify_membership",
                 {
@@ -397,30 +456,18 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
 
-        const data =
-            response.data;
-
-        const error =
-            response.error;
-
-
         if (error) {
 
             console.error(
-                "Supabase verification error:",
+                "Membership verification error:",
                 error
             );
 
             throw new Error(
                 "We could not complete the verification right now. Please try again."
             );
+
         }
-
-
-        console.log(
-            "Verification response:",
-            data
-        );
 
 
         if (
@@ -431,210 +478,61 @@ document.addEventListener("DOMContentLoaded", function () {
             throw new Error(
                 "Membership record not found. Please check your phone number and Membership ID."
             );
+
         }
 
 
         return data[0];
+
     }
 
 
     /* =========================================================
-       LOAD MEMBER PHOTO
-       ========================================================= */
+       DISPLAY VERIFIED MEMBER
+    ========================================================= */
 
-    async function loadMemberPhoto(
-        phone,
-        memberId
-    ) {
-
-        const photo =
-            document.getElementById(
-                "verifiedMemberPhoto"
-            );
-
-
-        const placeholder =
-            document.getElementById(
-                "verificationPhotoPlaceholder"
-            );
-
-
-        if (
-            !photo ||
-            !placeholder
-        ) {
-
-            return;
-        }
-
-
-        photo.removeAttribute(
-            "src"
-        );
-
-        photo.style.display =
-            "none";
-
-
-        placeholder.innerHTML =
-            "LOADING MEMBER PHOTO...";
-
-        placeholder.style.display =
-            "block";
-
-
-        try {
-
-            console.log(
-                "Requesting member photograph..."
-            );
-
-
-            const response =
-                await db.functions.invoke(
-                    "get-member-photo",
-                    {
-                        body: {
-                            phone:
-                                phone,
-
-                            member_id:
-                                memberId
-                        }
-                    }
-                );
-
-
-            const data =
-                response.data;
-
-            const error =
-                response.error;
-
-
-            if (error) {
-
-                console.error(
-                    "Photo function error:",
-                    error
-                );
-
-                throw error;
-            }
-
-
-            console.log(
-                "Photo response:",
-                data
-            );
-
-
-            if (
-                !data ||
-                !data.photo_url
-            ) {
-
-                placeholder.innerHTML =
-                    "MEMBER PHOTO<br>NOT AVAILABLE";
-
-                return;
-            }
-
-
-            photo.onload =
-                function () {
-
-                    photo.style.display =
-                        "block";
-
-                    placeholder.style.display =
-                        "none";
-                };
-
-
-            photo.onerror =
-                function () {
-
-                    photo.removeAttribute(
-                        "src"
-                    );
-
-                    photo.style.display =
-                        "none";
-
-                    placeholder.innerHTML =
-                        "MEMBER PHOTO<br>NOT AVAILABLE";
-
-                    placeholder.style.display =
-                        "block";
-                };
-
-
-            photo.src =
-                data.photo_url;
-
-
-        } catch (error) {
-
-            console.error(
-                "Unable to load member photo:",
-                error
-            );
-
-
-            placeholder.innerHTML =
-                "MEMBER PHOTO<br>NOT AVAILABLE";
-        }
-    }
-
-
-    /* =========================================================
-       DISPLAY MEMBER
-       ========================================================= */
-
-    function displayMember(
-        member,
-        phone
+    async function displayMember(
+        member
     ) {
 
         setText(
-            "verifiedMemberName",
-            member.full_name
-        );
-
-
-        setText(
-            "verifiedMemberId",
+            "successMemberId",
             member.member_id
         );
 
 
         setText(
-            "verifiedMemberGender",
+            "successMemberName",
+            member.full_name
+        );
+
+
+        setText(
+            "successMemberGender",
             member.gender
         );
 
 
         setText(
-            "verifiedMemberLga",
+            "successMemberLga",
             member.lga
         );
 
 
         setText(
-            "verifiedMemberWard",
+            "successMemberWard",
             member.ward
         );
 
 
         setText(
-            "verifiedMemberPollingUnit",
+            "successMemberPollingUnit",
             member.polling_unit
         );
 
 
         setText(
-            "verifiedMembershipStatus",
+            "successMembershipStatus",
             member.membership_status ||
             "PENDING"
         );
@@ -642,7 +540,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const dateElement =
             document.getElementById(
-                "verifiedRegistrationDate"
+                "successRegistrationDate"
             );
 
 
@@ -652,120 +550,143 @@ document.addEventListener("DOMContentLoaded", function () {
                 formatDate(
                     member.registration_date
                 );
+
         }
 
 
-        result.classList.add(
-            "show"
-        );
+        if (result) {
 
+            result.hidden = false;
 
-        result.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
+            result.classList.add(
+                "show"
+            );
+
+        }
 
 
         /*
-         * Load photograph after the
-         * membership has been verified.
+         * Load the member photograph
+         * after the card has been displayed.
          */
 
-        loadMemberPhoto(
-            phone,
+        await loadMemberPhoto(
+            phoneInput.value,
             member.member_id
         );
+
+
+        if (result) {
+
+            result.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
+
     }
 
 
     /* =========================================================
        FORM SUBMISSION
-       ========================================================= */
+    ========================================================= */
 
-    form.addEventListener(
-        "submit",
-        async function (event) {
+    if (form) {
 
-            event.preventDefault();
+        form.addEventListener(
+            "submit",
+            async function (event) {
 
-
-            clearMessage();
-
-            resetVerifiedCard();
+                event.preventDefault();
 
 
-            button.disabled =
-                true;
+                clearMessage();
 
-            button.textContent =
-                "VERIFYING...";
+                resetCard();
 
 
-            try {
+                button.disabled =
+                    true;
 
-                const member =
-                    await verifyMembership(
-                        phoneInput.value,
-                        memberIdInput.value
+                button.textContent =
+                    "VERIFYING...";
+
+
+                try {
+
+                    const member =
+                        await verifyMembership(
+                            phoneInput.value,
+                            memberIdInput.value
+                        );
+
+
+                    await displayMember(
+                        member
                     );
 
 
-                displayMember(
-                    member,
-                    phoneInput.value
-                );
+                    showMessage(
+                        "Membership verified successfully.",
+                        "success"
+                    );
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        error
+                    );
 
 
-                showMessage(
-                    "Membership verified successfully.",
-                    "success"
-                );
+                    showMessage(
+                        error.message ||
+                        "Verification failed. Please try again.",
+                        "error"
+                    );
 
+                }
 
-            } catch (error) {
+                finally {
 
-                console.error(
-                    "Verification failed:",
-                    error
-                );
+                    button.disabled =
+                        false;
 
+                    button.textContent =
+                        "VERIFY MEMBERSHIP";
 
-                showMessage(
-                    error.message ||
-                    "Verification failed. Please try again.",
-                    "error"
-                );
+                }
 
-
-            } finally {
-
-                button.disabled =
-                    false;
-
-                button.textContent =
-                    "VERIFY MEMBERSHIP";
             }
-        }
-    );
+        );
+
+    }
 
 
     /* =========================================================
-       MEMBERSHIP ID UPPERCASE
-       ========================================================= */
+       FORCE MEMBERSHIP ID TO UPPERCASE
+    ========================================================= */
 
-    memberIdInput.addEventListener(
-        "input",
-        function () {
+    if (memberIdInput) {
 
-            this.value =
-                this.value.toUpperCase();
-        }
-    );
+        memberIdInput.addEventListener(
+            "input",
+            function () {
+
+                this.value =
+                    this.value.toUpperCase();
+
+            }
+        );
+
+    }
 
 
     /* =========================================================
-       PRINT
-       ========================================================= */
+       PRINT MEMBERSHIP CARD
+    ========================================================= */
 
     if (printButton) {
 
@@ -774,14 +695,16 @@ document.addEventListener("DOMContentLoaded", function () {
             function () {
 
                 window.print();
+
             }
         );
+
     }
 
 
     /* =========================================================
        VERIFY ANOTHER MEMBER
-       ========================================================= */
+    ========================================================= */
 
     if (anotherButton) {
 
@@ -789,64 +712,41 @@ document.addEventListener("DOMContentLoaded", function () {
             "click",
             function () {
 
-                resetVerifiedCard();
+                resetCard();
 
                 clearMessage();
 
-                form.reset();
+
+                if (form) {
+
+                    form.reset();
+
+                }
+
 
                 window.scrollTo({
                     top: 0,
                     behavior: "smooth"
                 });
 
-                phoneInput.focus();
+
+                if (phoneInput) {
+
+                    phoneInput.focus();
+
+                }
+
             }
         );
-    }
 
-
-    /* =========================================================
-       READ URL PARAMETERS
-       ========================================================= */
-
-    const urlParams =
-        new URLSearchParams(
-            window.location.search
-        );
-
-
-    const urlPhone =
-        urlParams.get("phone");
-
-
-    const urlMemberId =
-        urlParams.get("member_id");
-
-
-    if (urlPhone) {
-
-        phoneInput.value =
-            urlPhone;
-    }
-
-
-    if (urlMemberId) {
-
-        memberIdInput.value =
-            urlMemberId.toUpperCase();
     }
 
 
     /* =========================================================
        INITIAL STATE
-       ========================================================= */
+    ========================================================= */
 
-    resetVerifiedCard();
+    resetCard();
 
 
-    console.log(
-        "OMG Membership Verification loaded successfully."
-    );
-
-});
+})();
