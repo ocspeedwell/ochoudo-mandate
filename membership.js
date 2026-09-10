@@ -20,7 +20,70 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let imoElectoralData = null;
     let selectedPhoto = null;
+/* =========================================================
+   PHONE VALIDATION
+========================================================= */
 
+const phoneInput =
+    document.getElementById("phone");
+
+
+function normalizePhoneNumber(phone) {
+
+    let value =
+        String(phone || "")
+            .trim()
+            .replace(/\s+/g, "")
+            .replace(/-/g, "")
+            .replace(/\(/g, "")
+            .replace(/\)/g, "");
+
+
+    /*
+       Convert +234XXXXXXXXXX
+       to 234XXXXXXXXXX
+    */
+
+    if (value.startsWith("+234")) {
+
+        value =
+            "234" +
+            value.substring(4);
+
+    }
+
+
+    /*
+       Convert 0XXXXXXXXXX
+       to 234XXXXXXXXXX
+    */
+
+    if (
+        /^0[0-9]{10}$/.test(value)
+    ) {
+
+        value =
+            "234" +
+            value.substring(1);
+
+    }
+
+
+    return value;
+}
+
+
+function isValidNigerianPhone(phone) {
+
+    const normalized =
+        normalizePhoneNumber(
+            phone
+        );
+
+    return /^234[0-9]{10}$/.test(
+        normalized
+    );
+}
 
     /* =========================================================
        SUPABASE
