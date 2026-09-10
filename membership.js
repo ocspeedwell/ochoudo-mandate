@@ -900,26 +900,75 @@
 
 
                     /* Show success */
+/* =========================================================
+   POPULATE FINAL MEMBERSHIP CARD
+========================================================= */
 
-                    setPreview(
-                        "successMemberId",
-                        memberId
-                    );
+setPreview(
+    "successMemberId",
+    memberId
+);
 
-                    setPreview(
-                        "successMemberName",
-                        document.getElementById(
-                            "fullname"
-                        ).value
-                    );
+setPreview(
+    "successMemberName",
+    document.getElementById(
+        "fullname"
+    ).value
+);
 
-                    setPreview(
-                        "successRegistrationDate",
-                        document.getElementById(
-                            "registration_date"
-                        ).value
-                    );
+setPreview(
+    "successMemberGender",
+    document.getElementById(
+        "gender"
+    ).value
+);
 
+setPreview(
+    "successMemberLga",
+    lgaSelect.value
+);
+
+setPreview(
+    "successMemberWard",
+    wardSelect.value
+);
+
+setPreview(
+    "successMemberPollingUnit",
+    pollingUnitSelect.value
+);
+
+setPreview(
+    "successRegistrationDate",
+    document.getElementById(
+        "registration_date"
+    ).value
+);
+
+
+/* Display the actual uploaded photograph */
+
+const successPhoto =
+    document.getElementById(
+        "successMemberPhoto"
+    );
+
+if (successPhoto && selectedPhoto) {
+
+    const photoReader =
+        new FileReader();
+
+    photoReader.onload =
+        function (event) {
+
+            successPhoto.src =
+                event.target.result;
+        };
+
+    photoReader.readAsDataURL(
+        selectedPhoto
+    );
+}
 
                     if (successSection) {
 
