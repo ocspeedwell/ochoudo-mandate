@@ -1,1 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>Verify Membership | Ochoudo Mandate Group</title>
+    <meta name="description" content="Verify your Ochoudo Mandate Group membership and print your membership card.">
+
+    <link rel="icon" type="image/png" href="assets/ochoudo-favicon.png">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="membership.css">
+
+    <style>
+        .verification-page {
+            min-height: 100vh;
+            padding: 60px 20px 80px;
+            background: #f5f7fb;
+        }
+
+        .verification-wrapper {
+            width: min(100%, 900px);
+            margin: 0 auto;
+        }
+
+        .verification-intro {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .verification-logo {
+            width: 210px;
+            max-width: 80%;
+            height: auto;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        .verification-intro h1 {
+            margin: 0 0 10px;
+            color: #071b49;
+            font-size: clamp(28px, 5vw, 42px);
+            line-height: 1.1;
+        }
+
+        .verification-intro p {
+            margin: 0 auto;
+            max-width: 650px;
+            color: #5b6472;
+            line-height: 1.7;
+        }
+
+        .verification-form-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: 0 15px 45px rgba(7, 27, 73, 0.10);
+            border: 1px solid rgba(7, 27, 73, 0.08);
+        }
+
+        .verification-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .verification-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .verification-field label {
+            font-weight: 700;
+            color: #071b49;
+            font-size: 14px;
+        }
+
+        .verification-field input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px 15px;
+            border: 1px solid #ccd3df;
+            border-radius: 9px;
+            background: #fff;
+            color: #071b49;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .verification-field input:focus {
+            border-color: #071b49;
+            box-shadow: 0 0 0 3px rgba(7, 27, 73, 0.10);
+        }
+
+        #verifyMembershipButton {
+            width: 100%;
+            margin-top: 24px;
+            padding: 15px 20px;
+            border: 0;
+            border-radius: 9px;
+            background: #071b49;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: .5px;
+            cursor: pointer;
+        }
+
+        #verifyMembershipButton:disabled {
+            opacity: .65;
+            cursor: wait;
+        }
+
+        .verification-message {
+            display: none;
+            margin-top: 18px;
+            padding: 14px 16px;
+            border-radius: 9px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .verification-message.show {
+            display: block;
+        }
+
+        .verification-message.error {
+            background: #fff0f0;
+            color: #a00000;
+            border: 1px solid #f1b5b5;
+        }
+
+        .verification-message.success {
+            background: #eef9f1;
+            color: #176b35;
+            border: 1px solid #b8dfc3;
+        }
+
+        .verification-help {
+            margin-top: 14px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .verification-back {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .verification-back a {
+            color: #071b49;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .verified-result {
+            display: none;
+            margin-top: 40px;
+        }
+
+        .verified-result.show {
+            display: block;
+        }
+
+        .verified-heading {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .verified-heading .check {
+            width: 52px;
+            height: 52px;
+            margin: 0 auto 12px;
+            border-radius: 50%;
+            background: #159447;
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .verified-heading h2 {
+            margin: 0;
+            color: #071b49;
+            font-size: 28px;
+        }
+
+        .verified-heading p {
+            color: #5b6472;
+            margin: 8px 0 0;
+        }
+
+        .verification-card-wrap {
+            display: flex;
+            justify-content: center;
+        }
+
+        .verification-membership-card {
+            width: min(100%, 760px);
+            background: #fff;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid #dfe4ec;
+            box-shadow: 0 18px 50px rgba(7, 27, 73, .13);
+        }
+
+        .verification-card-header {
+            padding: 20px 26px;
+            background: #071b49;
+            border-bottom: 5px solid #d71920;
+        }
+
+        .verification-card-header img {
+            width: 205px;
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .verification-card-body {
+            padding: 24px 26px;
+        }
+
+        .verification-card-top {
+            display: grid;
+            grid-template-columns: 135px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .verification-photo {
+            width: 135px;
+            height: 165px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #dfe4ec;
+            background: #f1f3f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .verification-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .verification-photo-placeholder {
+            text-align: center;
+            color: #8a93a3;
+            font-size: 12px;
+            padding: 12px;
+            line-height: 1.4;
+        }
+
+        .verification-member-name {
+            color: #071b49;
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .verification-member-id {
+            display: inline-flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 9px 14px;
+            border-radius: 8px;
+            background: #f1f4f9;
+            margin-bottom: 15px;
+        }
+
+        .verification-member-id span {
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: 1.3px;
+            color: #6b7280;
+        }
+
+        .verification-member-id strong {
+            color: #071b49;
+            font-size: 18px;
+            letter-spacing: .6px;
+        }
+
+        .verification-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .verification-detail {
+            min-height: 42px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            background: #f8f9fb;
+        }
+
+        .verification-detail.full {
+            grid-column: 1 / -1;
+        }
+
+        .verification-detail span {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 7px;
+            font-weight: 700;
+            letter-spacing: 1.1px;
+            color: #747d8c;
+        }
+
+        .verification-detail strong {
+            display: block;
+            color: #071b49;
+            font-size: 12px;
+            line-height: 1.3;
+            text-transform: uppercase;
+        }
+
+        .verification-card-footer {
+            padding: 16px 26px;
+            background: #f7f8fa;
+            border-top: 1px solid #e4e7ed;
+            text-align: center;
+            color: #687181;
+            font-size: 12px;
+        }
+
+        .verification-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .verification-actions button {
+            border: 0;
+            border-radius: 8px;
+            padding: 13px 18px;
+            font-weight: 800;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        #printVerifiedCard {
+            background: #071b49;
+            color: #fff;
+        }
+
+        #verifyAnother {
+            background: #d71920;
+            color: #fff;
+        }
+
+        @media (max-width: 700px) {
+            .verification-page {
+                padding: 35px 15px 60px;
+            }
+
+            .verification-form-card {
+                padding: 22px 18px;
+            }
+
+            .verification-fields,
+            .verification-details {
+                grid-template-columns: 1fr;
+            }
+
+            .verification-card-top {
+                grid-template-columns: 1fr;
+            }
+
+            .verification-photo {
+                margin: 0 auto;
+            }
+
+            .verification-member-name {
+                text-align: center;
+            }
+
+            .verification-member-id {
+                display: flex;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .verification-detail.full {
+                grid-column: auto;
+            }
+
+            .verification-actions {
+                flex-direction: column;
+            }
+
+            .verification-actions button {
+                width: 100%;
+            }
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+
+            #verifiedResult,
+            #verifiedResult * {
+                visibility: visible !important;
+            }
+
+            #verifiedResult {
+                display: block !important;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+            }
+
+            .verified-heading,
+            .verification-actions {
+                display: none !important;
+            }
+
+            .verification-membership-card {
+                width: 100%;
+                max-width: 760px;
+                margin: 0 auto;
+                box-shadow: none;
+                border: 1px solid #bbb;
+            }
+
+            .verification-page {
+                padding: 0;
+                background: #fff;
+            }
+
+            .verification-card-header,
+            .verification-card-footer {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<main class="verification-page">
+    <div class="verification-wrapper">
+
+        <section class="verification-intro">
+            <img
+                class="verification-logo"
+                src="assets/ochoudo-logo3.png"
+                alt="Ochoudo Mandate Group">
+
+            <h1>VERIFY YOUR MEMBERSHIP</h1>
+
+            <p>
+                Enter your registered phone number and Membership ID to confirm
+                your Ochoudo Mandate Group membership and access your membership card.
+            </p>
+        </section>
+
+        <section class="verification-form-card">
+
+            <form id="verificationForm" novalidate>
+
+                <div class="verification-fields">
+
+                    <div class="verification-field">
+                        <label for="verifyPhone">PHONE NUMBER</label>
+
+                        <input
+                            type="tel"
+                            id="verifyPhone"
+                            name="phone"
+                            inputmode="tel"
+                            autocomplete="tel"
+                            required>
+                    </div>
+
+                    <div class="verification-field">
+                        <label for="verifyMemberId">MEMBERSHIP ID</label>
+
+                        <input
+                            type="text"
+                            id="verifyMemberId"
+                            name="member_id"
+                            autocomplete="off"
+                            required>
+                    </div>
+
+                </div>
+
+                <button
+                    type="submit"
+                    id="verifyMembershipButton">
+                    VERIFY MEMBERSHIP
+                </button>
+
+                <div
+                    id="verificationMessage"
+                    class="verification-message"
+                    role="alert"
+                    aria-live="polite">
+                </div>
+
+                <p class="verification-help">
+                    Use the same phone number you used when registering.
+                </p>
+
+            </form>
+
+            <div class="verification-back">
+                <a href="membership.html">
+                    ← BACK TO MEMBERSHIP REGISTRATION
+                </a>
+            </div>
+
+        </section>
+
+        <section
+            id="verifiedResult"
+            class="verified-result"
+            aria-live="polite">
+
+            <div class="verified-heading">
+                <div class="check">✓</div>
+
+                <h2>MEMBERSHIP VERIFIED</h2>
+
+                <p>
+                    Your membership record has been successfully verified.
+                </p>
+            </div>
+
+            <div class="verification-card-wrap">
+
+                <article
+                    class="verification-membership-card"
+                    id="verifiedMembershipCard">
+
+                    <header class="verification-card-header">
+
+                        <img
+                            src="assets/ochoudo-logo3.png"
+                            alt="Ochoudo Mandate Group">
+
+                    </header>
+
+                    <div class="verification-card-body">
+
+                        <div class="verification-card-top">
+
+                            <div class="verification-photo">
+
+                                <img
+                                    id="verifiedMemberPhoto"
+                                    src=""
+                                    alt="Member photograph">
+
+                                <div
+                                    id="verificationPhotoPlaceholder"
+                                    class="verification-photo-placeholder">
+                                    MEMBER PHOTO<br>
+                                    NOT AVAILABLE
+                                </div>
+
+                            </div>
+
+                            <div>
+
+                                <div
+                                    id="verifiedMemberName"
+                                    class="verification-member-name">
+                                </div>
+
+                                <div class="verification-member-id">
+
+                                    <span>MEMBERSHIP ID</span>
+
+                                    <strong
+                                        id="verifiedMemberId">
+                                    </strong>
+
+                                </div>
+
+                                <div class="verification-details">
+
+                                    <div class="verification-detail">
+                                        <span>GENDER</span>
+                                        <strong id="verifiedMemberGender"></strong>
+                                    </div>
+
+                                    <div class="verification-detail">
+                                        <span>REGISTRATION DATE</span>
+                                        <strong id="verifiedRegistrationDate"></strong>
+                                    </div>
+
+                                    <div class="verification-detail">
+                                        <span>LGA</span>
+                                        <strong id="verifiedMemberLga"></strong>
+                                    </div>
+
+                                    <div class="verification-detail">
+                                        <span>WARD</span>
+                                        <strong id="verifiedMemberWard"></strong>
+                                    </div>
+
+                                    <div class="verification-detail full">
+                                        <span>POLLING UNIT</span>
+                                        <strong id="verifiedMemberPollingUnit"></strong>
+                                    </div>
+
+                                    <div class="verification-detail full">
+                                        <span>MEMBERSHIP STATUS</span>
+                                        <strong id="verifiedMembershipStatus"></strong>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <footer class="verification-card-footer">
+                        Ochoudo Mandate Group • Together, We Build a New Imo That Works for All.
+                    </footer>
+
+                </article>
+
+            </div>
+
+            <div class="verification-actions">
+
+                <button
+                    type="button"
+                    id="printVerifiedCard">
+                    PRINT MEMBERSHIP CARD
+                </button>
+
+                <button
+                    type="button"
+                    id="verifyAnother">
+                    VERIFY ANOTHER MEMBER
+                </button>
+
+            </div>
+
+        </section>
+
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="verify-membership.js"></script>
+
+</body>
+</html>
