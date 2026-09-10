@@ -1,72 +1,71 @@
-/* =========================================================
-   OCHOUDO MANDATE GROUP
-   MEMBERSHIP REGISTRATION
-   ========================================================= */
+      document.addEventListener("DOMContentLoaded", function () {
 
-document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("membershipForm");
+    const previewSection = document.getElementById("registrationPreview");
+    const successSection = document.getElementById("registrationSuccess");
 
-    /* =====================================================
+    const editButton = document.getElementById("editRegistration");
+    const confirmButton = document.getElementById("confirmRegistration");
+
+    const photoInput = document.getElementById("photo");
+    const photoUpload = document.querySelector(".photo-upload");
+
+    const lgaSelect = document.getElementById("lga");
+    const wardSelect = document.getElementById("ward");
+    const pollingUnitSelect = document.getElementById("polling_unit");
+
+    let imoElectoralData = null;
+    let selectedPhoto = null;
+
+    /* =========================================================
        SUPABASE
-       ===================================================== */
+    ========================================================= */
 
     const SUPABASE_URL =
         "https://yopqftofkvwrpyyluffw.supabase.co";
 
-    const SUPABASE_ANON_KEY =
-        "sb_publishable_k3whUGyuDbdQU6GA6egeuQ_k-g-nFoL";
+    const SUPABASE_KEY =
+        "YOUR_EXISTING_PUBLISHABLE_KEY";
 
-    const db = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-    );
+    let db = null;
 
-
-    /* =====================================================
-       ELEMENTS
-       ===================================================== */
-
-    const form =
-        document.getElementById("membershipForm");
-
-    const preview =
-        document.getElementById("registrationPreview");
-
-    const success =
-        document.getElementById("registrationSuccess");
-
-    const previewButton =
-        form.querySelector(".submit-membership");
-
-    const editButton =
-        document.getElementById("editRegistration");
-
-    const confirmButton =
-        document.getElementById("confirmRegistration");
-
-    const printButton =
-        document.getElementById("printConfirmation");
-
-    const photoInput =
-        document.getElementById("photo");
+    if (
+        typeof window.supabase !== "undefined" &&
+        SUPABASE_KEY !== "YOUR_EXISTING_PUBLISHABLE_KEY"
+    ) {
+        db = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+    }
 
 
-    /* =====================================================
-       ELECTORAL LOCATION
-       ===================================================== */
+    /* =========================================================
+       REGISTRATION DATE
+    ========================================================= */
 
-    let imoElectoralData = null;
+    const registrationDate =
+        document.getElementById("registration_date");
 
-    const lgaSelect =
-        document.getElementById("lga");
+    if (registrationDate && !registrationDate.value) {
+        const today = new Date();
 
-    const wardSelect =
-        document.getElementById("ward");
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const day = String(today.getDate()).padStart(2, "0");
 
-    const pollingUnitSelect =
-        document.getElementById("polling_unit");
+        registrationDate.value =
+            `${year}-${month}-${day}`;
+    }
 
+
+    /* =========================================================
+       LOAD IMO ELECTORAL DATA
+    ========================================================= */
 
     async function loadImoElectoralData() {
+
+        if (!lgaSelect) return;
 
         try {
 
@@ -75,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!response.ok) {
                 throw new Error(
-                    "Unable to load Imo electoral data."
+                    "Unable to load electoral data."
                 );
             }
 
@@ -92,520 +91,447 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
         }
-
     }
 
 
+    /* =========================================================
+       POPULATE LGAs
+    ========================================================= */
+
     function populateLGAs() {
 
-        if (!imoElectoralData) return;
+        if (!lgaSelect || !imoElectoralData) return;
 
         lgaSelect.innerHTML =
             '<option value="">Select LGA</option>';
 
-        imoElectoralData.state.lgas.forEach(
-            function (lga) {
+        imoElectoralData.state.lgas.forEach(function (lga) {
 
-                const option =
-                    document.createElement("option");
+            const option =
+                document.createElement("option");
 
-                option.value = lga.id;
-                option.textContent = lga.name;
+            option.value = lga.name;
+            option.textContent = lga.name;
+            option.dataset.lgaId = lga.id;
 
-                lgaSelect.appendChild(option);
-
-            }
-        );
-
+            lgaSelect.appendChild(option);
+        });
     }
 
 
-    lgaSelect.addEventListener(
-        "change",
-        function () {
+    /* =========================================================
+       LGA → WARD
+    ========================================================= */
 
-            wardSelect.innerHTML =
-                '<option value="">Select Ward</option>';
+    if (lgaSelect) {
 
-            pollingUnitSelect.innerHTML =
-                '<option value="">Select Polling Unit</option>';
+        lgaSelect.addEventListener(
+            "change",
+            function () {
 
-            wardSelect.disabled = true;
-            pollingUnitSelect.disabled = true;
+                if (!imoElectoralData) return;
 
-            const selectedLga =
-                imoElectoralData.state.lgas.find(
-                    function (lga) {
-                        return lga.id === lgaSelect.value;
-                    }
-                );
-
-            if (!selectedLga) return;
-
-            selectedLga.wards.forEach(
-                function (ward) {
-
-                    const option =
-                        document.createElement("option");
-
-                    option.value = ward.id;
-                    option.textContent = ward.name;
-
-                    wardSelect.appendChild(option);
-
-                }
-            );
-
-            wardSelect.disabled = false;
-
-        }
-    );
-
-
-    wardSelect.addEventListener(
-        "change",
-        function () {
-
-            pollingUnitSelect.innerHTML =
-                '<option value="">Select Polling Unit</option>';
-
-            pollingUnitSelect.disabled = true;
-
-            const selectedLga =
-                imoElectoralData.state.lgas.find(
-                    function (lga) {
-                        return lga.id === lgaSelect.value;
-                    }
-                );
-
-            if (!selectedLga) return;
-
-            const selectedWard =
-                selectedLga.wards.find(
-                    function (ward) {
-                        return ward.id === wardSelect.value;
-                    }
-                );
-
-            if (!selectedWard) return;
-
-            selectedWard.pollingUnits.forEach(
-                function (unit) {
-
-                    const option =
-                        document.createElement("option");
-
-                    option.value =
-                        unit.name;
-
-                    option.textContent =
-                        unit.name;
-
-                    option.dataset.delimitation =
-                        unit.delimitation || "";
-
-                    pollingUnitSelect.appendChild(
-                        option
+                const selectedLga =
+                    imoElectoralData.state.lgas.find(
+                        function (lga) {
+                            return lga.name ===
+                                lgaSelect.value;
+                        }
                     );
 
+                if (!wardSelect) return;
+
+                wardSelect.innerHTML =
+                    '<option value="">Select Ward</option>';
+
+                if (pollingUnitSelect) {
+
+                    pollingUnitSelect.innerHTML =
+                        '<option value="">Select Polling Unit</option>';
+
+                    pollingUnitSelect.disabled = true;
                 }
-            );
 
-            pollingUnitSelect.disabled = false;
+                if (!selectedLga) {
 
-        }
-    );
-
-
-    function getSelectedElectoralLocation() {
-
-        const selectedLga =
-            imoElectoralData.state.lgas.find(
-                function (lga) {
-                    return lga.id === lgaSelect.value;
+                    wardSelect.disabled = true;
+                    return;
                 }
-            );
 
-        const selectedWard =
-            selectedLga &&
-            selectedLga.wards.find(
-                function (ward) {
-                    return ward.id === wardSelect.value;
-                }
-            );
+                selectedLga.wards.forEach(
+                    function (ward) {
 
-        const selectedPollingUnit =
-            pollingUnitSelect.options[
-                pollingUnitSelect.selectedIndex
-            ];
+                        const option =
+                            document.createElement("option");
 
-        return {
+                        option.value = ward.name;
+                        option.textContent = ward.name;
+                        option.dataset.wardId =
+                            ward.id;
 
-            lga:
-                selectedLga
-                    ? selectedLga.name
-                    : "",
+                        wardSelect.appendChild(option);
+                    }
+                );
 
-            ward:
-                selectedWard
-                    ? selectedWard.name
-                    : "",
-
-            polling_unit:
-                selectedPollingUnit
-                    ? selectedPollingUnit.textContent
-                    : "",
-
-            polling_unit_code:
-                selectedPollingUnit
-                    ? (
-                        selectedPollingUnit
-                            .dataset.delimitation || ""
-                    )
-                    : ""
-
-        };
-
-    }
-
-
-    /* =====================================================
-       REGISTRATION DATE
-       ===================================================== */
-
-    const registrationDate =
-        document.getElementById(
-            "registration_date"
+                wardSelect.disabled = false;
+            }
         );
-
-    if (registrationDate && !registrationDate.value) {
-
-        const today =
-            new Date();
-
-        const year =
-            today.getFullYear();
-
-        const month =
-            String(
-                today.getMonth() + 1
-            ).padStart(2, "0");
-
-        const day =
-            String(
-                today.getDate()
-            ).padStart(2, "0");
-
-        registrationDate.value =
-            `${year}-${month}-${day}`;
-
     }
 
 
-    /* =====================================================
-       PASSPORT PHOTOGRAPH PREVIEW
-       ===================================================== */
+    /* =========================================================
+       WARD → POLLING UNIT
+    ========================================================= */
 
-    let selectedPhotoURL = null;
+    if (wardSelect) {
 
+        wardSelect.addEventListener(
+            "change",
+            function () {
 
-    photoInput.addEventListener(
-        "change",
-        function () {
+                if (!imoElectoralData) return;
 
-            const file =
-                photoInput.files[0];
+                const selectedLga =
+                    imoElectoralData.state.lgas.find(
+                        function (lga) {
+                            return lga.name ===
+                                lgaSelect.value;
+                        }
+                    );
 
-            if (!file) return;
+                if (!selectedLga) return;
 
+                const selectedWard =
+                    selectedLga.wards.find(
+                        function (ward) {
+                            return ward.name ===
+                                wardSelect.value;
+                        }
+                    );
 
-            /* File type */
+                if (!pollingUnitSelect) return;
 
-            const allowedTypes = [
-                "image/jpeg",
-                "image/png",
-                "image/webp"
-            ];
+                pollingUnitSelect.innerHTML =
+                    '<option value="">Select Polling Unit</option>';
 
-            if (
-                !allowedTypes.includes(
-                    file.type
-                )
-            ) {
+                if (!selectedWard) {
 
-                photoInput.value = "";
+                    pollingUnitSelect.disabled = true;
+                    return;
+                }
 
-                alert(
-                    "Please select a JPG, JPEG, PNG or WebP image."
+                selectedWard.pollingUnits.forEach(
+                    function (unit) {
+
+                        const option =
+                            document.createElement("option");
+
+                        option.value = unit.name;
+                        option.textContent =
+                            unit.name;
+
+                        option.dataset.delimitation =
+                            unit.delimitation;
+
+                        pollingUnitSelect.appendChild(
+                            option
+                        );
+                    }
                 );
 
-                return;
-
+                pollingUnitSelect.disabled = false;
             }
+        );
+    }
 
 
-            /* File size */
+    /* =========================================================
+       PHOTO SELECTION
+    ========================================================= */
 
-            const maxSize =
-                2 * 1024 * 1024;
+    if (photoInput) {
 
-            if (file.size > maxSize) {
+        photoInput.addEventListener(
+            "change",
+            function () {
 
-                photoInput.value = "";
+                const file =
+                    photoInput.files[0];
 
-                alert(
-                    "The passport photograph is too large. " +
-                    "Maximum size is 2 MB."
-                );
+                if (!file) return;
 
-                return;
+                const allowedTypes = [
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp"
+                ];
 
+                if (!allowedTypes.includes(file.type)) {
+
+                    alert(
+                        "Please select a JPG, PNG or WebP image."
+                    );
+
+                    photoInput.value = "";
+                    selectedPhoto = null;
+                    return;
+                }
+
+                if (file.size > 2 * 1024 * 1024) {
+
+                    alert(
+                        "The photograph must not exceed 2MB."
+                    );
+
+                    photoInput.value = "";
+                    selectedPhoto = null;
+                    return;
+                }
+
+                selectedPhoto = file;
+
+                showPhotoPreview(file);
             }
+        );
+    }
 
 
-            /* Revoke previous preview */
+    /* =========================================================
+       PHOTO PREVIEW
+    ========================================================= */
 
-            if (selectedPhotoURL) {
+    function showPhotoPreview(file) {
 
-                URL.revokeObjectURL(
-                    selectedPhotoURL
-                );
+        if (!photoUpload) return;
 
-            }
+        const reader =
+            new FileReader();
 
+        reader.onload = function (event) {
 
-            selectedPhotoURL =
-                URL.createObjectURL(file);
+            photoUpload.innerHTML = "";
 
+            const container =
+                document.createElement("div");
 
-            /* Existing upload area */
+            container.className =
+                "photo-preview-container";
 
-            const photoUpload =
-                document.querySelector(
-                    ".photo-upload"
-                );
+            const image =
+                document.createElement("img");
 
-            if (!photoUpload) return;
+            image.className =
+                "photo-preview-image";
 
+            image.src =
+                event.target.result;
 
-            photoUpload.classList.add(
-                "photo-selected"
-            );
+            image.alt =
+                "Selected passport photograph";
 
+            const info =
+                document.createElement("div");
 
-            photoUpload.innerHTML = `
+            info.className =
+                "photo-upload-success";
 
-                <div class="photo-preview-container">
-
-                    <img
-                        src="${selectedPhotoURL}"
-                        alt="Selected passport photograph"
-                        class="photo-preview-image">
-
-                    <div class="photo-upload-success">
-
-                        <strong>
-                            ✓ Photograph Selected
-                        </strong>
-
-                        <span>
-                            ${escapeHTML(file.name)}
-                        </span>
-
-                        <small>
-                            ${(file.size / 1024).toFixed(0)} KB
-                        </small>
-
-                    </div>
-
-                    <button
-                        type="button"
-                        class="change-photo-button"
-                        id="changePhotoButton">
-                        Change Photograph
-                    </button>
-
-                </div>
-
-            `;
-
+            info.innerHTML =
+                "<strong>Photograph selected</strong>" +
+                "<br>" +
+                file.name +
+                "<br>" +
+                formatFileSize(file.size);
 
             const changeButton =
-                document.getElementById(
-                    "changePhotoButton"
-                );
+                document.createElement("button");
+
+            changeButton.type =
+                "button";
+
+            changeButton.className =
+                "change-photo-button";
+
+            changeButton.textContent =
+                "Change Photograph";
 
             changeButton.addEventListener(
                 "click",
                 function () {
 
                     photoInput.click();
-
                 }
             );
 
+            container.appendChild(image);
+            container.appendChild(info);
+            container.appendChild(changeButton);
+
+            photoUpload.appendChild(container);
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+
+    function formatFileSize(bytes) {
+
+        if (bytes < 1024) {
+            return bytes + " bytes";
         }
-    );
+
+        if (bytes < 1024 * 1024) {
+            return (
+                (bytes / 1024).toFixed(1) +
+                " KB"
+            );
+        }
+
+        return (
+            (bytes / (1024 * 1024)).toFixed(2) +
+            " MB"
+        );
+    }
 
 
-    /* =====================================================
-       PREVIEW FORM
-       ===================================================== */
+    /* =========================================================
+       PREVIEW HELPER
+    ========================================================= */
 
-    form.addEventListener(
-        "submit",
-        function (event) {
+    function setPreview(id, value) {
 
-            event.preventDefault();
+        const element =
+            document.getElementById(id);
+
+        if (!element) return;
+
+        element.textContent =
+            value || "Not provided";
+    }
 
 
-            /* Browser validation */
+    /* =========================================================
+       COLLECT INTERESTS
+    ========================================================= */
 
-            if (!form.checkValidity()) {
+    function getInterests() {
 
-                form.reportValidity();
+        const checked =
+            document.querySelectorAll(
+                'input[name="interest"]:checked'
+            );
 
-                return;
-
+        return Array.from(checked).map(
+            function (item) {
+                return item.value;
             }
+        );
+    }
 
 
-            populatePreview();
+    /* =========================================================
+       PREPARE PREVIEW
+    ========================================================= */
 
-
-            form.hidden = true;
-
-            preview.hidden = false;
-
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-
-        }
-    );
-
-
-    function populatePreview() {
+    function preparePreview() {
 
         setPreview(
             "previewFullname",
-            getValue("fullname")
+            document.getElementById("fullname").value
         );
 
         setPreview(
             "previewDob",
-            formatDate(
-                getValue("dob")
-            )
+            document.getElementById("dob").value
         );
 
         setPreview(
             "previewGender",
-            getValue("gender")
+            document.getElementById("gender").value
         );
 
         setPreview(
             "previewPhone",
-            getValue("phone")
+            document.getElementById("phone").value
         );
 
         setPreview(
             "previewEmail",
-            getValue("email"),
-            "Not provided"
+            document.getElementById("email").value
         );
 
-
-        /* NDC */
-
-        const ndc =
+        const ndcMember =
             document.querySelector(
                 'input[name="ndc_member"]:checked'
             );
 
         setPreview(
             "previewNdcMember",
-            ndc ? ndc.value : ""
+            ndcMember ? ndcMember.value : ""
         );
 
         setPreview(
             "previewPartyCard",
-            getValue("party_card"),
-            "Not provided"
+            document.getElementById("party_card").value
         );
-
-
-        /* Electoral location */
-
-        const location =
-            getSelectedElectoralLocation();
 
         setPreview(
             "previewLga",
-            location.lga
+            lgaSelect.value
         );
 
         setPreview(
             "previewWard",
-            location.ward
+            wardSelect.value
         );
 
         setPreview(
             "previewPollingUnit",
-            location.polling_unit
+            pollingUnitSelect.value
         );
+
+        const selectedPolling =
+            pollingUnitSelect.options[
+                pollingUnitSelect.selectedIndex
+            ];
 
         setPreview(
             "previewPollingCode",
-            location.polling_unit_code
+            selectedPolling
+                ? selectedPolling.dataset.delimitation || ""
+                : ""
         );
-
-
-        /* Residence */
 
         setPreview(
             "previewCountry",
-            getValue("country")
+            document.getElementById("country").value
         );
 
         setPreview(
             "previewResidenceState",
-            getValue("residence_state")
+            document.getElementById(
+                "residence_state"
+            ).value
         );
 
         setPreview(
             "previewCity",
-            getValue("city")
+            document.getElementById("city").value
         );
-
-
-        /* Skills */
 
         setPreview(
             "previewOccupation",
-            getValue("occupation")
+            document.getElementById("occupation").value
         );
 
         setPreview(
             "previewSkills",
-            getValue("professional_skills"),
-            "Not provided"
+            document.getElementById(
+                "professional_skills"
+            ).value
         );
 
-
         const interests =
-            Array.from(
-                document.querySelectorAll(
-                    'input[name="interest"]:checked'
-                )
-            )
-            .map(
-                function (input) {
-                    return input.value;
-                }
-            );
-
+            getInterests();
 
         setPreview(
             "previewInterests",
@@ -614,304 +540,335 @@ document.addEventListener("DOMContentLoaded", function () {
                 : "None selected"
         );
 
-
         setPreview(
             "previewReason",
-            getValue("reason"),
-            "Not provided"
+            document.getElementById(
+                "reason"
+            ).value
         );
-
-
-        /* Declaration */
 
         setPreview(
             "previewDeclarationName",
-            getValue("declaration_name")
+            document.getElementById(
+                "declaration_name"
+            ).value
         );
 
         setPreview(
             "previewRegistrationDate",
-            formatDate(
-                getValue("registration_date")
-            )
+            document.getElementById(
+                "registration_date"
+            ).value
         );
 
 
-        /* Passport */
+        /* Photo preview */
 
         const previewPhoto =
             document.getElementById(
                 "previewPhoto"
             );
 
-        if (
-            photoInput.files &&
-            photoInput.files[0]
-        ) {
+        if (previewPhoto && selectedPhoto) {
 
-            const file =
-                photoInput.files[0];
+            const reader =
+                new FileReader();
 
-            const photoURL =
-                URL.createObjectURL(file);
+            reader.onload = function (event) {
 
-            previewPhoto.innerHTML = `
+                previewPhoto.src =
+                    event.target.result;
 
-                <img
-                    src="${photoURL}"
-                    alt="Passport photograph"
-                    class="preview-passport-image">
+                previewPhoto.style.display =
+                    "block";
+            };
 
-                <span>
-                    ✓ Photograph selected
-                </span>
-
-            `;
-
-        } else {
-
-            previewPhoto.innerHTML = `
-
-                <div class="no-photo">
-                    No photograph selected
-                </div>
-
-            `;
-
+            reader.readAsDataURL(
+                selectedPhoto
+            );
         }
-
     }
 
 
-    /* =====================================================
-       EDIT REGISTRATION
-       ===================================================== */
+    /* =========================================================
+       FORM SUBMISSION → PREVIEW
+    ========================================================= */
 
-    editButton.addEventListener(
-        "click",
-        function () {
+    if (form) {
 
-            preview.hidden = true;
+        form.addEventListener(
+            "submit",
+            function (event) {
 
-            form.hidden = false;
+                /*
+                 * VERY IMPORTANT:
+                 * Stop the browser from submitting/reloading.
+                 */
+                event.preventDefault();
+                event.stopPropagation();
 
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
+                console.log(
+                    "Preview button clicked."
+                );
 
-        }
-    );
+                if (!form.checkValidity()) {
 
+                    form.reportValidity();
 
-    /* =====================================================
-       CONFIRM & SUBMIT
-       ===================================================== */
-
-    confirmButton.addEventListener(
-        "click",
-        async function () {
-
-            if (
-                confirmButton.disabled
-            ) {
-                return;
-            }
-
-
-            confirmButton.disabled = true;
-
-            confirmButton.textContent =
-                "Submitting Registration...";
-
-
-            try {
-
-                /* =========================================
-                   PASSPORT PHOTO
-                   ========================================= */
-
-                let passportPath = "";
-
-
-                if (
-                    photoInput.files &&
-                    photoInput.files[0]
-                ) {
-
-                    const file =
-                        photoInput.files[0];
-
-                    const extension =
-                        file.name
-                            .split(".")
-                            .pop()
-                            .toLowerCase();
-
-                    const fileName =
-                        `${crypto.randomUUID()}.${extension}`;
-
-                    passportPath =
-                        `members/${fileName}`;
-
-
-                    const {
-                        error: uploadError
-                    } =
-                        await db.storage
-                            .from("member-photos")
-                            .upload(
-                                passportPath,
-                                file,
-                                {
-                                    cacheControl: "3600",
-                                    upsert: false,
-                                    contentType: file.type
-                                }
-                            );
-
-
-                    if (uploadError) {
-
-                        throw uploadError;
-
-                    }
-
+                    return;
                 }
 
+                preparePreview();
 
-                /* =========================================
-                   ELECTORAL LOCATION
-                   ========================================= */
+                form.style.display =
+                    "none";
 
-                const location =
-                    getSelectedElectoralLocation();
+                if (previewSection) {
+
+                    previewSection.hidden =
+                        false;
+
+                    previewSection.style.display =
+                        "block";
+
+                    previewSection.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+                }
+            }
+        );
+    }
 
 
-                /* =========================================
-                   INTERESTS
-                   ========================================= */
+    /* =========================================================
+       EDIT REGISTRATION
+    ========================================================= */
 
-                const interests =
-                    Array.from(
-                        document.querySelectorAll(
-                            'input[name="interest"]:checked'
-                        )
-                    )
-                    .map(
-                        function (input) {
-                            return input.value;
+    if (editButton) {
+
+        editButton.addEventListener(
+            "click",
+            function () {
+
+                if (previewSection) {
+
+                    previewSection.hidden =
+                        true;
+
+                    previewSection.style.display =
+                        "none";
+                }
+
+                if (form) {
+
+                    form.style.display =
+                        "";
+
+                    form.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+                }
+            }
+        );
+    }
+
+
+    /* =========================================================
+       CONFIRM & SUBMIT
+    ========================================================= */
+
+    if (confirmButton) {
+
+        confirmButton.addEventListener(
+            "click",
+            async function () {
+
+                if (!db) {
+
+                    alert(
+                        "The membership system is not connected to Supabase. Please check the Supabase publishable key in membership.js."
+                    );
+
+                    return;
+                }
+
+                confirmButton.disabled =
+                    true;
+
+                confirmButton.textContent =
+                    "Submitting...";
+
+                try {
+
+                    let passportUrl = "";
+
+                    /* Upload photograph */
+
+                    if (selectedPhoto) {
+
+                        const extension =
+                            selectedPhoto.name
+                                .split(".")
+                                .pop()
+                                .toLowerCase();
+
+                        const fileName =
+                            "members/" +
+                            crypto.randomUUID() +
+                            "." +
+                            extension;
+
+                        const upload =
+                            await db.storage
+                                .from("member-photos")
+                                .upload(
+                                    fileName,
+                                    selectedPhoto,
+                                    {
+                                        contentType:
+                                            selectedPhoto.type,
+                                        upsert: false
+                                    }
+                                );
+
+                        if (upload.error) {
+                            throw upload.error;
                         }
-                    );
+
+                        passportUrl =
+                            fileName;
+                    }
 
 
-                /* =========================================
-                   NDC
-                   ========================================= */
+                    /* Collect form data */
 
-                const ndc =
-                    document.querySelector(
-                        'input[name="ndc_member"]:checked'
-                    );
+                    const interests =
+                        getInterests();
 
-
-                /* =========================================
-                   MEMBER RECORD
-                   ========================================= */
-
-                const memberRecord = {
-
-                    full_name:
-                        getValue("fullname"),
-
-                    date_of_birth:
-                        getValue("dob"),
-
-                    gender:
-                        getValue("gender"),
-
-                    phone:
-                        getValue("phone"),
-
-                    email:
-                        getValue("email"),
-
-                    ndc_member:
-                        ndc
-                            ? ndc.value === "Yes"
-                            : false,
-
-                    ndc_card_number:
-                        getValue("party_card"),
-
-                    lga:
-                        location.lga,
-
-                    ward:
-                        location.ward,
-
-                    polling_unit:
-                        location.polling_unit,
-
-                    polling_unit_code:
-                        location.polling_unit_code,
-
-                    residence_country:
-                        getValue("country"),
-
-                    residence_state:
-                        getValue("residence_state"),
-
-                    residence_city:
-                        getValue("city"),
-
-                    occupation:
-                        getValue("occupation"),
-
-                    professional_skills:
-                        getValue(
-                            "professional_skills"
-                        ),
-
-                    interests:
-                        interests,
-
-                    reason_for_joining:
-                        getValue("reason"),
-
-                    declaration_confirmed:
-                        document.getElementById(
-                            "declaration"
-                        ).checked,
-
-                    declaration_name:
-                        getValue(
-                            "declaration_name"
-                        ),
-
-                    registration_date:
-                        getValue(
-                            "registration_date"
-                        ),
-
-                    passport_url:
-                        passportPath,
-
-                    membership_status:
-                        "Pending"
-
-                };
+                    const ndcMember =
+                        document.querySelector(
+                            'input[name="ndc_member"]:checked'
+                        );
 
 
-                /* =========================================
-                   SECURE RPC
-                   ========================================= */
+                    const selectedPolling =
+                        pollingUnitSelect.options[
+                            pollingUnitSelect.selectedIndex
+                        ];
 
-                const {
-                    data,
-                    error
-                } =
-                    await db.rpc(
+
+                    const memberRecord = {
+
+                        full_name:
+                            document.getElementById(
+                                "fullname"
+                            ).value,
+
+                        date_of_birth:
+                            document.getElementById(
+                                "dob"
+                            ).value,
+
+                        gender:
+                            document.getElementById(
+                                "gender"
+                            ).value,
+
+                        phone:
+                            document.getElementById(
+                                "phone"
+                            ).value,
+
+                        email:
+                            document.getElementById(
+                                "email"
+                            ).value,
+
+                        ndc_member:
+                            ndcMember
+                                ? ndcMember.value === "Yes"
+                                : false,
+
+                        ndc_card_number:
+                            document.getElementById(
+                                "party_card"
+                            ).value,
+
+                        lga:
+                            lgaSelect.value,
+
+                        ward:
+                            wardSelect.value,
+
+                        polling_unit:
+                            pollingUnitSelect.value,
+
+                        polling_unit_code:
+                            selectedPolling
+                                ? selectedPolling.dataset.delimitation || ""
+                                : "",
+
+                        residence_country:
+                            document.getElementById(
+                                "country"
+                            ).value,
+
+                        residence_state:
+                            document.getElementById(
+                                "residence_state"
+                            ).value,
+
+                        residence_city:
+                            document.getElementById(
+                                "city"
+                            ).value,
+
+                        occupation:
+                            document.getElementById(
+                                "occupation"
+                            ).value,
+
+                        professional_skills:
+                            document.getElementById(
+                                "professional_skills"
+                            ).value,
+
+                        interests:
+                            interests,
+
+                        reason_for_joining:
+                            document.getElementById(
+                                "reason"
+                            ).value,
+
+                        declaration_confirmed:
+                            document.getElementById(
+                                "declaration"
+                            ).checked,
+
+                        declaration_name:
+                            document.getElementById(
+                                "declaration_name"
+                            ).value,
+
+                        registration_date:
+                            document.getElementById(
+                                "registration_date"
+                            ).value,
+
+                        passport_url:
+                            passportUrl
+                    };
+
+
+                    /* Send to secure RPC */
+
+                    const {
+                        data,
+                        error
+                    } = await db.rpc(
                         "register_membership",
                         {
                             p_member:
@@ -920,215 +877,111 @@ document.addEventListener("DOMContentLoaded", function () {
                     );
 
 
-                if (error) {
+                    if (error) {
+                        throw error;
+                    }
 
-                    throw error;
 
+                    const memberId =
+                        data ||
+                        "Your membership number";
+
+
+                    /* Hide preview */
+
+                    if (previewSection) {
+
+                        previewSection.hidden =
+                            true;
+
+                        previewSection.style.display =
+                            "none";
+                    }
+
+
+                    /* Show success */
+
+                    setPreview(
+                        "successMemberId",
+                        memberId
+                    );
+
+                    setPreview(
+                        "successMemberName",
+                        document.getElementById(
+                            "fullname"
+                        ).value
+                    );
+
+                    setPreview(
+                        "successRegistrationDate",
+                        document.getElementById(
+                            "registration_date"
+                        ).value
+                    );
+
+
+                    if (successSection) {
+
+                        successSection.hidden =
+                            false;
+
+                        successSection.style.display =
+                            "block";
+
+                        successSection.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                        });
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "Membership submission error:",
+                        error
+                    );
+
+                    alert(
+                        "We could not complete your registration. Please try again."
+                    );
+
+                    confirmButton.disabled =
+                        false;
+
+                    confirmButton.textContent =
+                        "Confirm & Submit";
                 }
-
-
-                /* =========================================
-                   MEMBERSHIP ID
-                   ========================================= */
-
-                const memberId =
-                    data ||
-                    "Your membership number";
-
-
-                showSuccess(
-                    memberId
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "Registration error:",
-                    error
-                );
-
-
-                confirmButton.disabled =
-                    false;
-
-                confirmButton.textContent =
-                    "✓ Confirm & Submit";
-
-
-                alert(
-                    "We could not complete your registration.\n\n" +
-                    error.message
-                );
-
             }
-
-        }
-    );
-
-
-    /* =====================================================
-       SUCCESS SCREEN
-       ===================================================== */
-
-    function showSuccess(memberId) {
-
-        setText(
-            "successMemberId",
-            memberId
         );
-
-        setText(
-            "successMemberName",
-            getValue("fullname")
-        );
-
-        setText(
-            "successRegistrationDate",
-            formatDate(
-                getValue("registration_date")
-            )
-        );
-
-
-        preview.hidden = true;
-
-        form.hidden = true;
-
-        success.hidden = false;
-
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-
     }
 
 
-    /* =====================================================
+    /* =========================================================
        PRINT CONFIRMATION
-       ===================================================== */
+    ========================================================= */
 
-    printButton.addEventListener(
-        "click",
-        function () {
-
-            window.print();
-
-        }
-    );
-
-
-    /* =====================================================
-       HELPERS
-       ===================================================== */
-
-    function getValue(id) {
-
-        const element =
-            document.getElementById(id);
-
-        return element
-            ? element.value.trim()
-            : "";
-
-    }
-
-
-    function setPreview(
-        id,
-        value,
-        fallback = "Not provided"
-    ) {
-
-        setText(
-            id,
-            value || fallback
+    const printButton =
+        document.getElementById(
+            "printConfirmation"
         );
 
-    }
+    if (printButton) {
 
+        printButton.addEventListener(
+            "click",
+            function () {
 
-    function setText(
-        id,
-        value
-    ) {
+                window.print();
 
-        const element =
-            document.getElementById(id);
-
-        if (element) {
-
-            element.textContent =
-                value || "";
-
-        }
-
-    }
-
-
-    function formatDate(value) {
-
-        if (!value) return "";
-
-        const date =
-            new Date(
-                value + "T00:00:00"
-            );
-
-        if (
-            Number.isNaN(
-                date.getTime()
-            )
-        ) {
-
-            return value;
-
-        }
-
-        return date.toLocaleDateString(
-            "en-GB",
-            {
-                day: "2-digit",
-                month: "long",
-                year: "numeric"
             }
         );
-
     }
 
 
-    function escapeHTML(value) {
-
-        return String(value)
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-            .replace(
-                /</g,
-                "&lt;"
-            )
-            .replace(
-                />/g,
-                "&gt;"
-            )
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-            .replace(
-                /'/g,
-                "&#039;"
-            );
-
-    }
-
-
-    /* =====================================================
-       INITIALISE
-       ===================================================== */
+    /* =========================================================
+       START
+    ========================================================= */
 
     loadImoElectoralData();
 
