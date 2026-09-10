@@ -1291,96 +1291,258 @@
 
 <!-- ================= REGISTRATION SUCCESS ================= -->
 
+<!-- ================= MEMBERSHIP CONFIRMATION ================= -->
+
 <section
     id="registrationSuccess"
     class="registration-success"
     hidden>
 
-    <div class="success-card">
+    <div class="success-wrapper">
 
-        <div class="success-icon">
-            ✓
-        </div>
+        <!-- Confirmation heading -->
+        <div class="success-heading">
 
+            <div class="success-check">
+                ✓
+            </div>
 
-        <p class="form-eyebrow">
-            REGISTRATION COMPLETE
-        </p>
+            <p class="success-eyebrow">
+                REGISTRATION COMPLETE
+            </p>
 
+            <h1>
+                Registration Successful
+            </h1>
 
-        <h2>
-            Registration Successful
-        </h2>
+            <p class="success-welcome">
+                Welcome to the Ochoudo Mandate Group.
+            </p>
 
-
-        <p class="success-welcome">
-            Welcome to the Ochoudo Mandate Group.
-        </p>
-
-
-        <p class="success-message">
-            Thank you for joining a growing movement committed
-            to building a better Imo State.
-        </p>
-
-
-        <div class="membership-id-box">
-
-            <span>
-                YOUR MEMBERSHIP ID
-            </span>
-
-            <strong id="successMemberId">
-                OMG-2026-000000
-            </strong>
+            <p class="success-message">
+                Your registration has been successfully received
+                and is awaiting verification.
+            </p>
 
         </div>
 
 
-        <div class="success-details">
+        <!-- ================= MEMBERSHIP CARD ================= -->
 
-            <div>
-                <span>Member Name</span>
-                <strong id="successMemberName"></strong>
+        <div
+            id="membershipCard"
+            class="membership-id-card">
+
+            <!-- Card Header -->
+
+            <div class="id-card-header">
+
+                <div class="id-card-brand">
+
+                    <img
+                        src="assets/ochoudo-logo3.png"
+                        alt="Ochoudo Mandate Group">
+
+                </div>
+
+                <div class="id-card-title">
+
+                    <span>
+                        MEMBERSHIP
+                    </span>
+
+                    <strong>
+                        IDENTIFICATION CARD
+                    </strong>
+
+                </div>
+
             </div>
 
-            <div>
-                <span>Registration Date</span>
-                <strong id="successRegistrationDate"></strong>
+
+            <!-- Card Body -->
+
+            <div class="id-card-body">
+
+                <!-- Photograph -->
+
+                <div class="id-card-photo-area">
+
+                    <div class="id-card-photo">
+
+                        <img
+                            id="successMemberPhoto"
+                            src=""
+                            alt="Member Passport Photograph">
+
+                    </div>
+
+                    <div class="photo-label">
+                        MEMBER
+                    </div>
+
+                </div>
+
+
+                <!-- Member Information -->
+
+                <div class="id-card-information">
+
+                    <div class="membership-id-display">
+
+                        <span>
+                            MEMBERSHIP ID
+                        </span>
+
+                        <strong id="successMemberId">
+                            OMG-2026-000000
+                        </strong>
+
+                    </div>
+
+
+                    <div class="member-details-grid">
+
+                        <div class="member-detail full-detail">
+
+                            <span>
+                                FULL NAME
+                            </span>
+
+                            <strong id="successMemberName">
+                                -
+                            </strong>
+
+                        </div>
+
+
+                        <div class="member-detail">
+
+                            <span>
+                                GENDER
+                            </span>
+
+                            <strong id="successMemberGender">
+                                -
+                            </strong>
+
+                        </div>
+
+
+                        <div class="member-detail">
+
+                            <span>
+                                LGA
+                            </span>
+
+                            <strong id="successMemberLga">
+                                -
+                            </strong>
+
+                        </div>
+
+
+                        <div class="member-detail">
+
+                            <span>
+                                WARD
+                            </span>
+
+                            <strong id="successMemberWard">
+                                -
+                            </strong>
+
+                        </div>
+
+
+                        <div class="member-detail">
+
+                            <span>
+                                POLLING UNIT
+                            </span>
+
+                            <strong id="successMemberPollingUnit">
+                                -
+                            </strong>
+
+                        </div>
+
+
+                        <div class="member-detail">
+
+                            <span>
+                                REGISTRATION DATE
+                            </span>
+
+                            <strong id="successRegistrationDate">
+                                -
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
 
-            <div>
-                <span>Registration Status</span>
-                <strong>
-                    Pending Verification
-                </strong>
+
+            <!-- Card Footer -->
+
+            <div class="id-card-footer">
+
+                <div>
+                    TOGETHER, WE BUILD A NEW IMO THAT WORKS FOR ALL.
+                </div>
+
+                <span>
+                    OCHOUDO MANDATE GROUP
+                </span>
+
             </div>
 
         </div>
 
 
-        <p class="success-note">
-            Please keep your Membership ID for your records.
-            Your registration has been successfully received
-            and is awaiting verification.
-        </p>
-
+        <!-- ================= CARD ACTIONS ================= -->
 
         <div class="success-actions">
 
             <button
                 type="button"
                 id="printConfirmation"
-                class="print-confirmation-button">
-                Print Confirmation
+                class="print-card-button">
+
+                <span>🖨</span>
+                Print Membership Card
+
             </button>
 
 
             <a
                 href="index.html"
                 class="return-home-button">
-                Return to Ochoudo Mandate Group
+
+                Return to Homepage
+
             </a>
+
+        </div>
+
+
+        <!-- Important information -->
+
+        <div class="success-notice">
+
+            <strong>
+                Important Information
+            </strong>
+
+            <p>
+                Please keep your Membership ID for your records.
+                Your registration is awaiting verification.
+                You will be notified once your membership has been verified.
+            </p>
 
         </div>
 
