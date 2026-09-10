@@ -671,230 +671,384 @@ if (typeof window.supabase !== "undefined") {
         );
     }
 
+/* =========================================================
+   CONFIRM & SUBMIT
+========================================================= */
 
-    /* =========================================================
-       CONFIRM & SUBMIT
-    ========================================================= */
+if (confirmButton) {
 
-    if (confirmButton) {
+    confirmButton.addEventListener(
+        "click",
+        async function () {
 
-        confirmButton.addEventListener(
-            "click",
-            async function () {
+            if (!db) {
 
-                if (!db) {
+                alert(
+                    "The membership system is not connected to Supabase. Please check the Supabase publishable key in membership.js."
+                );
+
+                return;
+            }
+
+            confirmButton.disabled = true;
+
+            confirmButton.textContent =
+                "Submitting...";
+
+            try {
+
+                let passportUrl = "";
+
+                /* =====================================================
+                   UPLOAD PHOTOGRAPH
+                ===================================================== */
+
+                if (selectedPhoto) {
+
+                    const extension =
+                        selectedPhoto.name
+                            .split(".")
+                            .pop()
+                            .toLowerCase();
+
+                    const fileName =
+                        "members/" +
+                        crypto.randomUUID() +
+                        "." +
+                        extension;
+
+                    const upload =
+                        await db.storage
+                            .from("member-photos")
+                            .upload(
+                                fileName,
+                                selectedPhoto,
+                                {
+                                    contentType:
+                                        selectedPhoto.type,
+                                    upsert: false
+                                }
+                            );
+
+                    if (upload.error) {
+                        throw upload.error;
+                    }
+
+                    passportUrl =
+                        fileName;
+                }
+
+
+                /* =====================================================
+                   COLLECT FORM DATA
+                ===================================================== */
+
+                const interests =
+                    getInterests();
+
+                const ndcMember =
+                    document.querySelector(
+                        'input[name="ndc_member"]:checked'
+                    );
+
+
+                const selectedPolling =
+                    pollingUnitSelect.options[
+                        pollingUnitSelect.selectedIndex
+                    ];
+
+
+                const memberRecord = {
+
+                    full_name:
+                        document.getElementById(
+                            "fullname"
+                        ).value,
+
+                    date_of_birth:
+                        document.getElementById(
+                            "dob"
+                        ).value,
+
+                    gender:
+                        document.getElementById(
+                            "gender"
+                        ).value,
+
+                    phone:
+                        document.getElementById(
+                            "phone"
+                        ).value,
+
+                    email:
+                        document.getElementById(
+                            "email"
+                        ).value,
+
+                    ndc_member:
+                        ndcMember
+                            ? ndcMember.value === "Yes"
+                            : false,
+
+                    ndc_card_number:
+                        document.getElementById(
+                            "party_card"
+                        ).value,
+
+                    lga:
+                        lgaSelect.value,
+
+                    ward:
+                        wardSelect.value,
+
+                    polling_unit:
+                        pollingUnitSelect.value,
+
+                    polling_unit_code:
+                        selectedPolling
+                            ? selectedPolling.dataset.delimitation || ""
+                            : "",
+
+                    residence_country:
+                        document.getElementById(
+                            "country"
+                        ).value,
+
+                    residence_state:
+                        document.getElementById(
+                            "residence_state"
+                        ).value,
+
+                    residence_city:
+                        document.getElementById(
+                            "city"
+                        ).value,
+
+                    occupation:
+                        document.getElementById(
+                            "occupation"
+                        ).value,
+
+                    professional_skills:
+                        document.getElementById(
+                            "professional_skills"
+                        ).value,
+
+                    interests:
+                        interests,
+
+                    reason_for_joining:
+                        document.getElementById(
+                            "reason"
+                        ).value,
+
+                    declaration_confirmed:
+                        document.getElementById(
+                            "declaration"
+                        ).checked,
+
+                    declaration_name:
+                        document.getElementById(
+                            "declaration_name"
+                        ).value,
+
+                    registration_date:
+                        document.getElementById(
+                            "registration_date"
+                        ).value,
+
+                    passport_url:
+                        passportUrl
+                };
+
+
+                /* =====================================================
+                   SEND TO SECURE SUPABASE RPC
+                ===================================================== */
+
+                const {
+                    data,
+                    error
+                } = await db.rpc(
+                    "register_membership",
+                    {
+                        p_member:
+                            memberRecord
+                    }
+                );
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                /* =====================================================
+                   DUPLICATE PHONE REGISTRATION
+                ===================================================== */
+
+                if (data === "DUPLICATE_PHONE") {
+
+                    confirmButton.disabled = false;
+
+                    confirmButton.textContent =
+                        "Confirm & Submit";
 
                     alert(
-                        "The membership system is not connected to Supabase. Please check the Supabase publishable key in membership.js."
+                        "Registration Already Exists\n\n" +
+                        "A membership registration already exists " +
+                        "for this phone number.\n\n" +
+                        "Please do not submit another registration. " +
+                        "If you believe this is an error, please contact " +
+                        "the Ochoudo Mandate Group."
                     );
 
                     return;
                 }
 
-                confirmButton.disabled =
-                    true;
 
-                confirmButton.textContent =
-                    "Submitting...";
+                /* =====================================================
+                   MEMBERSHIP ID
+                ===================================================== */
 
-                try {
-
-                    let passportUrl = "";
-
-                    /* Upload photograph */
-
-                    if (selectedPhoto) {
-
-                        const extension =
-                            selectedPhoto.name
-                                .split(".")
-                                .pop()
-                                .toLowerCase();
-
-                        const fileName =
-                            "members/" +
-                            crypto.randomUUID() +
-                            "." +
-                            extension;
-
-                        const upload =
-                            await db.storage
-                                .from("member-photos")
-                                .upload(
-                                    fileName,
-                                    selectedPhoto,
-                                    {
-                                        contentType:
-                                            selectedPhoto.type,
-                                        upsert: false
-                                    }
-                                );
-
-                        if (upload.error) {
-                            throw upload.error;
-                        }
-
-                        passportUrl =
-                            fileName;
-                    }
+                const memberId =
+                    data ||
+                    "Your membership number";
 
 
-                    /* Collect form data */
+                /* =====================================================
+                   HIDE PREVIEW
+                ===================================================== */
 
-                    const interests =
-                        getInterests();
+                if (previewSection) {
 
-                    const ndcMember =
-                        document.querySelector(
-                            'input[name="ndc_member"]:checked'
-                        );
+                    previewSection.hidden =
+                        true;
 
-
-                    const selectedPolling =
-                        pollingUnitSelect.options[
-                            pollingUnitSelect.selectedIndex
-                        ];
+                    previewSection.style.display =
+                        "none";
+                }
 
 
-                    const memberRecord = {
+                /* =====================================================
+                   POPULATE FINAL MEMBERSHIP CARD
+                ===================================================== */
 
-                        full_name:
-                            document.getElementById(
-                                "fullname"
-                            ).value,
+                setPreview(
+                    "successMemberId",
+                    memberId
+                );
 
-                        date_of_birth:
-                            document.getElementById(
-                                "dob"
-                            ).value,
+                setPreview(
+                    "successMemberName",
+                    document.getElementById(
+                        "fullname"
+                    ).value
+                );
 
-                        gender:
-                            document.getElementById(
-                                "gender"
-                            ).value,
+                setPreview(
+                    "successMemberGender",
+                    document.getElementById(
+                        "gender"
+                    ).value
+                );
 
-                        phone:
-                            document.getElementById(
-                                "phone"
-                            ).value,
+                setPreview(
+                    "successMemberLga",
+                    lgaSelect.value
+                );
 
-                        email:
-                            document.getElementById(
-                                "email"
-                            ).value,
+                setPreview(
+                    "successMemberWard",
+                    wardSelect.value
+                );
 
-                        ndc_member:
-                            ndcMember
-                                ? ndcMember.value === "Yes"
-                                : false,
+                setPreview(
+                    "successMemberPollingUnit",
+                    pollingUnitSelect.value
+                );
 
-                        ndc_card_number:
-                            document.getElementById(
-                                "party_card"
-                            ).value,
-
-                        lga:
-                            lgaSelect.value,
-
-                        ward:
-                            wardSelect.value,
-
-                        polling_unit:
-                            pollingUnitSelect.value,
-
-                        polling_unit_code:
-                            selectedPolling
-                                ? selectedPolling.dataset.delimitation || ""
-                                : "",
-
-                        residence_country:
-                            document.getElementById(
-                                "country"
-                            ).value,
-
-                        residence_state:
-                            document.getElementById(
-                                "residence_state"
-                            ).value,
-
-                        residence_city:
-                            document.getElementById(
-                                "city"
-                            ).value,
-
-                        occupation:
-                            document.getElementById(
-                                "occupation"
-                            ).value,
-
-                        professional_skills:
-                            document.getElementById(
-                                "professional_skills"
-                            ).value,
-
-                        interests:
-                            interests,
-
-                        reason_for_joining:
-                            document.getElementById(
-                                "reason"
-                            ).value,
-
-                        declaration_confirmed:
-                            document.getElementById(
-                                "declaration"
-                            ).checked,
-
-                        declaration_name:
-                            document.getElementById(
-                                "declaration_name"
-                            ).value,
-
-                        registration_date:
-                            document.getElementById(
-                                "registration_date"
-                            ).value,
-
-                        passport_url:
-                            passportUrl
-                    };
+                setPreview(
+                    "successRegistrationDate",
+                    document.getElementById(
+                        "registration_date"
+                    ).value
+                );
 
 
-                    /* Send to secure RPC */
+                /* =====================================================
+                   DISPLAY ACTUAL UPLOADED PHOTOGRAPH
+                ===================================================== */
 
-                    const {
-                        data,
-                        error
-                    } = await db.rpc(
-                        "register_membership",
-                        {
-                            p_member:
-                                memberRecord
-                        }
+                const successPhoto =
+                    document.getElementById(
+                        "successMemberPhoto"
                     );
 
+                if (
+                    successPhoto &&
+                    selectedPhoto
+                ) {
 
-                    if (error) {
-                        throw error;
-                    }
+                    const photoReader =
+                        new FileReader();
+
+                    photoReader.onload =
+                        function (event) {
+
+                            successPhoto.src =
+                                event.target.result;
+
+                        };
+
+                    photoReader.readAsDataURL(
+                        selectedPhoto
+                    );
+                }
 
 
-                    const memberId =
-                        data ||
-                        "Your membership number";
+                /* =====================================================
+                   SHOW SUCCESS / MEMBERSHIP CARD
+                ===================================================== */
+
+                if (successSection) {
+
+                    successSection.hidden =
+                        false;
+
+                    successSection.style.display =
+                        "block";
+
+                    successSection.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+                }
 
 
-                    /* Hide preview */
+            } catch (error) {
 
-                    if (previewSection) {
+                console.error(
+                    "Membership submission error:",
+                    error
+                );
 
-                        previewSection.hidden =
-                            true;
+                confirmButton.disabled =
+                    false;
 
-                        previewSection.style.display =
-                            "none";
-                    }
+                confirmButton.textContent =
+                    "Confirm & Submit";
 
+
+                alert(
+                    "We could not complete your registration. " +
+                    "Please try again."
+                );
+            }
+
+        }
+    );
+}
 
                     /* Show success */
 /* =========================================================
