@@ -1010,7 +1010,26 @@ if (
                     return;
 
                 }
+/* =====================================================
+   VALIDATE PHONE NUMBER
+===================================================== */
 
+if (
+    phoneInput &&
+    !isValidNigerianPhone(
+        phoneInput.value
+    )
+) {
+
+    alert(
+        "Please enter a valid Nigerian phone number.\n\n" +
+        "Example: 08012345678"
+    );
+
+    phoneInput.focus();
+
+    return;
+}
 
                 if (
                     !selectedPhoto &&
