@@ -18,72 +18,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const wardSelect = document.getElementById("ward");
     const pollingUnitSelect = document.getElementById("polling_unit");
 
+    const phoneInput = document.getElementById("phone");
+
     let imoElectoralData = null;
     let selectedPhoto = null;
-/* =========================================================
-   PHONE VALIDATION
-========================================================= */
 
-const phoneInput =
-    document.getElementById("phone");
-
-
-function normalizePhoneNumber(phone) {
-
-    let value =
-        String(phone || "")
-            .trim()
-            .replace(/\s+/g, "")
-            .replace(/-/g, "")
-            .replace(/\(/g, "")
-            .replace(/\)/g, "");
-
-
-    /*
-       Convert +234XXXXXXXXXX
-       to 234XXXXXXXXXX
-    */
-
-    if (value.startsWith("+234")) {
-
-        value =
-            "234" +
-            value.substring(4);
-
-    }
-
-
-    /*
-       Convert 0XXXXXXXXXX
-       to 234XXXXXXXXXX
-    */
-
-    if (
-        /^0[0-9]{10}$/.test(value)
-    ) {
-
-        value =
-            "234" +
-            value.substring(1);
-
-    }
-
-
-    return value;
-}
-
-
-function isValidNigerianPhone(phone) {
-
-    const normalized =
-        normalizePhoneNumber(
-            phone
-        );
-
-    return /^234[0-9]{10}$/.test(
-        normalized
-    );
-}
 
     /* =========================================================
        SUPABASE
@@ -108,26 +47,89 @@ function isValidNigerianPhone(phone) {
 
 
     /* =========================================================
+       PHONE VALIDATION
+    ========================================================= */
+
+    function normalizePhoneNumber(phone) {
+
+        let value =
+            String(phone || "")
+                .trim()
+                .replace(/\s+/g, "")
+                .replace(/-/g, "")
+                .replace(/\(/g, "")
+                .replace(/\)/g, "");
+
+
+        if (value.startsWith("+234")) {
+
+            value =
+                "234" +
+                value.substring(4);
+
+        }
+
+
+        if (/^0[0-9]{10}$/.test(value)) {
+
+            value =
+                "234" +
+                value.substring(1);
+
+        }
+
+
+        return value;
+    }
+
+
+    function isValidNigerianPhone(phone) {
+
+        return /^234[0-9]{10}$/.test(
+            normalizePhoneNumber(phone)
+        );
+
+    }
+
+
+    /* =========================================================
        REGISTRATION DATE
     ========================================================= */
 
     const registrationDate =
         document.getElementById("registration_date");
 
-    if (registrationDate && !registrationDate.value) {
 
-        const today = new Date();
+    if (
+        registrationDate &&
+        !registrationDate.value
+    ) {
+
+        const today =
+            new Date();
+
 
         const year =
             today.getFullYear();
 
+
         const month =
-            String(today.getMonth() + 1)
-                .padStart(2, "0");
+            String(
+                today.getMonth() + 1
+            ).padStart(
+                2,
+                "0"
+            );
+
 
         const day =
-            String(today.getDate())
-                .padStart(2, "0");
+            String(
+                today.getDate()
+            ).padStart(
+                2,
+                "0"
+            );
+
 
         registrationDate.value =
             `${year}-${month}-${day}`;
@@ -141,7 +143,10 @@ function isValidNigerianPhone(phone) {
 
     async function loadImoElectoralData() {
 
-        if (!lgaSelect) return;
+        if (!lgaSelect) {
+            return;
+        }
+
 
         try {
 
@@ -153,6 +158,7 @@ function isValidNigerianPhone(phone) {
                     }
                 );
 
+
             if (!response.ok) {
 
                 throw new Error(
@@ -161,10 +167,13 @@ function isValidNigerianPhone(phone) {
 
             }
 
+
             imoElectoralData =
                 await response.json();
 
+
             populateLGAs();
+
 
         } catch (error) {
 
@@ -173,14 +182,13 @@ function isValidNigerianPhone(phone) {
                 error
             );
 
-            if (lgaSelect) {
 
-                lgaSelect.innerHTML =
-                    '<option value="">Unable to load LGAs</option>';
+            lgaSelect.innerHTML =
+                '<option value="">Unable to load LGAs</option>';
 
-                lgaSelect.disabled = true;
 
-            }
+            lgaSelect.disabled =
+                true;
 
         }
 
@@ -193,12 +201,17 @@ function isValidNigerianPhone(phone) {
 
     function populateLGAs() {
 
-        if (!lgaSelect || !imoElectoralData) {
+        if (
+            !lgaSelect ||
+            !imoElectoralData
+        ) {
             return;
         }
 
+
         lgaSelect.innerHTML =
             '<option value="">Select LGA</option>';
+
 
         const lgas =
             imoElectoralData.state &&
@@ -208,27 +221,38 @@ function isValidNigerianPhone(phone) {
                 ? imoElectoralData.state.lgas
                 : [];
 
-        lgas.forEach(function (lga) {
 
-            const option =
-                document.createElement("option");
+        lgas.forEach(
+            function (lga) {
 
-            option.value =
-                lga.name;
+                const option =
+                    document.createElement(
+                        "option"
+                    );
 
-            option.textContent =
-                lga.name;
 
-            option.dataset.lgaId =
-                lga.id || "";
+                option.value =
+                    lga.name;
 
-            lgaSelect.appendChild(
-                option
-            );
 
-        });
+                option.textContent =
+                    lga.name;
 
-        lgaSelect.disabled = false;
+
+                option.dataset.lgaId =
+                    lga.id || "";
+
+
+                lgaSelect.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        lgaSelect.disabled =
+            false;
 
 
         if (wardSelect) {
@@ -236,7 +260,8 @@ function isValidNigerianPhone(phone) {
             wardSelect.innerHTML =
                 '<option value="">Select Ward</option>';
 
-            wardSelect.disabled = true;
+            wardSelect.disabled =
+                true;
 
         }
 
@@ -246,7 +271,8 @@ function isValidNigerianPhone(phone) {
             pollingUnitSelect.innerHTML =
                 '<option value="">Select Polling Unit</option>';
 
-            pollingUnitSelect.disabled = true;
+            pollingUnitSelect.disabled =
+                true;
 
         }
 
@@ -266,6 +292,7 @@ function isValidNigerianPhone(phone) {
                 if (!imoElectoralData) {
                     return;
                 }
+
 
                 const selectedLga =
                     imoElectoralData.state.lgas.find(
@@ -294,14 +321,16 @@ function isValidNigerianPhone(phone) {
                     pollingUnitSelect.innerHTML =
                         '<option value="">Select Polling Unit</option>';
 
-                    pollingUnitSelect.disabled = true;
+                    pollingUnitSelect.disabled =
+                        true;
 
                 }
 
 
                 if (!selectedLga) {
 
-                    wardSelect.disabled = true;
+                    wardSelect.disabled =
+                        true;
 
                     return;
 
@@ -324,14 +353,18 @@ function isValidNigerianPhone(phone) {
                                 "option"
                             );
 
+
                         option.value =
                             ward.name;
+
 
                         option.textContent =
                             ward.name;
 
+
                         option.dataset.wardId =
                             ward.id || "";
+
 
                         wardSelect.appendChild(
                             option
@@ -341,7 +374,8 @@ function isValidNigerianPhone(phone) {
                 );
 
 
-                wardSelect.disabled = false;
+                wardSelect.disabled =
+                    false;
 
             }
         );
@@ -431,14 +465,18 @@ function isValidNigerianPhone(phone) {
                                 "option"
                             );
 
+
                         option.value =
                             unit.name;
+
 
                         option.textContent =
                             unit.name;
 
+
                         option.dataset.delimitation =
                             unit.delimitation || "";
+
 
                         pollingUnitSelect.appendChild(
                             option
@@ -494,10 +532,14 @@ function isValidNigerianPhone(phone) {
                         "Please select a JPG, PNG or WebP image."
                     );
 
-                    photoInput.value = "";
+
+                    photoInput.value =
+                        "";
+
 
                     selectedPhoto =
                         null;
+
 
                     return;
 
@@ -513,10 +555,14 @@ function isValidNigerianPhone(phone) {
                         "The photograph must not exceed 2MB."
                     );
 
-                    photoInput.value = "";
+
+                    photoInput.value =
+                        "";
+
 
                     selectedPhoto =
                         null;
+
 
                     return;
 
@@ -525,6 +571,7 @@ function isValidNigerianPhone(phone) {
 
                 selectedPhoto =
                     file;
+
 
                 showPhotoPreview(
                     file
@@ -540,106 +587,131 @@ function isValidNigerianPhone(phone) {
        PHOTO PREVIEW
     ========================================================= */
 
-  function showPhotoPreview(file) {
+    function showPhotoPreview(file) {
 
-    if (!photoUpload) {
-        return;
-    }
-
-    /*
-       Create a temporary browser URL for the selected image.
-       This displays immediately and is more reliable than
-       waiting for FileReader.
-    */
-
-    const imageUrl =
-        URL.createObjectURL(file);
-
-    photoUpload.innerHTML = "";
-
-    const container =
-        document.createElement("div");
-
-    container.className =
-        "photo-preview-container";
+        if (!photoUpload) {
+            return;
+        }
 
 
-    const image =
-        document.createElement("img");
-
-    image.className =
-        "photo-preview-image";
-
-    image.src =
-        imageUrl;
-
-    image.alt =
-        "Selected passport photograph";
+        const imageUrl =
+            URL.createObjectURL(
+                file
+            );
 
 
-    image.onload = function () {
+        photoUpload.innerHTML =
+            "";
 
-        URL.revokeObjectURL(
-            imageUrl
+
+        const container =
+            document.createElement(
+                "div"
+            );
+
+
+        container.className =
+            "photo-preview-container";
+
+
+        const image =
+            document.createElement(
+                "img"
+            );
+
+
+        image.className =
+            "photo-preview-image";
+
+
+        image.src =
+            imageUrl;
+
+
+        image.alt =
+            "Selected passport photograph";
+
+
+        image.onload =
+            function () {
+
+                URL.revokeObjectURL(
+                    imageUrl
+                );
+
+            };
+
+
+        const info =
+            document.createElement(
+                "div"
+            );
+
+
+        info.className =
+            "photo-upload-success";
+
+
+        info.innerHTML =
+            "<strong>Photograph selected</strong>" +
+            "<br>" +
+            escapeHtml(
+                file.name
+            ) +
+            "<br>" +
+            formatFileSize(
+                file.size
+            );
+
+
+        const changeButton =
+            document.createElement(
+                "button"
+            );
+
+
+        changeButton.type =
+            "button";
+
+
+        changeButton.className =
+            "change-photo-button";
+
+
+        changeButton.textContent =
+            "Change Photograph";
+
+
+        changeButton.addEventListener(
+            "click",
+            function () {
+
+                photoInput.click();
+
+            }
         );
 
-    };
+
+        container.appendChild(
+            image
+        );
 
 
-    const info =
-        document.createElement("div");
-
-    info.className =
-        "photo-upload-success";
-
-    info.innerHTML =
-        "<strong>Photograph selected</strong>" +
-        "<br>" +
-        escapeHtml(file.name) +
-        "<br>" +
-        formatFileSize(file.size);
+        container.appendChild(
+            info
+        );
 
 
-    const changeButton =
-        document.createElement("button");
-
-    changeButton.type =
-        "button";
-
-    changeButton.className =
-        "change-photo-button";
-
-    changeButton.textContent =
-        "Change Photograph";
+        container.appendChild(
+            changeButton
+        );
 
 
-    changeButton.addEventListener(
-        "click",
-        function () {
+        photoUpload.appendChild(
+            container
+        );
 
-            photoInput.click();
-
-        }
-    );
-
-
-    container.appendChild(
-        image
-    );
-
-    container.appendChild(
-        info
-    );
-
-    container.appendChild(
-        changeButton
-    );
-
-
-    photoUpload.appendChild(
-        container
-    );
-}
+    }
 
 
     function formatFileSize(bytes) {
@@ -654,7 +726,10 @@ function isValidNigerianPhone(phone) {
         }
 
 
-        if (bytes < 1024 * 1024) {
+        if (
+            bytes <
+            1024 * 1024
+        ) {
 
             return (
                 (bytes / 1024)
@@ -666,9 +741,10 @@ function isValidNigerianPhone(phone) {
 
 
         return (
-            (bytes /
-                (1024 * 1024))
-                .toFixed(2) +
+            (
+                bytes /
+                (1024 * 1024)
+            ).toFixed(2) +
             " MB"
         );
 
@@ -912,9 +988,7 @@ function isValidNigerianPhone(phone) {
         setPreview(
             "previewInterests",
             interests.length
-                ? interests.join(
-                    ", "
-                )
+                ? interests.join(", ")
                 : "None selected"
         );
 
@@ -943,43 +1017,47 @@ function isValidNigerianPhone(phone) {
         );
 
 
-       
         /* =====================================================
-   PHOTO PREVIEW
-===================================================== */
+           PHOTO PREVIEW
+        ===================================================== */
 
-const previewPhoto =
-    document.getElementById(
-        "previewPhoto"
-    );
-
-
-if (
-    previewPhoto &&
-    selectedPhoto
-) {
-
-    const previewUrl =
-        URL.createObjectURL(
-            selectedPhoto
-        );
-
-    previewPhoto.src =
-        previewUrl;
-
-    previewPhoto.style.display =
-        "block";
-
-    previewPhoto.onload =
-        function () {
-
-            URL.revokeObjectURL(
-                previewUrl
+        const previewPhoto =
+            document.getElementById(
+                "previewPhoto"
             );
 
-        };
 
-}
+        if (
+            previewPhoto &&
+            selectedPhoto
+        ) {
+
+            const previewUrl =
+                URL.createObjectURL(
+                    selectedPhoto
+                );
+
+
+            previewPhoto.src =
+                previewUrl;
+
+
+            previewPhoto.style.display =
+                "block";
+
+
+            previewPhoto.onload =
+                function () {
+
+                    URL.revokeObjectURL(
+                        previewUrl
+                    );
+
+                };
+
+        }
+
+    }
 
 
     /* =========================================================
@@ -1010,26 +1088,36 @@ if (
                     return;
 
                 }
-/* =====================================================
-   VALIDATE PHONE NUMBER
-===================================================== */
 
-if (
-    phoneInput &&
-    !isValidNigerianPhone(
-        phoneInput.value
-    )
-) {
 
-    alert(
-        "Please enter a valid Nigerian phone number.\n\n" +
-        "Example: 08012345678"
-    );
+                /* =================================================
+                   PHONE VALIDATION
+                ================================================= */
 
-    phoneInput.focus();
+                if (
+                    phoneInput &&
+                    !isValidNigerianPhone(
+                        phoneInput.value
+                    )
+                ) {
 
-    return;
-}
+                    alert(
+                        "Please enter a valid Nigerian phone number.\n\n" +
+                        "Example: 08012345678"
+                    );
+
+
+                    phoneInput.focus();
+
+
+                    return;
+
+                }
+
+
+                /* =================================================
+                   PHOTO REQUIRED
+                ================================================= */
 
                 if (
                     !selectedPhoto &&
@@ -1040,6 +1128,7 @@ if (
                     alert(
                         "Please select your passport photograph."
                     );
+
 
                     return;
 
@@ -1057,6 +1146,7 @@ if (
 
                     previewSection.hidden =
                         false;
+
 
                     previewSection.style.display =
                         "block";
@@ -1092,6 +1182,7 @@ if (
 
                     previewSection.hidden =
                         true;
+
 
                     previewSection.style.display =
                         "none";
@@ -1137,6 +1228,7 @@ if (
                         "The membership system is not connected to Supabase. Please refresh the page and try again."
                     );
 
+
                     return;
 
                 }
@@ -1147,8 +1239,54 @@ if (
                 }
 
 
+                /* =================================================
+                   VALIDATE PHONE AGAIN
+                ================================================= */
+
+                if (
+                    phoneInput &&
+                    !isValidNigerianPhone(
+                        phoneInput.value
+                    )
+                ) {
+
+                    alert(
+                        "Please enter a valid Nigerian phone number.\n\n" +
+                        "Example: 08012345678"
+                    );
+
+
+                    phoneInput.focus();
+
+
+                    return;
+
+                }
+
+
+                /* =================================================
+                   MAKE SURE PHOTO EXISTS
+                ================================================= */
+
+                if (
+                    !selectedPhoto &&
+                    photoInput &&
+                    photoInput.required
+                ) {
+
+                    alert(
+                        "Please select your passport photograph."
+                    );
+
+
+                    return;
+
+                }
+
+
                 confirmButton.disabled =
                     true;
+
 
                 confirmButton.textContent =
                     "Submitting...";
@@ -1232,7 +1370,7 @@ if (
 
 
                     /* =================================================
-                       COLLECT FORM DATA
+                       COLLECT INTERESTS
                     ================================================= */
 
                     const interests =
@@ -1253,6 +1391,10 @@ if (
                             ]
                             : null;
 
+
+                    /* =================================================
+                       CREATE MEMBER RECORD
+                    ================================================= */
 
                     const memberRecord = {
 
@@ -1275,11 +1417,12 @@ if (
 
 
                         phone:
-    normalizePhoneNumber(
-        document.getElementById(
-            "phone"
-        ).value
-    ),
+                            normalizePhoneNumber(
+                                document.getElementById(
+                                    "phone"
+                                ).value
+                            ),
+
 
                         email:
                             document.getElementById(
@@ -1393,24 +1536,19 @@ if (
 
 
                     /* =================================================
-                       SECURE SUPABASE RPC
+                       SEND TO SECURE SUPABASE RPC
                     ================================================= */
 
-                    const result =
-                        await db.rpc(
-                            "register_membership",
-                            {
-                                p_member:
-                                    memberRecord
-                            }
-                        );
-
-
-                    const data =
-                        result.data;
-
-                    const error =
-                        result.error;
+                    const {
+                        data,
+                        error
+                    } = await db.rpc(
+                        "register_membership",
+                        {
+                            p_member:
+                                memberRecord
+                        }
+                    );
 
 
                     if (error) {
@@ -1419,6 +1557,7 @@ if (
                             "Membership RPC error:",
                             error
                         );
+
 
                         throw error;
 
@@ -1436,6 +1575,7 @@ if (
 
                         confirmButton.disabled =
                             false;
+
 
                         confirmButton.textContent =
                             "Confirm & Submit";
@@ -1474,6 +1614,7 @@ if (
                         previewSection.hidden =
                             true;
 
+
                         previewSection.style.display =
                             "none";
 
@@ -1481,7 +1622,7 @@ if (
 
 
                     /* =================================================
-                       POPULATE FINAL MEMBERSHIP CARD
+                       POPULATE MEMBERSHIP CARD
                     ================================================= */
 
                     setPreview(
@@ -1539,7 +1680,7 @@ if (
 
 
                     /* =================================================
-                       DISPLAY ACTUAL PHOTOGRAPH ON CARD
+                       DISPLAY PHOTO ON FINAL CARD
                     ================================================= */
 
                     const successPhoto =
@@ -1553,37 +1694,41 @@ if (
                         selectedPhoto
                     ) {
 
-                        const photoReader =
-                            new FileReader();
+                        const successPhotoUrl =
+                            URL.createObjectURL(
+                                selectedPhoto
+                            );
 
 
-                        photoReader.onload =
-                            function (event) {
+                        successPhoto.src =
+                            successPhotoUrl;
 
-                                successPhoto.src =
-                                    event.target.result;
 
-                                successPhoto.style.display =
-                                    "block";
+                        successPhoto.style.display =
+                            "block";
+
+
+                        successPhoto.onload =
+                            function () {
+
+                                URL.revokeObjectURL(
+                                    successPhotoUrl
+                                );
 
                             };
-
-
-                        photoReader.readAsDataURL(
-                            selectedPhoto
-                        );
 
                     }
 
 
                     /* =================================================
-                       SHOW SUCCESS / MEMBERSHIP CARD
+                       SHOW SUCCESS CARD
                     ================================================= */
 
                     if (successSection) {
 
                         successSection.hidden =
                             false;
+
 
                         successSection.style.display =
                             "block";
@@ -1610,6 +1755,7 @@ if (
 
                     confirmButton.disabled =
                         false;
+
 
                     confirmButton.textContent =
                         "Confirm & Submit";
