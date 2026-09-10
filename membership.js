@@ -477,135 +477,106 @@ document.addEventListener("DOMContentLoaded", function () {
        PHOTO PREVIEW
     ========================================================= */
 
-    function showPhotoPreview(file) {
+  function showPhotoPreview(file) {
 
-        if (!photoUpload) {
-            return;
-        }
+    if (!photoUpload) {
+        return;
+    }
 
+    /*
+       Create a temporary browser URL for the selected image.
+       This displays immediately and is more reliable than
+       waiting for FileReader.
+    */
 
-        const reader =
-            new FileReader();
+    const imageUrl =
+        URL.createObjectURL(file);
 
+    photoUpload.innerHTML = "";
 
-        reader.onload =
-            function (event) {
+    const container =
+        document.createElement("div");
 
-                photoUpload.innerHTML =
-                    "";
-
-
-                const container =
-                    document.createElement(
-                        "div"
-                    );
-
-                container.className =
-                    "photo-preview-container";
+    container.className =
+        "photo-preview-container";
 
 
-                const image =
-                    document.createElement(
-                        "img"
-                    );
+    const image =
+        document.createElement("img");
 
-                image.className =
-                    "photo-preview-image";
+    image.className =
+        "photo-preview-image";
 
-                image.src =
-                    event.target.result;
+    image.src =
+        imageUrl;
 
-                image.alt =
-                    "Selected passport photograph";
+    image.alt =
+        "Selected passport photograph";
 
 
-                const info =
-                    document.createElement(
-                        "div"
-                    );
+    image.onload = function () {
 
-                info.className =
-                    "photo-upload-success";
-
-
-                info.innerHTML =
-                    "<strong>Photograph selected</strong>" +
-                    "<br>" +
-                    escapeHtml(file.name) +
-                    "<br>" +
-                    formatFileSize(file.size);
-
-
-                const changeButton =
-                    document.createElement(
-                        "button"
-                    );
-
-                changeButton.type =
-                    "button";
-
-                changeButton.className =
-                    "change-photo-button";
-
-                changeButton.textContent =
-                    "Change Photograph";
-
-
-                changeButton.addEventListener(
-                    "click",
-                    function () {
-
-                        photoInput.click();
-
-                    }
-                );
-
-
-                container.appendChild(
-                    image
-                );
-
-                container.appendChild(
-                    info
-                );
-
-                container.appendChild(
-                    changeButton
-                );
-
-
-                photoUpload.appendChild(
-                    container
-                );
-
-            };
-
-
-        reader.onerror =
-            function () {
-
-                console.error(
-                    "Could not read selected photograph."
-                );
-
-                alert(
-                    "The selected photograph could not be read. Please choose another image."
-                );
-
-                selectedPhoto =
-                    null;
-
-                photoInput.value =
-                    "";
-
-            };
-
-
-        reader.readAsDataURL(
-            file
+        URL.revokeObjectURL(
+            imageUrl
         );
 
-    }
+    };
+
+
+    const info =
+        document.createElement("div");
+
+    info.className =
+        "photo-upload-success";
+
+    info.innerHTML =
+        "<strong>Photograph selected</strong>" +
+        "<br>" +
+        escapeHtml(file.name) +
+        "<br>" +
+        formatFileSize(file.size);
+
+
+    const changeButton =
+        document.createElement("button");
+
+    changeButton.type =
+        "button";
+
+    changeButton.className =
+        "change-photo-button";
+
+    changeButton.textContent =
+        "Change Photograph";
+
+
+    changeButton.addEventListener(
+        "click",
+        function () {
+
+            photoInput.click();
+
+        }
+    );
+
+
+    container.appendChild(
+        image
+    );
+
+    container.appendChild(
+        info
+    );
+
+    container.appendChild(
+        changeButton
+    );
+
+
+    photoUpload.appendChild(
+        container
+    );
+}
 
 
     function formatFileSize(bytes) {
@@ -909,44 +880,43 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
 
+       
         /* =====================================================
-           PHOTO PREVIEW
-        ===================================================== */
+   PHOTO PREVIEW
+===================================================== */
 
-        const previewPhoto =
-            document.getElementById(
-                "previewPhoto"
-            );
+const previewPhoto =
+    document.getElementById(
+        "previewPhoto"
+    );
 
 
-        if (
-            previewPhoto &&
+if (
+    previewPhoto &&
+    selectedPhoto
+) {
+
+    const previewUrl =
+        URL.createObjectURL(
             selectedPhoto
-        ) {
+        );
 
-            const reader =
-                new FileReader();
+    previewPhoto.src =
+        previewUrl;
 
+    previewPhoto.style.display =
+        "block";
 
-            reader.onload =
-                function (event) {
+    previewPhoto.onload =
+        function () {
 
-                    previewPhoto.src =
-                        event.target.result;
-
-                    previewPhoto.style.display =
-                        "block";
-
-                };
-
-
-            reader.readAsDataURL(
-                selectedPhoto
+            URL.revokeObjectURL(
+                previewUrl
             );
 
-        }
+        };
 
-    }
+}
 
 
     /* =========================================================
