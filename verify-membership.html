@@ -838,137 +838,280 @@
 
         </section>
 
-        <section
-            id="verifiedResult"
-            class="verified-result"
-            aria-live="polite">
+       <!-- =========================================================
+     VERIFIED MEMBERSHIP CARD
+========================================================= -->
 
-            <div class="verified-heading">
-                <div class="check">✓</div>
+<section
+    id="registrationSuccess"
+    class="registration-success"
+    hidden>
 
-                <h2>MEMBERSHIP VERIFIED</h2>
+    <div class="success-heading">
 
-                <p>
-                    Your membership record has been successfully verified.
-                </p>
+        <span class="success-kicker">
+            MEMBERSHIP VERIFIED
+        </span>
+
+        <h2>
+            Membership Successfully Verified
+        </h2>
+
+        <p>
+            The membership information below has been verified.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         EXACT SAME CARD 1.0 USED AFTER REGISTRATION
+    ===================================================== -->
+
+    <div
+        id="membershipCard"
+        class="membership-id-card">
+
+        <!-- CARD HEADER -->
+
+        <div class="membership-card-header">
+
+            <div class="membership-brand">
+
+                <img
+                    src="assets/ochoudo-logo3.png"
+                    alt="Ochoudo Mandate Group"
+                    class="membership-card-logo">
+
             </div>
 
-            <div class="verification-card-wrap">
 
-                <article
-                    class="verification-membership-card"
-                    id="verifiedMembershipCard">
+            <div class="membership-card-title">
 
-                    <header class="verification-card-header">
+                <span>
+                    MEMBERSHIP
+                </span>
 
-                        <img
-                            src="assets/ochoudo-logo3.png"
-                            alt="Ochoudo Mandate Group">
+                <strong>
+                    IDENTIFICATION CARD
+                </strong>
 
-                    </header>
+            </div>
 
-                    <div class="verification-card-body">
+        </div>
 
-                        <div class="verification-card-top">
 
-                            <div class="verification-photo">
+        <!-- CARD BODY -->
 
-                                <img
-                                    id="verifiedMemberPhoto"
-                                    src=""
-                                    alt="Member photograph">
+        <div class="membership-card-body">
 
-                                <div
-                                    id="verificationPhotoPlaceholder"
-                                    class="verification-photo-placeholder">
-                                    MEMBER PHOTO<br>
-                                    NOT AVAILABLE
-                                </div>
+            <!-- PHOTO -->
 
-                            </div>
+            <div class="membership-photo-area">
 
-                            <div>
+                <div class="membership-photo-frame">
 
-                                <div
-                                    id="verifiedMemberName"
-                                    class="verification-member-name">
-                                </div>
+                    <img
+                        id="successMemberPhoto"
+                        src=""
+                        alt="Member photograph">
 
-                                <div class="verification-member-id">
+                </div>
 
-                                    <span>MEMBERSHIP ID</span>
+                <span class="member-label">
+                    MEMBER
+                </span>
 
-                                    <strong
-                                        id="verifiedMemberId">
-                                    </strong>
+            </div>
 
-                                </div>
 
-                                <div class="verification-details">
+            <!-- INFORMATION -->
 
-                                    <div class="verification-detail">
-                                        <span>GENDER</span>
-                                        <strong id="verifiedMemberGender"></strong>
-                                    </div>
+            <div class="membership-information">
 
-                                    <div class="verification-detail">
-                                        <span>REGISTRATION DATE</span>
-                                        <strong id="verifiedRegistrationDate"></strong>
-                                    </div>
+                <!-- MEMBERSHIP ID -->
 
-                                    <div class="verification-detail">
-                                        <span>LGA</span>
-                                        <strong id="verifiedMemberLga"></strong>
-                                    </div>
+                <div class="membership-number-box">
 
-                                    <div class="verification-detail">
-                                        <span>WARD</span>
-                                        <strong id="verifiedMemberWard"></strong>
-                                    </div>
+                    <span>
+                        MEMBERSHIP ID
+                    </span>
 
-                                    <div class="verification-detail full">
-                                        <span>POLLING UNIT</span>
-                                        <strong id="verifiedMemberPollingUnit"></strong>
-                                    </div>
+                    <strong id="successMemberId">
+                        -
+                    </strong>
 
-                                    <div class="verification-detail full">
-                                        <span>MEMBERSHIP STATUS</span>
-                                        <strong id="verifiedMembershipStatus"></strong>
-                                    </div>
+                </div>
 
-                                </div>
 
-                            </div>
+                <!-- NAME -->
 
-                        </div>
+                <div class="member-name-block">
+
+                    <span>
+                        FULL NAME
+                    </span>
+
+                    <strong id="successMemberName">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <!-- DETAILS -->
+
+                <div class="member-details-grid">
+
+                    <div class="member-detail">
+
+                        <span>
+                            GENDER
+                        </span>
+
+                        <strong id="successMemberGender">
+                            -
+                        </strong>
 
                     </div>
 
-                    <footer class="verification-card-footer">
-                        Ochoudo Mandate Group • Together, We Build a New Imo That Works for All.
-                    </footer>
 
-                </article>
+                    <div class="member-detail">
+
+                        <span>
+                            REGISTRATION DATE
+                        </span>
+
+                        <strong id="successRegistrationDate">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="member-detail">
+
+                        <span>
+                            LGA
+                        </span>
+
+                        <strong id="successMemberLga">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="member-detail">
+
+                        <span>
+                            WARD
+                        </span>
+
+                        <strong id="successMemberWard">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="member-detail member-detail-wide">
+
+                        <span>
+                            POLLING UNIT
+                        </span>
+
+                        <strong id="successMemberPollingUnit">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="member-detail">
+
+                        <span>
+                            MEMBERSHIP STATUS
+                        </span>
+
+                        <strong id="successMembershipStatus">
+                            PENDING
+                        </strong>
+
+                    </div>
+
+                </div>
 
             </div>
 
-            <div class="verification-actions">
+        </div>
 
-                <button
-                    type="button"
-                    id="printVerifiedCard">
-                    PRINT MEMBERSHIP CARD
-                </button>
 
-                <button
-                    type="button"
-                    id="verifyAnother">
-                    VERIFY ANOTHER MEMBER
-                </button>
+        <!-- CARD FOOTER -->
 
-            </div>
+        <div class="membership-card-footer">
 
-        </section>
+            <span>
+                TOGETHER, WE BUILD A NEW IMO THAT WORKS FOR ALL.
+            </span>
+
+            <div class="card-accent"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- VERIFICATION NOTICE -->
+
+    <div class="membership-verification-notice">
+
+        <div class="notice-icon">
+            ✓
+        </div>
+
+        <div>
+
+            <strong>
+                Membership Verified
+            </strong>
+
+            <p>
+                This membership record was successfully verified
+                using the registered phone number and Membership ID.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <div class="membership-card-actions">
+
+        <button
+            type="button"
+            id="printVerifiedCard"
+            class="membership-print-button">
+
+            Print Membership Card
+
+        </button>
+
+
+        <button
+            type="button"
+            id="verifyAnother"
+            class="membership-home-button">
+
+            Verify Another Member
+
+        </button>
+
+    </div>
+
+</section>
 
     </div>
 </main>
