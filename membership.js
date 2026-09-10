@@ -610,29 +610,25 @@ if (error) {
     throw error;
 }
 
-        /* =================================================
-           SUCCESS
-           ================================================= */
+  /* =================================================
+   SUCCESS
+   ================================================= */
 
-        const memberId =
-            data && data.member_id
-                ? data.member_id
-                : "Your membership number";
+const memberId = data || "Your membership number";
 
-
-        alert(
-            "REGISTRATION SUCCESSFUL!\n\n" +
-            "Welcome to the Ochoudo Mandate Group.\n\n" +
-            "Your Membership ID is:\n" +
-            memberId +
-            "\n\n" +
-            "Please keep this number for your records."
-        );
+alert(
+    "REGISTRATION SUCCESSFUL!\n\n" +
+    "Welcome to the Ochoudo Mandate Group.\n\n" +
+    "Your Membership ID is:\n" +
+    memberId +
+    "\n\n" +
+    "Please keep this number for your records."
+);
 
 
-        /* Reset form */
+/* Reset form */
 
-        form.reset();
+form.reset();
 
         resetWard();
         resetPollingUnit();
