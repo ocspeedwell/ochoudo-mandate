@@ -1427,9 +1427,9 @@ function setPreview(id, value) {
                     const memberRecord = {
 
                         full_name:
-                            document.getElementById(
-                                "fullname"
-                            ).value,
+    document.getElementById(
+        "fullname"
+    ).value.toUpperCase(),
 
 
                         date_of_birth:
@@ -1438,10 +1438,10 @@ function setPreview(id, value) {
                             ).value,
 
 
-                        gender:
-                            document.getElementById(
-                                "gender"
-                            ).value,
+                       gender:
+    document.getElementById(
+        "gender"
+    ).value.toUpperCase(),
 
 
                         phone:
@@ -1455,7 +1455,7 @@ function setPreview(id, value) {
                         email:
                             document.getElementById(
                                 "email"
-                            ).value,
+                            ).value.toUpperCase(),
 
 
                         ndc_member:
@@ -1497,31 +1497,31 @@ function setPreview(id, value) {
                         residence_country:
                             document.getElementById(
                                 "country"
-                            ).value,
+                             ).value.toUpperCase(),
 
 
                         residence_state:
                             document.getElementById(
                                 "residence_state"
-                            ).value,
+                            ).value.toUpperCase(),
 
 
                         residence_city:
                             document.getElementById(
                                 "city"
-                            ).value,
+                            ).value.toUpperCase(),
 
 
                         occupation:
                             document.getElementById(
                                 "occupation"
-                            ).value,
+                             ).value.toUpperCase(),
 
 
                         professional_skills:
                             document.getElementById(
                                 "professional_skills"
-                            ).value,
+                            ).value.toUpperCase(),
 
 
                         interests:
@@ -1549,7 +1549,7 @@ function setPreview(id, value) {
                         registration_date:
                             document.getElementById(
                                 "registration_date"
-                            ).value,
+                            ).value.toUpperCase(),
 
 
                         passport_url:
