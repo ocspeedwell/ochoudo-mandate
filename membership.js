@@ -31,7 +31,7 @@
 
     if (
         typeof window.supabase !== "undefined" &&
-        SUPABASE_KEY !== "YOUR_EXISTING_PUBLISHABLE_KEY"
+        SUPABASE_KEY !== "sb_publishable_k3whUGyuDbdQU6GA6egeuQ_k-g-nFoL"
     ) {
         db = window.supabase.createClient(
             SUPABASE_URL,
