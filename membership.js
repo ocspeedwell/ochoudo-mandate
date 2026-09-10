@@ -25,7 +25,7 @@
         "https://yopqftofkvwrpyyluffw.supabase.co";
 
     const SUPABASE_KEY =
-        "YOUR_EXISTING_PUBLISHABLE_KEY";
+        "sb_publishable_k3whUGyuDbdQU6GA6egeuQ_k-g-nFoL";
 
     let db = null;
 
