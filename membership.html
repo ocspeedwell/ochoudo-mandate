@@ -921,31 +921,472 @@
 
                 <!-- ================= SUBMIT ================= -->
 
-                <div class="submit-area">
+               <div class="submit-area">
 
+    <button
+        type="submit"
+        class="submit-membership">
+        Preview Registration
+    </button>
 
-                    <button
-                        type="submit"
-                        class="submit-membership">
+    <p>
+        Together, We Build a New Imo That Works for All.
+    </p>
 
-                        Submit Membership Registration
-
-                    </button>
-
-
-                    <p>
-
-                        Together, We Build a New Imo That Works for All.
-
-                    </p>
-
-
-                </div>
+</div>
 
 
             </form>
 
+<!-- ================= REGISTRATION PREVIEW ================= -->
 
+<section
+    id="registrationPreview"
+    class="registration-preview"
+    hidden>
+
+    <div class="preview-header">
+
+        <p class="form-eyebrow">
+            REVIEW YOUR INFORMATION
+        </p>
+
+        <h2>
+            Registration Preview
+        </h2>
+
+        <p>
+            Please carefully review the information below before
+            submitting your membership registration.
+        </p>
+
+    </div>
+
+
+    <!-- PERSONAL INFORMATION -->
+
+    <div class="preview-card">
+
+        <div class="preview-card-header">
+            <span class="preview-number">01</span>
+
+            <div>
+                <p class="form-eyebrow">
+                    YOUR DETAILS
+                </p>
+
+                <h3>
+                    Personal Information
+                </h3>
+            </div>
+        </div>
+
+
+        <div class="preview-personal">
+
+            <div
+                id="previewPhoto"
+                class="preview-photo">
+            </div>
+
+
+            <div class="preview-grid">
+
+                <div class="preview-item">
+                    <span>Full Name</span>
+                    <strong id="previewFullname"></strong>
+                </div>
+
+                <div class="preview-item">
+                    <span>Date of Birth</span>
+                    <strong id="previewDob"></strong>
+                </div>
+
+                <div class="preview-item">
+                    <span>Gender</span>
+                    <strong id="previewGender"></strong>
+                </div>
+
+                <div class="preview-item">
+                    <span>Phone Number</span>
+                    <strong id="previewPhone"></strong>
+                </div>
+
+                <div class="preview-item">
+                    <span>Email Address</span>
+                    <strong id="previewEmail"></strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- NDC MEMBERSHIP -->
+
+    <div class="preview-card">
+
+        <div class="preview-card-header">
+
+            <span class="preview-number red-preview-number">
+                02
+            </span>
+
+            <div>
+
+                <p class="form-eyebrow">
+                    POLITICAL PARTICIPATION
+                </p>
+
+                <h3>
+                    NDC Membership
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <div class="preview-grid">
+
+            <div class="preview-item">
+                <span>NDC Member</span>
+                <strong id="previewNdcMember"></strong>
+            </div>
+
+            <div class="preview-item">
+                <span>NDC Party Card Number</span>
+                <strong id="previewPartyCard"></strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- IMO POLITICAL LOCATION -->
+
+    <div class="preview-card">
+
+        <div class="preview-card-header">
+
+            <span class="preview-number">
+                03
+            </span>
+
+            <div>
+
+                <p class="form-eyebrow">
+                    YOUR IMO CONNECTION
+                </p>
+
+                <h3>
+                    Political Location in Imo
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <div class="preview-grid">
+
+            <div class="preview-item">
+                <span>Local Government Area</span>
+                <strong id="previewLga"></strong>
+            </div>
+
+            <div class="preview-item">
+                <span>Ward</span>
+                <strong id="previewWard"></strong>
+            </div>
+
+            <div class="preview-item full-preview-item">
+                <span>Polling Unit</span>
+                <strong id="previewPollingUnit"></strong>
+            </div>
+
+            <div class="preview-item full-preview-item">
+                <span>Polling Unit Code</span>
+                <strong id="previewPollingCode"></strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- RESIDENCE -->
+
+    <div class="preview-card">
+
+        <div class="preview-card-header">
+
+            <span class="preview-number">
+                04
+            </span>
+
+            <div>
+
+                <p class="form-eyebrow">
+                    CURRENT RESIDENCE
+                </p>
+
+                <h3>
+                    Where You Live
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <div class="preview-grid">
+
+            <div class="preview-item">
+                <span>Country</span>
+                <strong id="previewCountry"></strong>
+            </div>
+
+            <div class="preview-item">
+                <span>State / Province</span>
+                <strong id="previewResidenceState"></strong>
+            </div>
+
+            <div class="preview-item">
+                <span>City</span>
+                <strong id="previewCity"></strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SKILLS -->
+
+    <div class="preview-card">
+
+        <div class="preview-card-header">
+
+            <span class="preview-number">
+                05
+            </span>
+
+            <div>
+
+                <p class="form-eyebrow">
+                    YOUR CONTRIBUTION
+                </p>
+
+                <h3>
+                    Skills & Interests
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <div class="preview-grid">
+
+            <div class="preview-item">
+                <span>Occupation</span>
+                <strong id="previewOccupation"></strong>
+            </div>
+
+            <div class="preview-item full-preview-item">
+                <span>Professional Skills</span>
+                <strong id="previewSkills"></strong>
+            </div>
+
+            <div class="preview-item full-preview-item">
+                <span>Areas of Interest</span>
+                <strong id="previewInterests"></strong>
+            </div>
+
+            <div class="preview-item full-preview-item">
+                <span>Reason for Joining</span>
+                <strong id="previewReason"></strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- DECLARATION -->
+
+    <div class="preview-card">
+
+        <div class="preview-card-header">
+
+            <span class="preview-number">
+                06
+            </span>
+
+            <div>
+
+                <p class="form-eyebrow">
+                    CONFIRMATION
+                </p>
+
+                <h3>
+                    Declaration
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <div class="preview-grid">
+
+            <div class="preview-item">
+                <span>Declaration Name</span>
+                <strong id="previewDeclarationName"></strong>
+            </div>
+
+            <div class="preview-item">
+                <span>Registration Date</span>
+                <strong id="previewRegistrationDate"></strong>
+            </div>
+
+        </div>
+
+
+        <div class="preview-confirmation">
+            ✓ I confirm that the information provided is true
+            and correct to the best of my knowledge.
+        </div>
+
+    </div>
+
+
+    <!-- PREVIEW ACTIONS -->
+
+    <div class="preview-actions">
+
+        <button
+            type="button"
+            id="editRegistration"
+            class="preview-edit-button">
+            ← Edit Information
+        </button>
+
+
+        <button
+            type="button"
+            id="confirmRegistration"
+            class="preview-confirm-button">
+            ✓ Confirm & Submit
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= REGISTRATION SUCCESS ================= -->
+
+<section
+    id="registrationSuccess"
+    class="registration-success"
+    hidden>
+
+    <div class="success-card">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+
+        <p class="form-eyebrow">
+            REGISTRATION COMPLETE
+        </p>
+
+
+        <h2>
+            Registration Successful
+        </h2>
+
+
+        <p class="success-welcome">
+            Welcome to the Ochoudo Mandate Group.
+        </p>
+
+
+        <p class="success-message">
+            Thank you for joining a growing movement committed
+            to building a better Imo State.
+        </p>
+
+
+        <div class="membership-id-box">
+
+            <span>
+                YOUR MEMBERSHIP ID
+            </span>
+
+            <strong id="successMemberId">
+                OMG-2026-000000
+            </strong>
+
+        </div>
+
+
+        <div class="success-details">
+
+            <div>
+                <span>Member Name</span>
+                <strong id="successMemberName"></strong>
+            </div>
+
+            <div>
+                <span>Registration Date</span>
+                <strong id="successRegistrationDate"></strong>
+            </div>
+
+            <div>
+                <span>Registration Status</span>
+                <strong>
+                    Pending Verification
+                </strong>
+            </div>
+
+        </div>
+
+
+        <p class="success-note">
+            Please keep your Membership ID for your records.
+            Your registration has been successfully received
+            and is awaiting verification.
+        </p>
+
+
+        <div class="success-actions">
+
+            <button
+                type="button"
+                id="printConfirmation"
+                class="print-confirmation-button">
+                Print Confirmation
+            </button>
+
+
+            <a
+                href="index.html"
+                class="return-home-button">
+                Return to Ochoudo Mandate Group
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
         </div>
 
 
