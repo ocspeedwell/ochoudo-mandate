@@ -1441,3 +1441,518 @@
     }
 
 }
+/* =========================================================
+   OMG MEMBERSHIP IDENTIFICATION CARD
+   ========================================================= */
+
+.registration-success {
+    padding: 50px 20px 80px;
+    background: #f5f8f6;
+}
+
+.success-wrapper {
+    width: 100%;
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   SUCCESS HEADING
+   ========================================================= */
+
+.success-heading {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.success-check {
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    background: #006b4f;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.success-eyebrow {
+    margin: 0 0 8px;
+    font-size: 10px;
+    letter-spacing: 3px;
+    font-weight: 700;
+    color: #006b4f;
+}
+
+.success-heading h1 {
+    margin: 0;
+    font-size: 34px;
+    line-height: 1.15;
+    color: #10233f;
+}
+
+.success-welcome {
+    margin: 8px 0 6px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #006b4f;
+}
+
+.success-message {
+    margin: 0;
+    color: #667085;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   MEMBERSHIP CARD
+   ========================================================= */
+
+.membership-id-card {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid #d8e2dd;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.12);
+    position: relative;
+}
+
+
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
+
+.id-card-header {
+    min-height: 100px;
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    background: #ffffff;
+    border-bottom: 5px solid #006b4f;
+}
+
+.id-card-brand img {
+    width: 220px;
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.id-card-title {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.id-card-title span {
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: 700;
+    color: #e31e24;
+}
+
+.id-card-title strong {
+    font-size: 19px;
+    letter-spacing: 1px;
+    color: #006b4f;
+}
+
+
+/* =========================================================
+   CARD BODY
+   ========================================================= */
+
+.id-card-body {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    gap: 30px;
+    padding: 30px;
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff 0%,
+            #f8fbf9 100%
+        );
+}
+
+
+/* =========================================================
+   PHOTO
+   ========================================================= */
+
+.id-card-photo-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.id-card-photo {
+    width: 175px;
+    height: 210px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 4px solid #006b4f;
+    background: #edf3f0;
+}
+
+.id-card-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.photo-label {
+    margin-top: 9px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    font-weight: 700;
+    color: #667085;
+}
+
+
+/* =========================================================
+   INFORMATION
+   ========================================================= */
+
+.id-card-information {
+    min-width: 0;
+}
+
+.membership-id-display {
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    border-radius: 8px;
+    background: #006b4f;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.membership-id-display span {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+}
+
+.membership-id-display strong {
+    font-size: 20px;
+    letter-spacing: 1px;
+    color: #ffffff;
+}
+
+
+.member-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid #dfe7e3;
+    border-left: 1px solid #dfe7e3;
+}
+
+.member-detail {
+    min-width: 0;
+    padding: 13px 15px;
+    border-right: 1px solid #dfe7e3;
+    border-bottom: 1px solid #dfe7e3;
+}
+
+.member-detail.full-detail {
+    grid-column: 1 / -1;
+}
+
+.member-detail span {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 9px;
+    letter-spacing: 1.3px;
+    font-weight: 700;
+    color: #6b7280;
+}
+
+.member-detail strong {
+    display: block;
+    font-size: 14px;
+    line-height: 1.3;
+    color: #10233f;
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   CARD FOOTER
+   ========================================================= */
+
+.id-card-footer {
+    min-height: 48px;
+    padding: 12px 25px;
+    background: #006b4f;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    font-weight: 700;
+}
+
+.id-card-footer span {
+    color: #ffffff;
+    font-size: 9px;
+}
+
+
+/* Red accent */
+
+.id-card-footer::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 90px;
+    height: 5px;
+    background: #e31e24;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.success-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 25px 0;
+}
+
+.print-card-button,
+.return-home-button {
+    min-height: 50px;
+    padding: 0 25px;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: 0.2s ease;
+}
+
+.print-card-button {
+    border: 0;
+    background: #006b4f;
+    color: #ffffff;
+}
+
+.print-card-button:hover {
+    background: #00563f;
+}
+
+.return-home-button {
+    border: 2px solid #006b4f;
+    background: #ffffff;
+    color: #006b4f;
+}
+
+.return-home-button:hover {
+    background: #006b4f;
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   NOTICE
+   ========================================================= */
+
+.success-notice {
+    max-width: 850px;
+    margin: 20px auto 0;
+    padding: 18px 22px;
+    border-left: 4px solid #e31e24;
+    background: #ffffff;
+    border-radius: 7px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.05);
+}
+
+.success-notice strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #006b4f;
+    font-size: 14px;
+}
+
+.success-notice p {
+    margin: 0;
+    color: #667085;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .registration-success {
+        padding: 30px 12px 50px;
+    }
+
+    .success-heading h1 {
+        font-size: 27px;
+    }
+
+    .id-card-header {
+        padding: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .id-card-brand img {
+        width: 190px;
+    }
+
+    .id-card-title {
+        text-align: left;
+    }
+
+    .id-card-body {
+        grid-template-columns: 1fr;
+        gap: 22px;
+        padding: 20px;
+    }
+
+    .id-card-photo-area {
+        align-items: center;
+    }
+
+    .id-card-photo {
+        width: 145px;
+        height: 175px;
+    }
+
+    .membership-id-display {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .membership-id-display strong {
+        font-size: 18px;
+    }
+
+    .member-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .member-detail.full-detail {
+        grid-column: auto;
+    }
+
+    .id-card-footer {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .success-actions {
+        flex-direction: column;
+    }
+
+    .print-card-button,
+    .return-home-button {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   PRINT ONLY THE MEMBERSHIP CARD
+   ========================================================= */
+
+@media print {
+
+    body * {
+        visibility: hidden !important;
+    }
+
+    #registrationSuccess,
+    #registrationSuccess * {
+        visibility: visible !important;
+    }
+
+    #registrationSuccess {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: #ffffff !important;
+    }
+
+    .success-heading,
+    .success-actions,
+    .success-notice {
+        display: none !important;
+    }
+
+    .success-wrapper {
+        max-width: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    .membership-id-card {
+        width: 100% !important;
+        max-width: 900px !important;
+        margin: 0 auto !important;
+        box-shadow: none !important;
+        border: 1px solid #006b4f !important;
+        border-radius: 0 !important;
+    }
+
+    .id-card-header {
+        border-bottom: 4px solid #006b4f !important;
+    }
+
+    .id-card-body {
+        background: #ffffff !important;
+    }
+
+    .id-card-footer {
+        background: #006b4f !important;
+        color: #ffffff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .membership-id-display {
+        background: #006b4f !important;
+        color: #ffffff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .id-card-footer::before {
+        background: #e31e24 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
