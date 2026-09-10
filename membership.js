@@ -597,18 +597,18 @@ form.addEventListener("submit", async function (event) {
         };
 
 
-        const { data, error } =
-            await db
-                .from("members")
-                .insert(memberRecord)
-                .select("member_id")
-                .single();
-
-
-        if (error) {
-            throw error;
+  const { data, error } =
+    await db.rpc(
+        "register_membership",
+        {
+            p_member: memberRecord
         }
+    );
 
+
+if (error) {
+    throw error;
+}
 
         /* =================================================
            SUCCESS
