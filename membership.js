@@ -1275,10 +1275,11 @@ if (
 
 
                         phone:
-                            document.getElementById(
-                                "phone"
-                            ).value,
-
+    normalizePhoneNumber(
+        document.getElementById(
+            "phone"
+        ).value
+    ),
 
                         email:
                             document.getElementById(
