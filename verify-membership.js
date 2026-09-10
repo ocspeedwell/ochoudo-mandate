@@ -498,9 +498,9 @@ async function loadMemberPhoto(
 
 
         loadMemberPhoto(
-            member.passport_url
-        );
-
+    phoneInput.value,
+    member.member_id
+);
 
         result.classList.add("show");
 
