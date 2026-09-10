@@ -55,13 +55,10 @@
                 .replace(/\D/g, "");
 
         if (/^0\d{10}$/.test(digits)) {
-
-            return "234" +
-                digits.substring(1);
+            return "234" + digits.substring(1);
         }
 
         if (/^234\d{10}$/.test(digits)) {
-
             return digits;
         }
 
@@ -75,15 +72,13 @@
 
     function cleanText(value) {
 
-        return String(value ?? "")
-            .trim();
+        return String(value ?? "").trim();
     }
 
 
     function upper(value) {
 
-        const text =
-            cleanText(value);
+        const text = cleanText(value);
 
         return text
             ? text.toUpperCase()
@@ -96,8 +91,7 @@
         message.textContent = text;
 
         message.className =
-            "verification-message show " +
-            type;
+            "verification-message show " + type;
     }
 
 
@@ -166,8 +160,17 @@
         setText("verifiedMemberLga", "");
         setText("verifiedMemberWard", "");
         setText("verifiedMemberPollingUnit", "");
-        setText("verifiedRegistrationDate", "");
         setText("verifiedMembershipStatus", "");
+
+        const dateElement =
+            document.getElementById(
+                "verifiedRegistrationDate"
+            );
+
+        if (dateElement) {
+            dateElement.textContent =
+                "NOT PROVIDED";
+        }
 
         const photo =
             document.getElementById(
@@ -179,141 +182,88 @@
                 "verificationPhotoPlaceholder"
             );
 
+        if (photo) {
+            photo.removeAttribute("src");
+            photo.style.display = "none";
+        }
+
+        if (placeholder) {
+            placeholder.innerHTML =
+                "MEMBER PHOTO<br>NOT AVAILABLE";
+
+            placeholder.style.display =
+                "block";
+        }
+    }
+
+
+    /* =========================================================
+       SECURE MEMBER PHOTO
+       ========================================================= */
+
+    async function loadMemberPhoto(
+        phone,
+        memberId
+    ) {
+
+        const photo =
+            document.getElementById(
+                "verifiedMemberPhoto"
+            );
+
+        const placeholder =
+            document.getElementById(
+                "verificationPhotoPlaceholder"
+            );
+
+        if (!photo || !placeholder) {
+            return;
+        }
+
         photo.removeAttribute("src");
 
         photo.style.display =
             "none";
 
+        placeholder.textContent =
+            "LOADING MEMBER PHOTO...";
+
         placeholder.style.display =
             "block";
-    }
 
+        try {
 
-    /* =========================================================
-       MEMBER PHOTO
-       ========================================================= */
-
-async function loadMemberPhoto(
-    phone,
-    memberId
-) {
-
-    const photo =
-        document.getElementById(
-            "verifiedMemberPhoto"
-        );
-
-    const placeholder =
-        document.getElementById(
-            "verificationPhotoPlaceholder"
-        );
-
-    photo.removeAttribute("src");
-
-    photo.style.display = "none";
-
-    placeholder.textContent =
-        "LOADING MEMBER PHOTO...";
-
-    placeholder.style.display = "block";
-
-    try {
-
-        const { data, error } =
-            await db.functions.invoke(
-                "get-member-photo",
-                {
-                    body: {
-                        phone: phone,
-                        member_id: memberId
+            const { data, error } =
+                await db.functions.invoke(
+                    "get-member-photo",
+                    {
+                        body: {
+                            phone: phone,
+                            member_id: memberId
+                        }
                     }
-                }
-            );
-
-        if (error) {
-
-            console.error(
-                "Photo function error:",
-                error
-            );
-
-            throw error;
-        }
-
-        if (
-            !data ||
-            !data.photo_url
-        ) {
-
-            placeholder.innerHTML =
-                "MEMBER PHOTO<br>NOT AVAILABLE";
-
-            return;
-        }
-
-        photo.onload =
-            function () {
-
-                photo.style.display =
-                    "block";
-
-                placeholder.style.display =
-                    "none";
-            };
-
-        photo.onerror =
-            function () {
-
-                photo.removeAttribute(
-                    "src"
                 );
 
-                photo.style.display =
-                    "none";
+            if (error) {
+
+                console.error(
+                    "Photo function error:",
+                    error
+                );
+
+                throw error;
+            }
+
+            if (
+                !data ||
+                !data.photo_url
+            ) {
 
                 placeholder.innerHTML =
                     "MEMBER PHOTO<br>NOT AVAILABLE";
 
-                placeholder.style.display =
-                    "block";
-            };
-
-        photo.src =
-            data.photo_url;
-
-    } catch (error) {
-
-        console.error(
-            "Unable to load member photo:",
-            error
-        );
-
-        placeholder.innerHTML =
-            "MEMBER PHOTO<br>NOT AVAILABLE";
-
-        placeholder.style.display =
-            "block";
-    }
-}
-
-
-        /*
-         * The member-photos bucket is private.
-         *
-         * We deliberately do not make the bucket public.
-         *
-         * If passport_url contains a valid signed URL,
-         * it can be displayed directly.
-         *
-         * If it contains only the storage path,
-         * the secure photo-delivery mechanism can be
-         * connected later without exposing the bucket.
-         */
-
-        if (
-            passportUrl.startsWith("http://") ||
-            passportUrl.startsWith("https://")
-        ) {
+                return;
+            }
 
             photo.onload =
                 function () {
@@ -325,36 +275,37 @@ async function loadMemberPhoto(
                         "none";
                 };
 
-
             photo.onerror =
                 function () {
 
-                    photo.removeAttribute(
-                        "src"
-                    );
+                    photo.removeAttribute("src");
 
                     photo.style.display =
                         "none";
+
+                    placeholder.innerHTML =
+                        "MEMBER PHOTO<br>NOT AVAILABLE";
 
                     placeholder.style.display =
                         "block";
                 };
 
-
             photo.src =
-                passportUrl;
+                data.photo_url;
 
-            return;
+        } catch (error) {
+
+            console.error(
+                "Unable to load member photo:",
+                error
+            );
+
+            placeholder.innerHTML =
+                "MEMBER PHOTO<br>NOT AVAILABLE";
+
+            placeholder.style.display =
+                "block";
         }
-
-
-        photo.removeAttribute("src");
-
-        photo.style.display =
-            "none";
-
-        placeholder.style.display =
-            "block";
     }
 
 
@@ -370,7 +321,6 @@ async function loadMemberPhoto(
         const normalizedPhone =
             normalizePhone(phone);
 
-
         if (!normalizedPhone) {
 
             throw new Error(
@@ -378,11 +328,9 @@ async function loadMemberPhoto(
             );
         }
 
-
         const cleanMemberId =
             cleanText(memberId)
                 .toUpperCase();
-
 
         if (!cleanMemberId) {
 
@@ -390,7 +338,6 @@ async function loadMemberPhoto(
                 "Please enter your Membership ID."
             );
         }
-
 
         const { data, error } =
             await db.rpc(
@@ -404,7 +351,6 @@ async function loadMemberPhoto(
                 }
             );
 
-
         if (error) {
 
             console.error(
@@ -417,7 +363,6 @@ async function loadMemberPhoto(
             );
         }
 
-
         if (
             !data ||
             data.length === 0
@@ -427,7 +372,6 @@ async function loadMemberPhoto(
                 "Membership record not found. Please check your phone number and Membership ID."
             );
         }
-
 
         return data[0];
     }
@@ -444,36 +388,30 @@ async function loadMemberPhoto(
             member.full_name
         );
 
-
         setText(
             "verifiedMemberId",
             member.member_id
         );
-
 
         setText(
             "verifiedMemberGender",
             member.gender
         );
 
-
         setText(
             "verifiedMemberLga",
             member.lga
         );
-
 
         setText(
             "verifiedMemberWard",
             member.ward
         );
 
-
         setText(
             "verifiedMemberPollingUnit",
             member.polling_unit
         );
-
 
         setText(
             "verifiedMembershipStatus",
@@ -481,12 +419,10 @@ async function loadMemberPhoto(
             "PENDING"
         );
 
-
         const dateElement =
             document.getElementById(
                 "verifiedRegistrationDate"
             );
-
 
         if (dateElement) {
 
@@ -496,14 +432,17 @@ async function loadMemberPhoto(
                 );
         }
 
+        /*
+         * Request the photograph only after the
+         * membership record has been verified.
+         */
 
         loadMemberPhoto(
-    phoneInput.value,
-    member.member_id
-);
+            phoneInput.value,
+            member.member_id
+        );
 
         result.classList.add("show");
-
 
         result.scrollIntoView({
             behavior: "smooth",
@@ -526,13 +465,10 @@ async function loadMemberPhoto(
 
             resetVerifiedCard();
 
-
-            button.disabled =
-                true;
+            button.disabled = true;
 
             button.textContent =
                 "VERIFYING...";
-
 
             try {
 
@@ -542,22 +478,16 @@ async function loadMemberPhoto(
                         memberIdInput.value
                     );
 
-
-                displayMember(
-                    member
-                );
-
+                displayMember(member);
 
                 showMessage(
                     "Membership verified successfully.",
                     "success"
                 );
 
-
             } catch (error) {
 
                 console.error(error);
-
 
                 showMessage(
                     error.message ||
@@ -565,11 +495,9 @@ async function loadMemberPhoto(
                     "error"
                 );
 
-
             } finally {
 
-                button.disabled =
-                    false;
+                button.disabled = false;
 
                 button.textContent =
                     "VERIFY MEMBERSHIP";
@@ -593,7 +521,7 @@ async function loadMemberPhoto(
 
 
     /* =========================================================
-       PRINT
+       PRINT MEMBERSHIP CARD
        ========================================================= */
 
     printButton.addEventListener(
@@ -619,12 +547,10 @@ async function loadMemberPhoto(
 
             form.reset();
 
-
             window.scrollTo({
                 top: 0,
                 behavior: "smooth"
             });
-
 
             phoneInput.focus();
         }
