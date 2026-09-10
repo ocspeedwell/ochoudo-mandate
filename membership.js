@@ -22,7 +22,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let imoElectoralData = null;
     let selectedPhoto = null;
+/* =========================================================
+   FORCE TEXT ENTRY TO UPPERCASE
+   ========================================================= */
 
+const uppercaseFieldIds = [
+    "fullname",
+    "gender",
+    "email",
+    "party_card",
+    "country",
+    "residence_state",
+    "city",
+    "occupation",
+    "professional_skills",
+    "reason",
+    "declaration_name"
+];
+
+uppercaseFieldIds.forEach(function (fieldId) {
+    const field = document.getElementById(fieldId);
+
+    if (!field) return;
+
+    field.addEventListener("input", function () {
+
+        const start = field.selectionStart;
+        const end = field.selectionEnd;
+
+        field.value = field.value.toUpperCase();
+
+        if (
+            typeof start === "number" &&
+            typeof end === "number"
+        ) {
+            field.setSelectionRange(start, end);
+        }
+    });
+
+    field.value = field.value.toUpperCase();
+});
 
     /* =========================================================
        SUPABASE
@@ -783,29 +822,18 @@ document.addEventListener("DOMContentLoaded", function () {
     /* =========================================================
        PREVIEW HELPER
     ========================================================= */
+function setPreview(id, value) {
 
-    function setPreview(
-        id,
-        value
-    ) {
+    const element =
+        document.getElementById(id);
 
-        const element =
-            document.getElementById(
-                id
-            );
+    if (!element) return;
 
-
-        if (!element) {
-            return;
-        }
-
-
-        element.textContent =
-            value ||
-            "Not provided";
-
-    }
-
+    element.textContent =
+        typeof value === "string"
+            ? (value.toUpperCase() || "Not provided")
+            : (value || "Not provided");
+}
 
     /* =========================================================
        COLLECT INTERESTS
