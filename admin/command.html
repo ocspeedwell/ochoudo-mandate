@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMG Command Centre</title>
+    <link rel="icon" href="../assets/ochoudo-favicon.png">
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        .command-page { padding: 28px 0 60px; }
+        .command-hero { background:#fff; border:1px solid #e6eaf1; border-radius:16px; padding:26px; box-shadow:0 8px 24px rgba(7,27,73,.06); margin-bottom:20px; }
+        .command-kicker { display:block; font-size:11px; font-weight:900; letter-spacing:.14em; color:#d21f2b; }
+        .command-hero h1 { margin:5px 0 8px; color:#071b49; font-size:28px; }
+        .command-hero p { margin:0; color:#68758d; line-height:1.6; max-width:900px; }
+        .command-actions { margin-top:18px; display:flex; gap:10px; flex-wrap:wrap; }
+        .command-button { border:0; border-radius:8px; background:#071b49; color:#fff; padding:11px 15px; font:inherit; font-weight:900; font-size:11px; cursor:pointer; text-decoration:none; }
+        .command-button.secondary { background:#eef3fa; color:#071b49; }
+        .command-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:20px; }
+        .command-stat { background:#fff; border:1px solid #e6eaf1; border-radius:13px; padding:17px; }
+        .command-stat span { display:block; color:#71809b; font-size:10px; font-weight:900; letter-spacing:.08em; }
+        .command-stat strong { display:block; color:#071b49; font-size:28px; margin-top:7px; }
+        .command-panel { background:#fff; border:1px solid #e6eaf1; border-radius:16px; padding:22px; box-shadow:0 8px 24px rgba(7,27,73,.05); margin-bottom:20px; }
+        .command-panel h2 { margin:0 0 5px; color:#071b49; font-size:20px; }
+        .command-panel > p { margin:0 0 17px; color:#78849a; font-size:13px; }
+        .structure-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; }
+        .structure-card { border:1px solid #e1e6ef; border-radius:11px; padding:15px; background:#fbfcfe; }
+        .structure-card strong { display:block; color:#071b49; font-size:14px; }
+        .structure-card small { display:block; margin-top:7px; color:#738098; line-height:1.5; }
+        .command-toolbar { display:grid; grid-template-columns:1fr 190px 190px; gap:10px; margin-bottom:15px; }
+        .command-toolbar input,.command-toolbar select { min-height:42px; border:1px solid #dce2eb; border-radius:9px; padding:0 12px; font:inherit; color:#26334a; background:#fff; }
+        .command-table-wrap { overflow-x:auto; border:1px solid #e6eaf1; border-radius:12px; }
+        .command-table { width:100%; border-collapse:collapse; min-width:850px; }
+        .command-table th,.command-table td { padding:11px 12px; border-bottom:1px solid #edf0f5; text-align:left; vertical-align:middle; }
+        .command-table th { background:#f7f9fc; color:#61708a; font-size:10px; font-weight:900; letter-spacing:.07em; }
+        .command-table td { color:#2d3a51; font-size:13px; }
+        .command-table tr:last-child td { border-bottom:0; }
+        .command-role { color:#071b49; font-weight:900; }
+        .command-vacant { color:#b31b25; font-weight:900; }
+        .command-assigned { color:#14633b; font-weight:900; }
+        .command-scope { color:#5f6d84; font-size:11px; }
+        .assign-button { border:0; border-radius:7px; background:#071b49; color:#fff; padding:8px 10px; font:inherit; font-size:10px; font-weight:900; cursor:pointer; }
+        .assign-button.remove { background:#fdeaea; color:#a21e27; }
+        .command-message { margin-bottom:15px; padding:12px 14px; border-radius:9px; background:#f5f7fb; color:#5f6d84; font-size:12px; }
+        .command-modal { position:fixed; inset:0; background:rgba(7,27,73,.48); display:flex; align-items:center; justify-content:center; padding:20px; z-index:50; }
+        .command-modal[hidden] { display:none; }
+        .command-modal-card { width:min(100%,560px); background:#fff; border-radius:15px; padding:22px; box-shadow:0 25px 70px rgba(0,0,0,.2); }
+        .command-modal-card h3 { margin:0 0 4px; color:#071b49; font-size:20px; }
+        .command-modal-card p { margin:0 0 17px; color:#738098; font-size:12px; }
+        .command-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+        .command-form-grid label { display:block; color:#65728a; font-size:10px; font-weight:900; letter-spacing:.06em; }
+        .command-form-grid input,.command-form-grid textarea { width:100%; box-sizing:border-box; margin-top:5px; border:1px solid #dce2eb; border-radius:8px; padding:10px; font:inherit; color:#26334a; }
+        .command-form-grid textarea { min-height:85px; resize:vertical; }
+        .command-form-grid .full { grid-column:1/-1; }
+        .modal-actions { display:flex; justify-content:flex-end; gap:9px; margin-top:17px; }
+        @media(max-width:900px) { .command-grid{grid-template-columns:repeat(2,minmax(0,1fr));} .structure-grid{grid-template-columns:repeat(2,minmax(0,1fr));} .command-toolbar{grid-template-columns:1fr;} }
+        @media(max-width:600px) { .command-grid{grid-template-columns:1fr 1fr;} .structure-grid{grid-template-columns:1fr;} .command-panel{padding:16px;} .command-hero{padding:20px;} .command-form-grid{grid-template-columns:1fr;} .command-form-grid .full{grid-column:auto;} }
+    </style>
+</head>
+<body>
+    <main class="dashboard-body command-page">
+        <section class="command-hero">
+            <span class="command-kicker">PHASE 3</span>
+            <h1>Grassroots Command Centre</h1>
+            <p>
+                Build and manage the Ochoudo Mandate Group field structure across the electoral hierarchy.
+                This layer tracks organisational leadership separately from membership and coverage data.
+            </p>
+            <div class="command-actions">
+                <a class="command-button secondary" href="dashboard.html">BACK TO DASHBOARD</a>
+                <a class="command-button secondary" href="members.html">MEMBERSHIP DIRECTORY</a>
+            </div>
+        </section>
+
+        <div id="commandMessage" class="command-message">Loading command structure...</div>
+
+        <section class="command-grid">
+            <article class="command-stat"><span>LGA MANDATE PILLAR SLOTS</span><strong id="lgaPillarSlots">0</strong></article>
+            <article class="command-stat"><span>LGA MANDATE CAPTAINS</span><strong id="lgaCaptainSlots">0</strong></article>
+            <article class="command-stat"><span>WARD PILLAR SLOTS</span><strong id="wardPillarSlots">0</strong></article>
+            <article class="command-stat"><span>POLLING UNIT CAPTAINS</span><strong id="puCaptainSlots">0</strong></article>
+            <article class="command-stat"><span>POLLING UNIT CONNECTORS</span><strong id="puConnectorSlots">0</strong></article>
+        </section>
+
+        <section class="command-panel">
+            <h2>Approved Organisational Structure</h2>
+            <p>Current Phase 3 model. Mandate Captains are operational coordinators. Mandate Pillars provide strategic direction and oversight and do not report to the Mandate Captain.</p>
+            <div class="structure-grid">
+                <article class="structure-card"><strong>STATE</strong><small>State Mandate Coordinator and state functional officers.</small></article>
+                <article class="structure-card"><strong>SENATORIAL ZONE</strong><small>Zonal Mandate Coordinator linking state leadership with LGAs.</small></article>
+                <article class="structure-card"><strong>LGA</strong><small>10 Mandate Pillars, Mandate Captain, Deputy and functional officers.</small></article>
+                <article class="structure-card"><strong>WARD</strong><small>3 Ward Pillars and Ward Mandate Team.</small></article>
+                <article class="structure-card"><strong>POLLING UNIT</strong><small>1 Polling Unit Captain supervising 8 Polling Unit Connectors.</small></article>
+            </div>
+        </section>
+
+        <section class="command-panel">
+            <h2>Command Assignment Registry</h2>
+            <p>Assign or review organisational officers. Only authenticated OMG administrators can access this registry.</p>
+            <div class="command-toolbar">
+                <input id="commandSearch" type="search" placeholder="Search LGA, ward, polling unit, role or officer...">
+                <select id="commandLevel">
+                    <option value="">ALL LEVELS</option>
+                    <option value="LGA">LGA</option>
+                    <option value="WARD">WARD</option>
+                    <option value="POLLING_UNIT">POLLING UNIT</option>
+                </select>
+                <select id="commandStatus">
+                    <option value="">ALL STATUS</option>
+                    <option value="ASSIGNED">ASSIGNED</option>
+                    <option value="VACANT">VACANT</option>
+                </select>
+            </div>
+            <div class="command-table-wrap">
+                <table class="command-table">
+                    <thead><tr><th>LEVEL</th><th>LOCATION</th><th>ROLE</th><th>SLOT</th><th>OFFICER</th><th>STATUS</th><th></th></tr></thead>
+                    <tbody id="commandBody"><tr><td colspan="7">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <div id="commandModal" class="command-modal" hidden>
+        <div class="command-modal-card" role="dialog" aria-modal="true" aria-labelledby="commandModalTitle">
+            <h3 id="commandModalTitle">Assign Command Officer</h3>
+            <p id="commandModalScope"></p>
+            <form id="commandForm">
+                <div class="command-form-grid">
+                    <div class="full"><label>OFFICER FULL NAME<input id="commandName" required></label></div>
+                    <div><label>PHONE<input id="commandPhone" inputmode="tel"></label></div>
+                    <div><label>EMAIL<input id="commandEmail" type="email"></label></div>
+                    <div class="full"><label>NOTES<textarea id="commandNotes"></textarea></label></div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="command-button secondary" id="commandCancel">CANCEL</button>
+                    <button type="submit" class="command-button" id="commandSave">SAVE ASSIGNMENT</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="command.js"></script>
+</body>
+</html>
