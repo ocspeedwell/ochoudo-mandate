@@ -210,6 +210,62 @@
             background: #fafbfd;
         }
 
+        /* Keep the Phase 2D verified table fully visible on desktop. */
+        .verified-coverage-table {
+            min-width: 0;
+            table-layout: fixed;
+        }
+
+        .verified-coverage-table th,
+        .verified-coverage-table td {
+            white-space: normal;
+            padding: 11px 9px;
+            font-size: 11px;
+        }
+
+        .verified-coverage-table th {
+            font-size: 9px;
+            line-height: 1.25;
+        }
+
+        .verified-coverage-table th:nth-child(1),
+        .verified-coverage-table td:nth-child(1) { width: 16%; }
+        .verified-coverage-table th:nth-child(2),
+        .verified-coverage-table td:nth-child(2) { width: 9%; }
+        .verified-coverage-table th:nth-child(3),
+        .verified-coverage-table td:nth-child(3) { width: 10%; }
+        .verified-coverage-table th:nth-child(4),
+        .verified-coverage-table td:nth-child(4) { width: 10%; }
+        .verified-coverage-table th:nth-child(5),
+        .verified-coverage-table td:nth-child(5) { width: 10%; }
+        .verified-coverage-table th:nth-child(6),
+        .verified-coverage-table td:nth-child(6) { width: 9%; }
+        .verified-coverage-table th:nth-child(7),
+        .verified-coverage-table td:nth-child(7) { width: 10%; }
+        .verified-coverage-table th:nth-child(8),
+        .verified-coverage-table td:nth-child(8) { width: 13%; }
+        .verified-coverage-table th:nth-child(9),
+        .verified-coverage-table td:nth-child(9) { width: 13%; }
+
+        .verified-coverage-table td:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .verified-coverage-table .coverage-progress {
+            width: 70px;
+            margin-right: 4px;
+        }
+
+        .verified-coverage-table .verified-badge {
+            min-width: 0;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 8px;
+            padding: 5px 5px;
+        }
+
         .coverage-name {
             color: #071b49;
             font-weight: 800;
@@ -902,7 +958,7 @@
                 </div>
 
                 <div class="coverage-table-wrap">
-                    <table class="coverage-table">
+                    <table class="coverage-table verified-coverage-table">
                         <thead>
                             <tr>
                                 <th>LGA</th>
