@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMG Admin Login</title>
+    <link rel="icon" href="../assets/ochoudo-favicon.png">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+    <main class="admin-shell admin-login-shell">
+        <section class="admin-login-card">
+            <img src="../assets/ochoudo-logo.png" class="admin-logo" alt="Ochoudo Mandate Group">
+            <div class="admin-kicker">SECURE ADMINISTRATION</div>
+            <h1>OMG ADMIN LOGIN</h1>
+            <p class="admin-intro">Sign in to manage Ochoudo Mandate Group membership records.</p>
+
+            <form id="adminLoginForm" class="admin-form">
+                <label for="adminEmail">EMAIL ADDRESS</label>
+                <input id="adminEmail" type="email" autocomplete="username" required>
+
+                <label for="adminPassword">PASSWORD</label>
+                <input id="adminPassword" type="password" autocomplete="current-password" required>
+
+                <button type="submit" class="admin-primary-button" id="loginButton">LOGIN</button>
+                <div id="loginMessage" class="admin-message" role="alert" aria-live="polite"></div>
+            </form>
+
+            <a href="../index.html" class="admin-back-link">← BACK TO HOME</a>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

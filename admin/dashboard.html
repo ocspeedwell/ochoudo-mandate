@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMG Admin Dashboard</title>
+    <link rel="icon" href="../assets/ochoudo-favicon.png">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body dashboard-body">
+    <header class="admin-topbar">
+        <div class="admin-topbar-brand">
+            <img src="../assets/ochoudo-logo.png" alt="Ochoudo Mandate Group">
+            <div>
+                <strong>OMG ADMIN</strong>
+                <span>MEMBERSHIP MANAGEMENT</span>
+            </div>
+        </div>
+        <div class="admin-topbar-actions">
+            <span id="adminUserEmail" class="admin-user-email"></span>
+            <button type="button" id="logoutButton" class="admin-logout-button">LOG OUT</button>
+        </div>
+    </header>
+
+    <main class="admin-dashboard">
+        <section class="dashboard-heading">
+            <div>
+                <div class="admin-kicker">MEMBERSHIP MANAGEMENT</div>
+                <h1>Dashboard</h1>
+                <p>Monitor membership registrations and approval activity.</p>
+            </div>
+            <a href="../index.html" class="dashboard-home-link">VIEW WEBSITE</a>
+        </section>
+
+        <div id="dashboardMessage" class="admin-message" role="alert" aria-live="polite"></div>
+
+        <section class="stats-grid" aria-label="Membership statistics">
+            <article class="stat-card stat-total">
+                <span>TOTAL MEMBERS</span>
+                <strong id="totalMembers">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>PENDING APPROVAL</span>
+                <strong id="pendingMembers">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>APPROVED MEMBERS</span>
+                <strong id="approvedMembers">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>REJECTED</span>
+                <strong id="rejectedMembers">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>REGISTERED TODAY</span>
+                <strong id="todayRegistrations">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>NDC MEMBERS</span>
+                <strong id="ndcMembers">0</strong>
+            </article>
+        </section>
+
+        <section class="dashboard-panel">
+            <div class="panel-header">
+                <div>
+                    <span class="panel-kicker">NEXT MODULE</span>
+                    <h2>Membership Directory</h2>
+                </div>
+                <button type="button" class="admin-secondary-button" disabled>COMING NEXT</button>
+            </div>
+            <p class="panel-placeholder">
+                The secure membership directory will appear here in the next phase.
+                It will support search, filtering, member review, approval and rejection.
+            </p>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
