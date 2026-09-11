@@ -2453,20 +2453,24 @@
 
 .verified-result .membership-information {
     min-width: 0;
-
     position: relative;
     z-index: 2;
-}
 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
 
 /* =========================================================
    MEMBERSHIP NUMBER
    ========================================================= */
 
 .verified-result .membership-number-box {
-    min-height: 43px;
+    height: 42px;
+    min-height: 42px;
+    box-sizing: border-box;
 
-    padding: 8px 13px;
+    padding: 7px 12px;
 
     display: flex;
     align-items: center;
@@ -2477,7 +2481,6 @@
     background: #ffffff;
 
     border: 2px solid #082b52;
-
     border-radius: 6px;
 }
 
@@ -2501,19 +2504,18 @@
     white-space: nowrap;
 }
 
-
 /* =========================================================
    MEMBER NAME
    ========================================================= */
 
 .verified-result .member-name-block {
-    margin-top: 8px;
+    margin-top: 6px;
 }
 
 .verified-result .member-name-block span {
     display: block;
 
-    margin-bottom: 3px;
+    margin-bottom: 2px;
 
     color: #68778a;
 
@@ -2528,71 +2530,13 @@
 
     color: #082b52;
 
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 800;
 
-    line-height: 1.2;
+    line-height: 1.1;
 
     word-break: break-word;
 }
-
-
-/* =========================================================
-   DETAILS
-   ========================================================= */
-
-.verified-result .member-details-grid {
-    margin-top: 7px;
-
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 3px 10px;
-}
-
-.verified-result .member-detail {
-    min-height: 38px;
-
-    padding: 5px 8px;
-
-    background: rgba(255, 255, 255, 0.9);
-
-    border: 1px solid #edf0f4;
-
-    border-radius: 4px;
-}
-
-.verified-result .member-detail-wide {
-    grid-column: 1 / -1;
-}
-
-.verified-result .member-detail span {
-    display: block;
-
-    margin-bottom: 2px;
-
-    color: #68778a;
-
-    font-size: 6px;
-    font-weight: 800;
-
-    letter-spacing: 1px;
-}
-
-.verified-result .member-detail strong {
-    display: block;
-
-    color: #082b52;
-
-    font-size: 11px;
-    font-weight: 700;
-
-    line-height: 1.2;
-
-    word-break: break-word;
-}
-
 
 /* =========================================================
    CARD FOOTER
