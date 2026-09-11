@@ -12,6 +12,7 @@
     let readinessRows = [];
     let activities = [];
     let currentSlot = null;
+    let currentProfileLga = null;
 
     const $ = (id) => document.getElementById(id);
     const normalize = (value) => String(value || "").trim().replace(/\s+/g, " ").toUpperCase();
@@ -204,6 +205,94 @@
         return Math.min(100, Math.round((value / total) * 100));
     }
 
+    function getLgaProfile(lgaKey) {
+        const row = readinessRows.find(r => r.lgaKey === lgaKey);
+        if (!row) return null;
+        const lga = hierarchy.state.lgas.find(x => normalize(x.name) === lgaKey);
+        const wards = lga ? (lga.wards || []) : [];
+        const lgaAssignments = assignments.filter(a => {
+            if (!isActiveAssignment(a)) return false;
+            const scope = normalize(a.scope_type);
+            if (scope === "LGA") return normalize(a.scope_key) === lgaKey;
+            return scope === "WARD" || scope === "POLLING_UNIT" ? normalize(a.scope_key).startsWith(lgaKey + "||") : false;
+        });
+        const lgaLeadership = lgaAssignments.filter(a => normalize(a.scope_type) === "LGA" && normalize(a.role_code) !== "OCHOUdo_PILLAR");
+        const lgaPillars = lgaAssignments.filter(a => normalize(a.scope_type) === "LGA" && normalize(a.role_code) === "OCHOUdo_PILLAR");
+        const wardPillars = lgaAssignments.filter(a => normalize(a.role_code) === "WARD_PILLAR");
+        const puCaptains = lgaAssignments.filter(a => normalize(a.role_code) === "POLLING_UNIT_CAPTAIN");
+        const connectors = lgaAssignments.filter(a => normalize(a.role_code) === "POLLING_UNIT_CONNECTOR");
+        const lgaMembers = members.filter(m => normalize(m.lga) === lgaKey);
+        const approvedMembers = lgaMembers.filter(m => normalize(m.membership_status) === "APPROVED");
+        const registeredPuKeys = new Set(lgaMembers.map(m => normalize(m.ward) + "||" + normalize(m.polling_unit)));
+        const approvedPuKeys = new Set(approvedMembers.map(m => normalize(m.ward) + "||" + normalize(m.polling_unit)));
+        const uncoveredPus = [];
+        const pendingOnlyPus = [];
+        const rejectedOnlyPus = [];
+        const memberByPu = new Map();
+        lgaMembers.forEach(m => {
+            const key = normalize(m.ward) + "||" + normalize(m.polling_unit);
+            if (!key || key === "||") return;
+            if (!memberByPu.has(key)) memberByPu.set(key, []);
+            memberByPu.get(key).push(m);
+        });
+        wards.forEach(w => (w.pollingUnits || []).forEach(u => {
+            const key = normalize(w.name) + "||" + normalize(u.name);
+            const puMembers = memberByPu.get(key) || [];
+            if (!puMembers.length) uncoveredPus.push({ ward: w.name, name: u.name, code: u.delimitation || "" });
+            else if (!puMembers.some(m => normalize(m.membership_status) === "APPROVED") && puMembers.some(m => normalize(m.membership_status) === "PENDING")) pendingOnlyPus.push({ ward: w.name, name: u.name, code: u.delimitation || "" });
+            else if (!puMembers.some(m => normalize(m.membership_status) === "APPROVED") && puMembers.every(m => normalize(m.membership_status) === "REJECTED")) rejectedOnlyPus.push({ ward: w.name, name: u.name, code: u.delimitation || "" });
+        }));
+        const recentActivities = activities.filter(a => normalize(a.lga_name) === lgaKey && isRecentActivity(a));
+        const wardDetails = wards.map(w => {
+            const wardKey = normalize(w.name);
+            const puCount = (w.pollingUnits || []).length;
+            const wardPillarCount = lgaAssignments.filter(a => normalize(a.scope_type) === "WARD" && normalize(a.scope_key) === lgaKey + "||" + wardKey && normalize(a.role_code) === "WARD_PILLAR").length;
+            const captainCount = lgaAssignments.filter(a => normalize(a.scope_type) === "POLLING_UNIT" && normalize(a.scope_key).startsWith(lgaKey + "||" + wardKey + "||") && normalize(a.role_code) === "POLLING_UNIT_CAPTAIN").length;
+            const connectorCount = lgaAssignments.filter(a => normalize(a.scope_type) === "POLLING_UNIT" && normalize(a.scope_key).startsWith(lgaKey + "||" + wardKey + "||") && normalize(a.role_code) === "POLLING_UNIT_CONNECTOR").length;
+            const approvedPuCount = new Set(lgaMembers.filter(m => normalize(m.ward) === wardKey && normalize(m.membership_status) === "APPROVED").map(m => normalize(m.polling_unit))).size;
+            return { name:w.name, puCount, wardPillarCount, captainCount, connectorCount, approvedPuCount };
+        });
+        return { ...row, lga, wards, lgaAssignments, lgaLeadership, lgaPillars, wardPillars, puCaptains, connectors, lgaMembers, approvedMembers, uncoveredPus, pendingOnlyPus, rejectedOnlyPus, recentActivities, wardDetails, registeredPuKeys, approvedPuKeys };
+    }
+
+    function openLgaProfile(lgaKey) {
+        const profile = getLgaProfile(lgaKey);
+        if (!profile) return;
+        currentProfileLga = profile;
+        $("profileLgaName").textContent = profile.name;
+        $("profileHealthScore").textContent = `${profile.score}%`;
+        $("profileHealthStatus").textContent = profile.status;
+        $("profileCommandScore").textContent = `${profile.score}%`;
+        $("profileRegisteredMembers").textContent = profile.registeredMembers.toLocaleString();
+        $("profileApprovedMembers").textContent = profile.approvedMembers.toLocaleString();
+        $("profileRegisteredPus").textContent = profile.registeredPUs.toLocaleString();
+        $("profileVerifiedPus").textContent = profile.verifiedPUs.toLocaleString();
+        $("profilePillars").textContent = `${profile.pillarAssigned}/10`;
+        $("profileLeadership").textContent = `${profile.lgaLeadershipAssigned}/${LGA_FUNCTIONAL_ROLES.length}`;
+        $("profileWardPillars").textContent = `${profile.wardPillarAssigned}/${profile.totalWards * 3}`;
+        $("profilePuCaptains").textContent = `${profile.puCaptainAssigned}/${profile.totalPUs}`;
+        $("profileConnectors").textContent = `${profile.connectorAssigned}/${profile.totalPUs * 8}`;
+        $("profileActivityCount").textContent = profile.recentActivities.length.toLocaleString();
+        const latest = profile.recentActivities.slice().sort((a,b)=>String(b.activity_date).localeCompare(String(a.activity_date)))[0];
+        $("profileLatestActivity").textContent = latest ? latest.activity_date : "None recorded";
+        $("profileUncoveredPus").textContent = profile.uncoveredPus.length.toLocaleString();
+        $("profilePendingPus").textContent = profile.pendingOnlyPus.length.toLocaleString();
+        $("profileRejectedPus").textContent = profile.rejectedOnlyPus.length.toLocaleString();
+        const priority = [];
+        if (profile.pillarAssigned < 10) priority.push(`Fill ${10 - profile.pillarAssigned} remaining Mandate Pillar position${10-profile.pillarAssigned===1?'':'s'}.`);
+        if (profile.lgaLeadershipAssigned < LGA_FUNCTIONAL_ROLES.length) priority.push(`Complete ${LGA_FUNCTIONAL_ROLES.length - profile.lgaLeadershipAssigned} remaining LGA leadership position${LGA_FUNCTIONAL_ROLES.length-profile.lgaLeadershipAssigned===1?'':'s'}.`);
+        if (profile.wardPillarAssigned < profile.totalWards * 3) priority.push(`Establish ${profile.totalWards * 3 - profile.wardPillarAssigned} remaining Ward Pillar position${profile.totalWards*3-profile.wardPillarAssigned===1?'':'s'}.`);
+        if (profile.puCaptainAssigned < profile.totalPUs) priority.push(`Assign ${profile.totalPUs - profile.puCaptainAssigned} remaining Polling Unit Captain${profile.totalPUs-profile.puCaptainAssigned===1?'':'s'}.`);
+        if (profile.connectorAssigned < profile.totalPUs * 8) priority.push(`Build the remaining ${profile.totalPUs * 8 - profile.connectorAssigned} connector slot${profile.totalPUs*8-profile.connectorAssigned===1?'':'s'}.`);
+        if (profile.verifiedPUs < profile.totalPUs) priority.push(`Expand approved membership coverage across ${profile.totalPUs - profile.verifiedPUs} uncovered polling unit${profile.totalPUs-profile.verifiedPUs===1?'':'s'}.`);
+        if (!profile.recentActivities.length) priority.push("Record a recent organisational activity to establish an operational activity baseline.");
+        $("profilePriorityList").innerHTML = priority.slice(0,6).map(x=>`<li>${esc(x)}</li>`).join("") || "<li>No immediate priority gaps identified.</li>";
+        $("profileWardBody").innerHTML = profile.wardDetails.map(w=>`<tr><td>${esc(w.name)}</td><td>${w.wardPillarCount}/3</td><td>${w.approvedPuCount}/${w.puCount}</td><td>${w.captainCount}/${w.puCount}</td><td>${w.connectorCount}/${w.puCount*8}</td></tr>`).join("") || '<tr><td colspan="5">No ward data available.</td></tr>';
+        $("profileModal").hidden = false;
+    }
+
+    function closeProfile() { $("profileModal").hidden = true; currentProfileLga = null; }
+
     function renderReadiness() {
         const search = normalize($("readinessSearch").value);
         const statusFilter = $("readinessStatus").value;
@@ -227,8 +316,11 @@
                 <td><span class="readiness-bar"><i style="width:${r.score}%"></i></span><span class="readiness-percent">${r.score}%</span></td>
                 <td><span class="readiness-badge ${badgeClass}">${r.status}</span></td>
                 <td class="readiness-mini">${r.registeredMembers} reg / ${r.approvedMembers} approved</td>
+                <td><button class="profile-button" data-profile="${esc(r.lgaKey)}">VIEW PROFILE</button></td>
             </tr>`;
-        }).join("") || '<tr><td colspan="9">No LGAs match the selected filters.</td></tr>';
+        }).join("") || '<tr><td colspan="10">No LGAs match the selected filters.</td></tr>';
+
+        $("readinessBody").querySelectorAll("[data-profile]").forEach(btn => btn.addEventListener("click", () => openLgaProfile(btn.dataset.profile)));
 
         const average = readinessRows.length ? Math.round(readinessRows.reduce((sum,r) => sum + r.score, 0) / readinessRows.length) : 0;
         const ready = readinessRows.filter(r => r.status === "READY").length;
@@ -284,8 +376,10 @@
         });
         $("healthBody").innerHTML = filtered.map(function(r){
             const cls = r.status === "ACTIVE" ? "health-active" : r.status === "DEVELOPING" ? "health-developing" : r.status === "WATCH" ? "health-watch" : "health-critical";
-            return `<tr><td class="readiness-lga">${esc(r.name)}</td><td>${r.score}%</td><td>${r.approvedPu}/${r.totalPUs}</td><td>${r.puCaptainAssigned}/${r.totalPUs}</td><td>${r.connectorAssigned}/${r.totalPUs*8}</td><td>${r.recent} recent${r.latestActivity ? ` <span class="activity-date">(${esc(r.latestActivity)})</span>` : ""}</td><td class="health-score">${r.health}%</td><td><span class="health-badge ${cls}">${r.status}</span></td></tr>`;
-        }).join("") || '<tr><td colspan="8">No LGAs match the selected filters.</td></tr>';
+            return `<tr><td class="readiness-lga">${esc(r.name)}</td><td>${r.score}%</td><td>${r.approvedPu}/${r.totalPUs}</td><td>${r.puCaptainAssigned}/${r.totalPUs}</td><td>${r.connectorAssigned}/${r.totalPUs*8}</td><td>${r.recent} recent${r.latestActivity ? ` <span class="activity-date">(${esc(r.latestActivity)})</span>` : ""}</td><td class="health-score">${r.health}%</td><td><span class="health-badge ${cls}">${r.status}</span></td><td><button class="profile-button" data-health-profile="${esc(r.lgaKey)}">VIEW PROFILE</button></td></tr>`;
+        }).join("") || '<tr><td colspan="9">No LGAs match the selected filters.</td></tr>';
+        $("healthBody").querySelectorAll("[data-health-profile]").forEach(btn => btn.addEventListener("click", () => openLgaProfile(btn.dataset.healthProfile)));
+
         const avg = rows.length ? Math.round(rows.reduce((s,r)=>s+r.health,0)/rows.length) : 0;
         $("stateHealthScore").textContent = `${avg}%`;
         $("stateHealthText").textContent = `${rows.filter(r=>r.health>0).length} of ${rows.length} LGAs have measurable organisational activity or structure.`;
@@ -446,6 +540,8 @@
             $("commandCancel").addEventListener("click", closeModal);
             $("commandForm").addEventListener("submit", saveAssignment);
             $("commandModal").addEventListener("click", e => { if (e.target === $("commandModal")) closeModal(); });
+            $("profileClose").addEventListener("click", closeProfile);
+            $("profileModal").addEventListener("click", e => { if (e.target === $("profileModal")) closeProfile(); });
         } catch (error) { console.error(error); setMessage(error.message || "Unable to load command centre."); }
     }
 

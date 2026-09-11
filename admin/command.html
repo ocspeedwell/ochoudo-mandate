@@ -101,6 +101,19 @@
         .activity-form textarea{min-height:78px;resize:vertical;grid-column:1/-1}
         .activity-form .full{grid-column:1/-1}
         .activity-type{font-weight:900;color:#071b49}.activity-date{white-space:nowrap;color:#65728a}
+
+        .profile-button{border:0;border-radius:7px;background:#eef3fa;color:#071b49;padding:8px 10px;font:inherit;font-size:9px;font-weight:900;cursor:pointer;white-space:nowrap}
+        .profile-modal{position:fixed;inset:0;background:rgba(7,27,73,.52);display:flex;align-items:center;justify-content:center;padding:20px;z-index:60}
+        .profile-modal[hidden]{display:none}
+        .profile-card{width:min(100%,1050px);max-height:92vh;overflow:auto;background:#fff;border-radius:16px;padding:22px;box-shadow:0 25px 70px rgba(0,0,0,.22)}
+        .profile-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;margin-bottom:18px}
+        .profile-head h3{margin:4px 0 4px;color:#071b49;font-size:24px}.profile-head p{margin:0;color:#71809b;font-size:12px}
+        .profile-close{border:0;background:#eef3fa;color:#071b49;border-radius:8px;padding:9px 12px;font-weight:900;cursor:pointer}
+        .profile-score{background:#071b49;color:#fff;border-radius:13px;padding:16px;display:flex;align-items:center;gap:16px;margin-bottom:15px}.profile-score strong{font-size:34px}.profile-score span{font-size:10px;font-weight:900;letter-spacing:.08em;opacity:.82}.profile-score small{display:block;margin-top:3px;opacity:.8}
+        .profile-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:15px}.profile-stat{border:1px solid #e1e6ef;border-radius:10px;padding:13px;background:#fbfcfe}.profile-stat span{display:block;color:#71809b;font-size:9px;font-weight:900;letter-spacing:.06em}.profile-stat strong{display:block;color:#071b49;font-size:21px;margin-top:5px}
+        .profile-two{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px}.profile-box{border:1px solid #e1e6ef;border-radius:11px;padding:15px}.profile-box h4{margin:0 0 10px;color:#071b49;font-size:14px}.profile-box ul{margin:0;padding-left:18px;color:#4e5e78;font-size:12px;line-height:1.7}.profile-table-wrap{overflow-x:auto;border:1px solid #e1e6ef;border-radius:10px}.profile-table{width:100%;border-collapse:collapse;min-width:650px}.profile-table th,.profile-table td{padding:9px 10px;border-bottom:1px solid #edf0f5;text-align:left;font-size:11px}.profile-table th{background:#f7f9fc;color:#61708a;font-size:9px;font-weight:900;letter-spacing:.06em}.profile-table tr:last-child td{border-bottom:0}
+        .profile-status{display:inline-flex;border-radius:999px;padding:6px 9px;font-size:9px;font-weight:900;margin-left:8px;background:#e9eff8;color:#36557e}
+        @media(max-width:700px){.profile-grid{grid-template-columns:1fr 1fr}.profile-two{grid-template-columns:1fr}.profile-score{align-items:flex-start}.profile-head h3{font-size:20px}}
         @media(max-width:900px){.health-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.activity-form{grid-template-columns:1fr 1fr}}
         @media(max-width:600px){.health-grid{grid-template-columns:1fr 1fr}.activity-form{grid-template-columns:1fr}.activity-form textarea,.activity-form .full{grid-column:auto}}
         @media(max-width:900px){.readiness-hero{grid-template-columns:1fr}.readiness-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.readiness-toolbar{grid-template-columns:1fr}}
@@ -278,6 +291,34 @@
             </div>
         </section>
     </main>
+
+
+    <div id="profileModal" class="profile-modal" hidden>
+        <div class="profile-card" role="dialog" aria-modal="true" aria-labelledby="profileLgaName">
+            <div class="profile-head">
+                <div><span class="command-kicker">LGA COMMAND PROFILE</span><h3 id="profileLgaName">LGA NAME <span id="profileHealthStatus" class="profile-status">STATUS</span></h3><p>Detailed command, membership, activity and coverage picture for this LGA.</p></div>
+                <button type="button" class="profile-close" id="profileClose">CLOSE</button>
+            </div>
+            <div class="profile-score"><div><span>COMMAND READINESS</span><strong id="profileHealthScore">0%</strong><small id="profileCommandScore">0% overall command readiness</small></div></div>
+            <div class="profile-grid">
+                <article class="profile-stat"><span>REGISTERED MEMBERS</span><strong id="profileRegisteredMembers">0</strong></article>
+                <article class="profile-stat"><span>APPROVED MEMBERS</span><strong id="profileApprovedMembers">0</strong></article>
+                <article class="profile-stat"><span>REGISTERED PUs</span><strong id="profileRegisteredPus">0</strong></article>
+                <article class="profile-stat"><span>VERIFIED PUs</span><strong id="profileVerifiedPus">0</strong></article>
+                <article class="profile-stat"><span>MANDATE PILLARS</span><strong id="profilePillars">0/10</strong></article>
+                <article class="profile-stat"><span>LGA LEADERSHIP</span><strong id="profileLeadership">0/11</strong></article>
+                <article class="profile-stat"><span>WARD PILLARS</span><strong id="profileWardPillars">0/0</strong></article>
+                <article class="profile-stat"><span>PU CAPTAINS</span><strong id="profilePuCaptains">0/0</strong></article>
+            </div>
+            <div class="profile-two">
+                <div class="profile-box"><h4>CONNECTOR NETWORK</h4><p style="margin:0;color:#071b49;font-size:20px;font-weight:900" id="profileConnectors">0/0</p><small style="color:#71809b">Assigned connector slots</small></div>
+                <div class="profile-box"><h4>ACTIVITY</h4><p style="margin:0;color:#071b49;font-size:13px;font-weight:900"><span id="profileActivityCount">0</span> recent activities</p><small style="color:#71809b">Latest: <span id="profileLatestActivity">None recorded</span></small></div>
+                <div class="profile-box"><h4>COVERAGE GAPS</h4><p style="margin:0;color:#071b49;font-size:12px;line-height:1.8">Uncovered PUs: <strong id="profileUncoveredPus">0</strong><br>Pending-only PUs: <strong id="profilePendingPus">0</strong><br>Rejected-only PUs: <strong id="profileRejectedPus">0</strong></p></div>
+                <div class="profile-box"><h4>PRIORITY ACTIONS</h4><ul id="profilePriorityList"><li>Loading...</li></ul></div>
+            </div>
+            <div class="profile-box"><h4>WARD COMMAND SNAPSHOT</h4><div class="profile-table-wrap"><table class="profile-table"><thead><tr><th>WARD</th><th>WARD PILLARS</th><th>VERIFIED PUs</th><th>PU CAPTAINS</th><th>CONNECTORS</th></tr></thead><tbody id="profileWardBody"><tr><td colspan="5">Loading...</td></tr></tbody></table></div></div>
+        </div>
+    </div>
 
     <div id="commandModal" class="command-modal" hidden>
         <div class="command-modal-card" role="dialog" aria-modal="true" aria-labelledby="commandModalTitle">
