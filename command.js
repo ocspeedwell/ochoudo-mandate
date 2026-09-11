@@ -169,7 +169,7 @@
             const approvedMembers = registeredMembers.filter(m => normalize(m.membership_status) === "APPROVED");
             const approvedMemberCount = approvedMembers.length;
             const registeredPUs = new Set(registeredMembers.map(m => normalize(m.ward) + "||" + normalize(m.polling_unit)).filter(Boolean)).size;
-            const verifiedPUs = new Set(approvedMemberRecords.map(m => normalize(m.ward) + "||" + normalize(m.polling_unit)).filter(Boolean)).size;
+            const verifiedPUs = new Set(approvedMembers.map(m => normalize(m.ward) + "||" + normalize(m.polling_unit)).filter(Boolean)).size;
 
             const layers = [
                 pct(pillarAssigned, 10),
@@ -266,7 +266,8 @@
         $("profileHealthStatus").textContent = profile.status;
         $("profileCommandScore").textContent = `${profile.score}%`;
         $("profileRegisteredMembers").textContent = profile.registeredMembers.toLocaleString();
-        $("profileApprovedMembers").textContent = profile.approvedMemberCount.toLocaleString();
+        const approvedCount = Array.isArray(profile.approvedMemberRecords) ? profile.approvedMemberRecords.length : Number(profile.approvedMemberCount) || 0;
+        $("profileApprovedMemberCount").textContent = String(approvedCount);
         $("profileRegisteredPus").textContent = profile.registeredPUs.toLocaleString();
         $("profileVerifiedPus").textContent = profile.verifiedPUs.toLocaleString();
         $("profilePillars").textContent = `${profile.pillarAssigned}/10`;
