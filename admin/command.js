@@ -2,8 +2,8 @@
     "use strict";
 
 // OMG Command Centre version marker and cache-busting diagnostic.
-window.OMG_COMMAND_VERSION = "PHASE-3C";
-console.log("OMG Command Centre PHASE-3C loaded");
+window.OMG_COMMAND_VERSION = "PHASE-3D";
+console.log("OMG Command Centre PHASE-3D loaded");
 
     const SUPABASE_URL = "https://yopqftofkvwrpyyluffw.supabase.co";
     const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_k3whUGyuDbdQU6GA6egeuQ_k-g-nFoL";
@@ -19,6 +19,8 @@ console.log("OMG Command Centre PHASE-3C loaded");
     let currentProfileLga = null;
     let wardReadinessRows = [];
     let currentProfileWard = null;
+    let puReadinessRows = [];
+    let currentProfilePu = null;
 
     const $ = (id) => document.getElementById(id);
     const normalize = (value) => String(value || "").trim().replace(/\s+/g, " ").toUpperCase();
@@ -396,7 +398,8 @@ console.log("OMG Command Centre PHASE-3C loaded");
         if(profile.verifiedPUs<profile.totalPUs) priority.push(`Expand approved membership coverage across ${profile.totalPUs-profile.verifiedPUs} uncovered polling unit${profile.totalPUs-profile.verifiedPUs===1?'':'s'}.`);
         if(!profile.recentActivities.length) priority.push("Record a recent ward activity to establish an operational baseline.");
         $("wardProfilePriorityList").innerHTML = priority.slice(0,6).map(x=>`<li>${esc(x)}</li>`).join("") || "<li>No immediate priority gaps identified.</li>";
-        $("wardProfilePuBody").innerHTML = profile.puDetails.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.code || "-")}</td><td>${u.verified ? "VERIFIED" : "NOT VERIFIED"}</td><td class="${u.captain === "VACANT" ? "command-vacant" : "command-assigned"}">${esc(u.captain)}</td><td>${u.connectorCount}/8</td><td>${u.puActivities}</td></tr>`).join("") || '<tr><td colspan="6">No polling units available.</td></tr>';
+        $("wardProfilePuBody").innerHTML = profile.puDetails.map(u=>{ const puKey = profile.wardKey + "||" + normalize(u.name); return `<tr><td>${esc(u.name)}</td><td>${esc(u.code || "-")}</td><td>${u.verified ? "VERIFIED" : "NOT VERIFIED"}</td><td class="${u.captain === "VACANT" ? "command-vacant" : "command-assigned"}">${esc(u.captain)}</td><td>${u.connectorCount}/8</td><td>${u.puActivities}</td><td><button class="profile-button" data-pu-profile="${esc(puKey)}">VIEW PROFILE</button></td></tr>`; }).join("") || '<tr><td colspan="7">No polling units available.</td></tr>';
+        $("wardProfilePuBody").querySelectorAll("[data-pu-profile]").forEach(btn=>btn.addEventListener("click",()=>openPuProfile(btn.dataset.puProfile)));
         $("wardProfileModal").hidden=false;
     }
 
@@ -556,6 +559,106 @@ console.log("OMG Command Centre PHASE-3C loaded");
         activities=activities.filter(a=>a.id!==id); renderActivities(); renderHealth();
     }
 
+
+    function buildPuReadinessRows() {
+        puReadinessRows = [];
+        hierarchy.state.lgas.forEach(function(lga) {
+            const lgaKey = normalize(lga.name);
+            (lga.wards || []).forEach(function(ward) {
+                const wardKey = lgaKey + "||" + normalize(ward.name);
+                (ward.pollingUnits || []).forEach(function(unit) {
+                    const puKey = wardKey + "||" + normalize(unit.name);
+                    const captain = assignments.find(a => normalize(a.scope_type) === "POLLING_UNIT" && normalize(a.scope_key) === puKey && normalize(a.role_code) === "POLLING_UNIT_CAPTAIN" && Number(a.slot_number) === 1 && isActiveAssignment(a));
+                    const connectorAssigned = assignments.filter(a => normalize(a.scope_type) === "POLLING_UNIT" && normalize(a.scope_key) === puKey && normalize(a.role_code) === "POLLING_UNIT_CONNECTOR" && isActiveAssignment(a)).length;
+                    const puMembers = members.filter(m => normalize(m.lga) === lgaKey && normalize(m.ward) === normalize(ward.name) && normalize(m.polling_unit) === normalize(unit.name));
+                    const approvedMembers = puMembers.filter(m => normalize(m.membership_status) === "APPROVED");
+                    const verified = approvedMembers.length > 0;
+                    const puActivities = activities.filter(a => normalize(a.lga_name) === lgaKey && normalize(a.ward_name) === normalize(ward.name) && normalize(a.polling_unit_name) === normalize(unit.name) && isRecentActivity(a));
+                    const activityScore = puActivities.length ? Math.min(100, puActivities.length * 20) : 0;
+                    const layers = [captain ? 100 : 0, pct(connectorAssigned, 8), verified ? 100 : 0, activityScore];
+                    const score = Math.round(layers.reduce((a,b)=>a+b,0)/layers.length);
+                    const status = score >= 80 ? "READY" : score >= 50 ? "DEVELOPING" : score > 0 ? "STARTING" : "NOT READY";
+                    const assignedTotal = (captain ? 1 : 0) + connectorAssigned;
+                    const gap = Math.max(0, 9 - assignedTotal);
+                    puReadinessRows.push({
+                        lgaName:lga.name,lgaKey,wardName:ward.name,wardKey,puName:unit.name,puKey,code:unit.delimitation || "",
+                        captain:captain ? captain.full_name : "VACANT",connectorAssigned,registeredMembers:puMembers.length,approvedMembers:approvedMembers.length,verified,
+                        recentActivities:puActivities.length,activityRecords:puActivities,score,status,gap
+                    });
+                });
+            });
+        });
+    }
+
+    function getPuProfile(puKey) {
+        const row = puReadinessRows.find(r => r.puKey === puKey);
+        if (!row) return null;
+        const connectorSlots = [];
+        for (let i=1;i<=8;i++) {
+            const assignment = assignments.find(a => normalize(a.scope_type) === "POLLING_UNIT" && normalize(a.scope_key) === row.puKey && normalize(a.role_code) === "POLLING_UNIT_CONNECTOR" && Number(a.slot_number) === i && isActiveAssignment(a));
+            connectorSlots.push({slotNumber:i,assignment});
+        }
+        const captainAssignment = assignments.find(a => normalize(a.scope_type) === "POLLING_UNIT" && normalize(a.scope_key) === row.puKey && normalize(a.role_code) === "POLLING_UNIT_CAPTAIN" && Number(a.slot_number) === 1 && isActiveAssignment(a));
+        const memberRecords = members.filter(m => normalize(m.lga) === row.lgaKey && normalize(m.ward) === normalize(row.wardName) && normalize(m.polling_unit) === normalize(row.puName));
+        const approvedRecords = memberRecords.filter(m => normalize(m.membership_status) === "APPROVED");
+        const activityRecords = activities.filter(a => normalize(a.lga_name) === row.lgaKey && normalize(a.ward_name) === normalize(row.wardName) && normalize(a.polling_unit_name) === normalize(row.puName) && isRecentActivity(a)).sort((a,b)=>String(b.activity_date).localeCompare(String(a.activity_date)));
+        return {...row, captainAssignment, connectorSlots, memberRecords, approvedRecords, activityRecords};
+    }
+
+    function openPuProfile(puKey) {
+        const profile = getPuProfile(puKey);
+        if (!profile) return;
+        currentProfilePu = profile;
+        $("puProfileName").textContent = profile.puName;
+        $("puProfileStatus").textContent = profile.status;
+        $("puProfileLocation").textContent = `${profile.lgaName} • ${profile.wardName} • ${profile.code || "No polling-unit code"}`;
+        $("puProfileScore").textContent = `${profile.score}%`;
+        $("puProfileScoreText").textContent = `${profile.score}% overall polling-unit readiness`;
+        $("puProfileCaptain").textContent = profile.captain;
+        $("puProfileCaptain").className = profile.captain === "VACANT" ? "vacant" : "";
+        $("puProfileConnectorCount").textContent = `${profile.connectorAssigned}/8`;
+        $("puProfileRegisteredMembers").textContent = profile.registeredMembers.toLocaleString();
+        $("puProfileApprovedMembers").textContent = profile.approvedMembers.toLocaleString();
+        $("puProfileVerified").textContent = profile.verified ? "YES" : "NO";
+        $("puProfileActivityCount").textContent = profile.activityRecords.length.toLocaleString();
+        $("puProfileCommandStatus").textContent = profile.captainAssignment ? "ASSIGNED" : "VACANT";
+        const latest = profile.activityRecords[0];
+        $("puProfileLatestActivity").textContent = latest ? latest.activity_date : "NONE";
+        $("puCoverageRegistered").textContent = profile.registeredMembers.toLocaleString();
+        $("puCoverageApproved").textContent = profile.approvedMembers.toLocaleString();
+        $("puCoverageStatus").textContent = profile.verified ? "VERIFIED" : "NOT VERIFIED";
+        $("puActivityTotal").textContent = profile.activityRecords.length.toLocaleString();
+        $("puActivityLatest").textContent = latest ? `${latest.activity_date} • ${latest.activity_type}` : "None recorded";
+        $("puCaptainSlot").innerHTML = `<span>Polling Unit Captain</span><strong class="${profile.captain === "VACANT" ? "vacant" : ""}">${esc(profile.captain)}</strong>`;
+        $("puCaptainActions").innerHTML = profile.captainAssignment ? `<button type="button" class="pu-action-button secondary" data-pu-edit="1">EDIT CAPTAIN</button><button type="button" class="pu-action-button secondary" data-pu-remove="${esc(profile.captainAssignment.id)}">REMOVE CAPTAIN</button>` : `<button type="button" class="pu-action-button" data-pu-assign="captain">ASSIGN CAPTAIN</button>`;
+        $("puConnectorGrid").innerHTML = profile.connectorSlots.map(x => `<div class="pu-connector"><span>CONNECTOR ${x.slotNumber}</span><strong class="${x.assignment ? "" : "vacant"}">${esc(x.assignment ? x.assignment.full_name : "VACANT")}</strong></div>`).join("");
+        $("puActivityList").innerHTML = profile.activityRecords.slice(0,5).map(a=>`<li>${esc(a.activity_date)} • ${esc(a.activity_type)}${a.notes ? ` • ${esc(a.notes)}` : ""}</li>`).join("") || "<li>No recent polling-unit activity recorded.</li>";
+        const priority=[];
+        if(!profile.captainAssignment) priority.push("Assign the Polling Unit Captain.");
+        if(profile.connectorAssigned<8) priority.push(`Recruit ${8-profile.connectorAssigned} remaining connector${8-profile.connectorAssigned===1?'':'s'}.`);
+        if(!profile.verified) priority.push("Expand approved membership coverage to establish verified polling-unit presence.");
+        if(!profile.activityRecords.length) priority.push("Record a recent polling-unit activity to establish an operational baseline.");
+        $("puProfilePriorityList").innerHTML = priority.map(x=>`<li>${esc(x)}</li>`).join("") || "<li>No immediate priority gaps identified.</li>";
+        $("puProfileModal").hidden=false;
+        $("puCaptainActions").querySelectorAll("[data-pu-assign]").forEach(btn=>btn.addEventListener("click",()=>openModal({scopeType:"POLLING_UNIT",scopeKey:profile.puKey,scopeName:`${profile.lgaName} • ${profile.wardName} • ${profile.puName}`,roleCode:"POLLING_UNIT_CAPTAIN",roleTitle:"Polling Unit Captain",slotNumber:1})));
+        $("puCaptainActions").querySelectorAll("[data-pu-edit]").forEach(btn=>btn.addEventListener("click",()=>openModal({scopeType:"POLLING_UNIT",scopeKey:profile.puKey,scopeName:`${profile.lgaName} • ${profile.wardName} • ${profile.puName}`,roleCode:"POLLING_UNIT_CAPTAIN",roleTitle:"Polling Unit Captain",slotNumber:1})));
+        $("puCaptainActions").querySelectorAll("[data-pu-remove]").forEach(btn=>btn.addEventListener("click",()=>removeAssignment(btn.dataset.puRemove)));
+    }
+
+    function closePuProfile(){ $("puProfileModal").hidden=true; currentProfilePu=null; }
+
+    function renderPuReadiness(){
+        const search=normalize($("puSearch").value); const statusFilter=$("puStatus").value; const sort=$("puSort").value;
+        let rows=puReadinessRows.filter(r=>(!search || normalize(`${r.lgaName} ${r.wardName} ${r.puName} ${r.code}`).includes(search)) && (!statusFilter || r.status===statusFilter));
+        rows.sort((a,b)=>{ if(sort==="score-asc") return a.score-b.score || a.puName.localeCompare(b.puName); if(sort==="gap-desc") return b.gap-a.gap || a.puName.localeCompare(b.puName); if(sort==="pu-asc") return a.puName.localeCompare(b.puName); return b.score-a.score || a.puName.localeCompare(b.puName); });
+        $("puBody").innerHTML=rows.slice(0,1000).map(r=>{ const cls=r.status==="READY"?"pu-ready":r.status==="DEVELOPING"?"pu-developing":r.status==="STARTING"?"pu-starting":"pu-none"; return `<tr><td class="pu-mini">${esc(r.lgaName)}</td><td class="pu-mini">${esc(r.wardName)}</td><td class="pu-name">${esc(r.puName)}</td><td class="pu-code">${esc(r.code||"-")}</td><td class="${r.captain==="VACANT"?"command-vacant":"command-assigned"}">${esc(r.captain)}</td><td class="pu-mini">${r.connectorAssigned}/8</td><td class="pu-mini">${r.verified?"VERIFIED":"NOT VERIFIED"}</td><td class="pu-mini">${r.recentActivities}</td><td><span class="pu-progress"><i style="width:${r.score}%"></i></span><span class="pu-score">${r.score}%</span></td><td><span class="pu-status ${cls}">${r.status}</span></td><td><button class="profile-button" data-pu-profile="${esc(r.puKey)}">VIEW PROFILE</button></td></tr>`; }).join("") || '<tr><td colspan="11">No polling units match the selected filters.</td></tr>';
+        $("puBody").querySelectorAll("[data-pu-profile]").forEach(btn=>btn.addEventListener("click",()=>openPuProfile(btn.dataset.puProfile)));
+        const avg=puReadinessRows.length?Math.round(puReadinessRows.reduce((s,r)=>s+r.score,0)/puReadinessRows.length):0;
+        $("statePuReadinessScore").textContent=`${avg}%`;
+        $("statePuReadinessText").textContent=`${puReadinessRows.filter(r=>r.score>0).length.toLocaleString()} of ${puReadinessRows.length.toLocaleString()} polling units have at least one active readiness layer.`;
+        $("totalPuCount").textContent=puReadinessRows.length.toLocaleString(); $("puReadyCount").textContent=puReadinessRows.filter(r=>r.status==="READY").length.toLocaleString(); $("puDevelopingCount").textContent=puReadinessRows.filter(r=>r.status==="DEVELOPING").length.toLocaleString(); $("puStartingCount").textContent=puReadinessRows.filter(r=>r.status==="STARTING").length.toLocaleString(); $("puNotReadyCount").textContent=puReadinessRows.filter(r=>r.status==="NOT READY").length.toLocaleString(); $("puVerifiedCount").textContent=puReadinessRows.filter(r=>r.verified).length.toLocaleString();
+    }
+
     function render() {
         const rows = filteredSlots();
         $("commandBody").innerHTML = rows.slice(0, 500).map(function (slot) {
@@ -593,8 +696,10 @@ console.log("OMG Command Centre PHASE-3C loaded");
         setMessage(`${assigned.toLocaleString()} command positions currently assigned out of ${slots.length.toLocaleString()} defined positions.`);
         buildReadinessRows();
         buildWardReadinessRows();
+        buildPuReadinessRows();
         renderReadiness();
         renderWardReadiness();
+        renderPuReadiness();
         renderHealth();
         renderActivities();
     }
@@ -662,6 +767,9 @@ console.log("OMG Command Centre PHASE-3C loaded");
             $("wardSearch").addEventListener("input", renderWardReadiness);
             $("wardStatus").addEventListener("change", renderWardReadiness);
             $("wardSort").addEventListener("change", renderWardReadiness);
+            $("puSearch").addEventListener("input", renderPuReadiness);
+            $("puStatus").addEventListener("change", renderPuReadiness);
+            $("puSort").addEventListener("change", renderPuReadiness);
             $("healthSearch").addEventListener("input", renderHealth);
             $("healthStatus").addEventListener("change", renderHealth);
             $("healthSort").addEventListener("change", renderHealth);
@@ -674,6 +782,8 @@ console.log("OMG Command Centre PHASE-3C loaded");
             $("profileModal").addEventListener("click", e => { if (e.target === $("profileModal")) closeProfile(); });
             $("wardProfileClose").addEventListener("click", closeWardProfile);
             $("wardProfileModal").addEventListener("click", e => { if (e.target === $("wardProfileModal")) closeWardProfile(); });
+            $("puProfileClose").addEventListener("click", closePuProfile);
+            $("puProfileModal").addEventListener("click", e => { if (e.target === $("puProfileModal")) closePuProfile(); });
         } catch (error) { console.error(error); setMessage(error.message || "Unable to load command centre."); }
     }
 

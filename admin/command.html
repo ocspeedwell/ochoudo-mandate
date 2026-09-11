@@ -144,6 +144,31 @@
         @media(max-width:600px){.readiness-summary{grid-template-columns:1fr 1fr}.readiness-score-card strong{font-size:36px}}
         @media(max-width:900px) { .command-grid{grid-template-columns:repeat(2,minmax(0,1fr));} .structure-grid{grid-template-columns:repeat(2,minmax(0,1fr));} .command-toolbar{grid-template-columns:1fr;} }
         @media(max-width:600px) { .command-grid{grid-template-columns:1fr 1fr;} .structure-grid{grid-template-columns:1fr;} .command-panel{padding:16px;} .command-hero{padding:20px;} .command-form-grid{grid-template-columns:1fr;} .command-form-grid .full{grid-column:auto;} }
+
+        /* PHASE 3D: POLLING UNIT COMMAND & CONNECTOR OPERATIONS */
+        .pu-summary{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:16px}
+        .pu-summary-card{border:1px solid #e1e6ef;border-radius:11px;padding:13px;background:#fbfcfe}
+        .pu-summary-card span{display:block;color:#71809b;font-size:9px;font-weight:900;letter-spacing:.07em}
+        .pu-summary-card strong{display:block;color:#071b49;font-size:22px;margin-top:5px}
+        .pu-toolbar{display:grid;grid-template-columns:1fr 180px 180px;gap:10px;margin-bottom:14px}
+        .pu-toolbar input,.pu-toolbar select{min-height:42px;border:1px solid #dce2eb;border-radius:9px;padding:0 12px;font:inherit;color:#26334a;background:#fff}
+        .pu-table-wrap{overflow-x:auto;border:1px solid #e6eaf1;border-radius:12px}
+        .pu-table{width:100%;min-width:1050px;border-collapse:collapse}
+        .pu-table th,.pu-table td{padding:10px 11px;border-bottom:1px solid #edf0f5;text-align:left;vertical-align:middle}
+        .pu-table th{background:#f7f9fc;color:#61708a;font-size:9px;font-weight:900;letter-spacing:.06em}
+        .pu-table td{font-size:11px;color:#2d3a51}
+        .pu-table tr:last-child td{border-bottom:0}
+        .pu-name{font-weight:900;color:#071b49;min-width:220px}.pu-code{white-space:nowrap;color:#65728a}
+        .pu-mini{white-space:nowrap;color:#65728a}.pu-score{font-weight:900;color:#071b49;white-space:nowrap}
+        .pu-status{display:inline-flex;border-radius:999px;padding:6px 9px;font-size:9px;font-weight:900;letter-spacing:.04em;white-space:nowrap}
+        .pu-ready{background:#e5f5eb;color:#17633a}.pu-developing{background:#fff3d7;color:#966000}.pu-starting{background:#e9eff8;color:#36557e}.pu-none{background:#fde9e9;color:#b11f28}
+        .pu-progress{width:75px;height:7px;background:#e8edf4;border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:6px}.pu-progress i{display:block;height:100%;background:#071b49;border-radius:99px}
+        .pu-profile-list{display:grid;grid-template-columns:1fr 1fr;gap:9px}.pu-slot{border:1px solid #e1e6ef;border-radius:9px;padding:11px;background:#fbfcfe}.pu-slot span{display:block;color:#71809b;font-size:9px;font-weight:900}.pu-slot strong{display:block;color:#071b49;font-size:12px;margin-top:5px}.pu-slot strong.vacant{color:#d21f2b}
+        .pu-connector-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.pu-connector{border:1px solid #e1e6ef;border-radius:8px;padding:9px;background:#fbfcfe}.pu-connector span{display:block;color:#71809b;font-size:9px;font-weight:900}.pu-connector strong{display:block;color:#071b49;font-size:11px;margin-top:4px}.pu-connector strong.vacant{color:#d21f2b}
+        .pu-action-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.pu-action-button{border:0;border-radius:7px;background:#071b49;color:#fff;padding:8px 10px;font:inherit;font-size:9px;font-weight:900;cursor:pointer}.pu-action-button.secondary{background:#eef3fa;color:#071b49}
+        @media(max-width:1050px){.pu-summary{grid-template-columns:repeat(3,minmax(0,1fr))}}
+        @media(max-width:900px){.pu-toolbar{grid-template-columns:1fr}.pu-profile-list{grid-template-columns:1fr}.pu-connector-grid{grid-template-columns:1fr}}
+        @media(max-width:600px){.pu-summary{grid-template-columns:1fr 1fr}}
     </style>
 </head>
 <body>
@@ -258,6 +283,41 @@
                 <table class="ward-table">
                     <thead><tr><th>LGA</th><th>WARD</th><th>WARD PILLARS</th><th>WARD LEADERSHIP</th><th>PU CAPTAINS</th><th>CONNECTORS</th><th>VERIFIED PUs</th><th>READINESS</th><th>STATUS</th><th>MEMBERS</th><th></th></tr></thead>
                     <tbody id="wardBody"><tr><td colspan="11">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="command-panel">
+            <div class="readiness-hero">
+                <div>
+                    <span class="command-kicker">PHASE 3D</span>
+                    <h2 style="margin-top:6px;">Polling Unit Command &amp; Connector Operations</h2>
+                    <p style="margin-bottom:10px;">Move from ward readiness into the polling-unit command layer. Each polling unit is measured against its Captain, eight Connectors, approved membership coverage and recent field activity.</p>
+                    <div class="ward-section-note"><strong>Polling-unit readiness:</strong> four operational layers carry equal weight: Polling Unit Captain, Connector Network, verified membership coverage and recent activity.</div>
+                </div>
+                <div class="readiness-score-card">
+                    <span>STATEWIDE POLLING UNIT READINESS</span>
+                    <strong id="statePuReadinessScore">0%</strong>
+                    <small id="statePuReadinessText">Loading polling-unit intelligence...</small>
+                </div>
+            </div>
+            <div class="pu-summary">
+                <article class="pu-summary-card"><span>TOTAL POLLING UNITS</span><strong id="totalPuCount">0</strong></article>
+                <article class="pu-summary-card"><span>PU READY</span><strong id="puReadyCount">0</strong></article>
+                <article class="pu-summary-card"><span>PU DEVELOPING</span><strong id="puDevelopingCount">0</strong></article>
+                <article class="pu-summary-card"><span>PU STARTING</span><strong id="puStartingCount">0</strong></article>
+                <article class="pu-summary-card"><span>PU NOT READY</span><strong id="puNotReadyCount">0</strong></article>
+                <article class="pu-summary-card"><span>VERIFIED PUs</span><strong id="puVerifiedCount">0</strong></article>
+            </div>
+            <div class="pu-toolbar">
+                <input id="puSearch" type="search" placeholder="Search polling unit, ward or LGA...">
+                <select id="puStatus"><option value="">ALL READINESS</option><option value="READY">READY</option><option value="DEVELOPING">DEVELOPING</option><option value="STARTING">STARTING</option><option value="NOT READY">NOT READY</option></select>
+                <select id="puSort"><option value="score-desc">SORT: READINESS HIGH TO LOW</option><option value="score-asc">SORT: READINESS LOW TO HIGH</option><option value="gap-desc">SORT: GAP HIGH TO LOW</option><option value="pu-asc">SORT: POLLING UNIT A-Z</option></select>
+            </div>
+            <div class="pu-table-wrap">
+                <table class="pu-table">
+                    <thead><tr><th>LGA</th><th>WARD</th><th>POLLING UNIT</th><th>CODE</th><th>PU CAPTAIN</th><th>CONNECTORS</th><th>VERIFIED</th><th>ACTIVITY</th><th>READINESS</th><th>STATUS</th><th></th></tr></thead>
+                    <tbody id="puBody"><tr><td colspan="11">Loading...</td></tr></tbody>
                 </table>
             </div>
         </section>
@@ -399,7 +459,34 @@
                 <div class="profile-box"><h4>WARD LEADERSHIP</h4><div id="wardLeadershipList" class="ward-profile-list"><div>Loading...</div></div></div>
                 <div class="profile-box"><h4>ACTIVITY &amp; PRIORITIES</h4><p style="margin:0 0 7px;color:#071b49;font-size:13px;font-weight:900"><span id="wardProfileActivityCount">0</span> recent activities</p><small style="color:#71809b">Latest: <span id="wardProfileLatestActivity">None recorded</span></small><ul id="wardProfilePriorityList" style="margin-top:10px"></ul></div>
             </div>
-            <div class="profile-box"><h4>POLLING UNIT COMMAND SNAPSHOT</h4><div class="profile-table-wrap"><table class="ward-pu-table"><thead><tr><th>POLLING UNIT</th><th>CODE</th><th>VERIFIED PUs</th><th>PU CAPTAIN</th><th>CONNECTORS</th><th>ACTIVITY</th></tr></thead><tbody id="wardProfilePuBody"><tr><td colspan="6">Loading...</td></tr></tbody></table></div></div>
+            <div class="profile-box"><h4>POLLING UNIT COMMAND SNAPSHOT</h4><div class="profile-table-wrap"><table class="ward-pu-table"><thead><tr><th>POLLING UNIT</th><th>CODE</th><th>VERIFIED PUs</th><th>PU CAPTAIN</th><th>CONNECTORS</th><th>ACTIVITY</th><th></th></tr></thead><tbody id="wardProfilePuBody"><tr><td colspan="7">Loading...</td></tr></tbody></table></div></div>
+        </div>
+    </div>
+
+    <div id="puProfileModal" class="profile-modal" hidden>
+        <div class="profile-card" role="dialog" aria-modal="true" aria-labelledby="puProfileName">
+            <div class="profile-head">
+                <div><span class="command-kicker">POLLING UNIT COMMAND PROFILE</span><h3><span id="puProfileName">POLLING UNIT</span> <span id="puProfileStatus" class="profile-status">STATUS</span></h3><p id="puProfileLocation">Polling-unit command, connector, membership and field-activity picture.</p></div>
+                <button type="button" class="profile-close" id="puProfileClose">CLOSE</button>
+            </div>
+            <div class="profile-score"><div><span>PU READINESS</span><strong id="puProfileScore">0%</strong><small id="puProfileScoreText">0% overall polling-unit readiness</small></div></div>
+            <div class="profile-grid">
+                <article class="profile-stat"><span>PU CAPTAIN</span><strong id="puProfileCaptain">VACANT</strong></article>
+                <article class="profile-stat"><span>CONNECTORS</span><strong id="puProfileConnectorCount">0/8</strong></article>
+                <article class="profile-stat"><span>REGISTERED MEMBERS</span><strong id="puProfileRegisteredMembers">0</strong></article>
+                <article class="profile-stat"><span>APPROVED MEMBERS</span><strong id="puProfileApprovedMembers">0</strong></article>
+                <article class="profile-stat"><span>MEMBERSHIP VERIFIED</span><strong id="puProfileVerified">NO</strong></article>
+                <article class="profile-stat"><span>RECENT ACTIVITIES</span><strong id="puProfileActivityCount">0</strong></article>
+                <article class="profile-stat"><span>COMMAND STATUS</span><strong id="puProfileCommandStatus">VACANT</strong></article>
+                <article class="profile-stat"><span>LAST ACTIVITY</span><strong id="puProfileLatestActivity">NONE</strong></article>
+            </div>
+            <div class="profile-two">
+                <div class="profile-box"><h4>POLLING UNIT CAPTAIN</h4><div id="puCaptainSlot" class="pu-slot"><span>Polling Unit Captain</span><strong class="vacant">VACANT</strong></div><div class="pu-action-row" id="puCaptainActions"></div></div>
+                <div class="profile-box"><h4>CONNECTOR NETWORK</h4><div id="puConnectorGrid" class="pu-connector-grid"></div></div>
+                <div class="profile-box"><h4>MEMBERSHIP COVERAGE</h4><p style="margin:0;color:#4e5e78;font-size:12px;line-height:1.7">Registered members: <strong id="puCoverageRegistered">0</strong><br>Approved members: <strong id="puCoverageApproved">0</strong><br>Coverage status: <strong id="puCoverageStatus">NOT VERIFIED</strong></p></div>
+                <div class="profile-box"><h4>FIELD ACTIVITY</h4><p style="margin:0;color:#4e5e78;font-size:12px;line-height:1.7">Recent activities: <strong id="puActivityTotal">0</strong><br>Latest activity: <strong id="puActivityLatest">None recorded</strong></p><ul id="puActivityList" style="margin-top:10px"></ul></div>
+            </div>
+            <div class="profile-box"><h4>PRIORITY ACTIONS</h4><ul id="puProfilePriorityList"><li>Loading...</li></ul></div>
         </div>
     </div>
 
@@ -423,6 +510,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="command.js?v=20260911-phase3c"></script>
+    <script src="command.js?v=20260911-phase3d"></script>
 </body>
 </html>
