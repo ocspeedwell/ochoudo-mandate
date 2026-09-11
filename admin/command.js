@@ -10,6 +10,7 @@
     let members = [];
     let slots = [];
     let readinessRows = [];
+    let activities = [];
     let currentSlot = null;
 
     const $ = (id) => document.getElementById(id);
@@ -244,6 +245,98 @@
         $("stateCommandGaps").textContent = gaps.toLocaleString();
     }
 
+    function isRecentActivity(a) {
+        if (!a || !a.activity_date) return false;
+        const d = new Date(a.activity_date + "T23:59:59");
+        const cutoff = new Date();
+        cutoff.setDate(cutoff.getDate() - 30);
+        return d >= cutoff;
+    }
+
+    function buildHealthRows() {
+        return readinessRows.map(function (r) {
+            const lgaActivities = activities.filter(a => normalize(a.lga_name) === r.lgaKey);
+            const recent = lgaActivities.filter(isRecentActivity).length;
+            const approvedPu = r.verifiedPUs;
+            const puCoverage = r.totalPUs ? pct(r.puCaptainAssigned, r.totalPUs) : 100;
+            const connectorCoverage = r.totalPUs ? pct(r.connectorAssigned, r.totalPUs * 8) : 100;
+            const commandScore = r.score;
+            const membershipScore = r.totalPUs ? pct(approvedPu, r.totalPUs) : 100;
+            const activityScore = Math.min(100, recent * 20);
+            const health = Math.round(commandScore * 0.45 + membershipScore * 0.20 + puCoverage * 0.15 + connectorCoverage * 0.10 + activityScore * 0.10);
+            const status = health >= 75 ? "ACTIVE" : health >= 45 ? "DEVELOPING" : health > 0 ? "WATCH" : "CRITICAL";
+            const latest = lgaActivities.slice().sort((a,b) => String(b.activity_date).localeCompare(String(a.activity_date)))[0];
+            return { ...r, recent, approvedPu, health, status, latestActivity: latest ? latest.activity_date : "" };
+        });
+    }
+
+    function renderHealth() {
+        const rows = buildHealthRows();
+        const search = normalize($("healthSearch").value);
+        const statusFilter = $("healthStatus").value;
+        const sort = $("healthSort").value;
+        let filtered = rows.filter(r => (!search || normalize(r.name).includes(search)) && (!statusFilter || r.status === statusFilter));
+        filtered.sort(function(a,b){
+            if(sort === "health-asc") return a.health-b.health || a.name.localeCompare(b.name);
+            if(sort === "activity-desc") return String(b.latestActivity).localeCompare(String(a.latestActivity)) || b.health-a.health;
+            if(sort === "gap-desc") return b.gap-a.gap || a.name.localeCompare(b.name);
+            return b.health-a.health || a.name.localeCompare(b.name);
+        });
+        $("healthBody").innerHTML = filtered.map(function(r){
+            const cls = r.status === "ACTIVE" ? "health-active" : r.status === "DEVELOPING" ? "health-developing" : r.status === "WATCH" ? "health-watch" : "health-critical";
+            return `<tr><td class="readiness-lga">${esc(r.name)}</td><td>${r.score}%</td><td>${r.approvedPu}/${r.totalPUs}</td><td>${r.puCaptainAssigned}/${r.totalPUs}</td><td>${r.connectorAssigned}/${r.totalPUs*8}</td><td>${r.recent} recent${r.latestActivity ? ` <span class="activity-date">(${esc(r.latestActivity)})</span>` : ""}</td><td class="health-score">${r.health}%</td><td><span class="health-badge ${cls}">${r.status}</span></td></tr>`;
+        }).join("") || '<tr><td colspan="8">No LGAs match the selected filters.</td></tr>';
+        const avg = rows.length ? Math.round(rows.reduce((s,r)=>s+r.health,0)/rows.length) : 0;
+        $("stateHealthScore").textContent = `${avg}%`;
+        $("stateHealthText").textContent = `${rows.filter(r=>r.health>0).length} of ${rows.length} LGAs have measurable organisational activity or structure.`;
+        $("healthActiveLgas").textContent = rows.filter(r=>r.status==="ACTIVE").length;
+        $("healthDevelopingLgas").textContent = rows.filter(r=>r.status==="DEVELOPING").length;
+        $("healthWatchLgas").textContent = rows.filter(r=>r.status==="WATCH").length;
+        $("healthCriticalLgas").textContent = rows.filter(r=>r.status==="CRITICAL").length;
+    }
+
+    function renderActivities() {
+        const rows = activities.slice().sort((a,b)=>String(b.activity_date).localeCompare(String(a.activity_date))).slice(0,100);
+        $("activityBody").innerHTML = rows.map(function(a){
+            return `<tr><td class="activity-date">${esc(a.activity_date || "-")}</td><td class="activity-type">${esc(a.activity_type)}</td><td>${esc(a.lga_name)}</td><td>${esc(a.ward_name || "-")}</td><td>${esc(a.polling_unit_name || "-")}</td><td>${esc(a.notes || "-")}</td><td><button class="assign-button remove" data-activity-remove="${esc(a.id)}">REMOVE</button></td></tr>`;
+        }).join("") || '<tr><td colspan="7">No activities recorded yet.</td></tr>';
+        $("activityBody").querySelectorAll("[data-activity-remove]").forEach(btn=>btn.addEventListener("click",()=>removeActivity(btn.dataset.activityRemove)));
+    }
+
+    async function loadActivities() {
+        const { data, error } = await db.rpc("get_omg_activity_log");
+        if (error) throw error;
+        activities = data || [];
+    }
+
+    async function saveActivity(event) {
+        event.preventDefault();
+        const button=$("activitySave"); button.disabled=true; button.textContent="SAVING...";
+        try {
+            const {data,error}=await db.rpc("save_omg_activity_log",{
+                p_activity_type:$("activityType").value,
+                p_lga_name:$("activityLga").value,
+                p_ward_name:$("activityWard").value,
+                p_polling_unit_name:$("activityPu").value,
+                p_activity_date:$("activityDate").value,
+                p_notes:$("activityNotes").value
+            });
+            if(error) throw error;
+            activities=[data,...activities];
+            $("activityForm").reset();
+            $("activityDate").value=new Date().toISOString().slice(0,10);
+            renderActivities(); renderHealth();
+        } catch(error){ alert(error.message || "Unable to log activity."); }
+        finally{ button.disabled=false; button.textContent="LOG ACTIVITY"; }
+    }
+
+    async function removeActivity(id) {
+        if(!confirm("Remove this activity record?")) return;
+        const {error}=await db.rpc("remove_omg_activity_log",{p_id:id});
+        if(error){alert(error.message || "Unable to remove activity.");return;}
+        activities=activities.filter(a=>a.id!==id); renderActivities(); renderHealth();
+    }
+
     function render() {
         const rows = filteredSlots();
         $("commandBody").innerHTML = rows.slice(0, 500).map(function (slot) {
@@ -281,6 +374,8 @@
         setMessage(`${assigned.toLocaleString()} command positions currently assigned out of ${slots.length.toLocaleString()} defined positions.`);
         buildReadinessRows();
         renderReadiness();
+        renderHealth();
+        renderActivities();
     }
 
     function assignedLga(total, role) { return slots.filter(s => s.scopeType === "LGA" && s.roleCode === role && findAssignment(s)).length; }
@@ -336,13 +431,18 @@
     async function start() {
         try {
             const ok = await requireAdmin(); if (!ok) return;
-            await loadHierarchy(); await loadAssignments(); await loadMembers(); buildSlots(); render();
+            await loadHierarchy(); await loadAssignments(); await loadMembers(); await loadActivities(); buildSlots(); render();
             $("commandSearch").addEventListener("input", render);
             $("commandLevel").addEventListener("change", render);
             $("commandStatus").addEventListener("change", render);
             $("readinessSearch").addEventListener("input", renderReadiness);
             $("readinessStatus").addEventListener("change", renderReadiness);
             $("readinessSort").addEventListener("change", renderReadiness);
+            $("healthSearch").addEventListener("input", renderHealth);
+            $("healthStatus").addEventListener("change", renderHealth);
+            $("healthSort").addEventListener("change", renderHealth);
+            $("activityForm").addEventListener("submit", saveActivity);
+            $("activityDate").value = new Date().toISOString().slice(0,10);
             $("commandCancel").addEventListener("click", closeModal);
             $("commandForm").addEventListener("submit", saveAssignment);
             $("commandModal").addEventListener("click", e => { if (e.target === $("commandModal")) closeModal(); });
