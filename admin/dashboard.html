@@ -61,19 +61,463 @@
             </article>
         </section>
 
-        <section class="dashboard-panel">
-            <div class="panel-header">
-                <div>
-                    <span class="panel-kicker">NEXT MODULE</span>
-                    <h2>Membership Directory</h2>
-                </div>
-                <button type="button" class="admin-secondary-button" disabled>COMING NEXT</button>
-            </div>
-            <p class="panel-placeholder">
-                The secure membership directory will appear here in the next phase.
-                It will support search, filtering, member review, approval and rejection.
-            </p>
-        </section>
+         /* =========================================================
+   OMG MEMBERSHIP INTELLIGENCE
+   ========================================================= */
+
+let omgLocationStats = [];
+
+
+function locationEscapeHtml(value) {
+    return String(value ?? "")
+        .replace(/[&<>'"]/g, function (character) {
+            return {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                "'": "&#39;",
+                '"': "&quot;"
+            }[character];
+        });
+}
+
+
+function locationDisplay(value) {
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return "NOT PROVIDED";
+    }
+
+    return String(value).toUpperCase();
+}
+
+
+async function loadOMGLocationStats() {
+
+    const message =
+        document.getElementById("locationStatsMessage");
+
+    if (message) {
+        message.textContent = "Loading location intelligence...";
+    }
+
+
+    const {
+        data,
+        error
+    } = await db.rpc(
+        "get_omg_location_stats"
+    );
+
+
+    if (error) {
+        console.error(
+            "Location statistics error:",
+            error
+        );
+
+        if (message) {
+            message.textContent =
+                "Unable to load location statistics.";
+        }
+
+        return;
+    }
+
+
+    omgLocationStats =
+        Array.isArray(data)
+            ? data
+            : [];
+
+
+    renderOMGLocationStats();
+
+
+    if (message) {
+        message.textContent =
+            `${omgLocationStats.length} location records loaded.`;
+    }
+}
+
+
+function renderOMGLocationStats() {
+
+    const lgaMap = new Map();
+
+    const wards = new Set();
+    const pollingUnits = new Set();
+
+
+    omgLocationStats.forEach(function (row) {
+
+        const lga =
+            locationDisplay(row.lga);
+
+        const ward =
+            locationDisplay(row.ward);
+
+        const pollingUnit =
+            locationDisplay(row.polling_unit);
+
+
+        wards.add(
+            `${lga}|${ward}`
+        );
+
+        pollingUnits.add(
+            `${lga}|${ward}|${pollingUnit}`
+        );
+
+
+        if (!lgaMap.has(lga)) {
+
+            lgaMap.set(lga, {
+                lga: lga,
+                total: 0,
+                approved: 0,
+                pending: 0,
+                rejected: 0
+            });
+
+        }
+
+
+        const item =
+            lgaMap.get(lga);
+
+
+        item.total +=
+            Number(row.total_members || 0);
+
+        item.approved +=
+            Number(row.approved_members || 0);
+
+        item.pending +=
+            Number(row.pending_members || 0);
+
+        item.rejected +=
+            Number(row.rejected_members || 0);
+
+    });
+
+
+    const lgaCount =
+        document.getElementById(
+            "locationLgaCount"
+        );
+
+    const wardCount =
+        document.getElementById(
+            "locationWardCount"
+        );
+
+    const pollingUnitCount =
+        document.getElementById(
+            "locationPollingUnitCount"
+        );
+
+
+    if (lgaCount) {
+        lgaCount.textContent =
+            lgaMap.size;
+    }
+
+    if (wardCount) {
+        wardCount.textContent =
+            wards.size;
+    }
+
+    if (pollingUnitCount) {
+        pollingUnitCount.textContent =
+            pollingUnits.size;
+    }
+
+
+    const select =
+        document.getElementById(
+            "locationLgaFilter"
+        );
+
+
+    if (select) {
+
+        const currentValue =
+            select.value;
+
+        select.innerHTML =
+            `<option value="">ALL LGAs</option>`;
+
+
+        Array.from(lgaMap.keys())
+            .sort()
+            .forEach(function (lga) {
+
+                const option =
+                    document.createElement("option");
+
+                option.value =
+                    lga;
+
+                option.textContent =
+                    lga;
+
+                select.appendChild(option);
+
+            });
+
+
+        if (
+            Array.from(
+                select.options
+            ).some(
+                option =>
+                    option.value === currentValue
+            )
+        ) {
+
+            select.value =
+                currentValue;
+
+        }
+
+    }
+
+
+    renderLGATable(
+        Array.from(
+            lgaMap.values()
+        ).sort(
+            (a, b) =>
+                b.total - a.total
+        )
+    );
+
+}
+
+
+function renderLGATable(rows) {
+
+    const body =
+        document.getElementById(
+            "lgaStatsBody"
+        );
+
+
+    if (!body) return;
+
+
+    if (!rows.length) {
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="5">
+                    NO MEMBERSHIP LOCATION DATA AVAILABLE.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    body.innerHTML =
+        rows.map(function (row) {
+
+            return `
+                <tr data-lga="${locationEscapeHtml(row.lga)}">
+                    <td>${locationEscapeHtml(row.lga)}</td>
+                    <td class="location-count">${row.total}</td>
+                    <td class="location-approved">${row.approved}</td>
+                    <td class="location-pending">${row.pending}</td>
+                    <td class="location-rejected">${row.rejected}</td>
+                </tr>
+            `;
+
+        }).join("");
+
+
+    body
+        .querySelectorAll("tr[data-lga]")
+        .forEach(function (row) {
+
+            row.style.cursor =
+                "pointer";
+
+            row.addEventListener(
+                "click",
+                function () {
+
+                    const lga =
+                        row.dataset.lga;
+
+                    const select =
+                        document.getElementById(
+                            "locationLgaFilter"
+                        );
+
+                    if (select) {
+                        select.value =
+                            lga;
+                    }
+
+                    renderWardDrilldown(
+                        lga
+                    );
+
+                }
+            );
+
+        });
+
+}
+
+
+function renderWardDrilldown(lga) {
+
+    const panel =
+        document.getElementById(
+            "locationDrilldownPanel"
+        );
+
+    const title =
+        document.getElementById(
+            "selectedLgaTitle"
+        );
+
+    const body =
+        document.getElementById(
+            "wardStatsBody"
+        );
+
+
+    if (!panel || !title || !body) {
+        return;
+    }
+
+
+    if (!lga) {
+
+        panel.hidden =
+            true;
+
+        return;
+    }
+
+
+    panel.hidden =
+        false;
+
+
+    title.textContent =
+        lga;
+
+
+    const rows =
+        omgLocationStats.filter(
+            row =>
+                locationDisplay(row.lga)
+                === lga
+        );
+
+
+    body.innerHTML =
+        rows
+            .sort(function (a, b) {
+
+                return (
+                    Number(b.total_members || 0)
+                    -
+                    Number(a.total_members || 0)
+                );
+
+            })
+            .map(function (row) {
+
+                return `
+                    <tr>
+                        <td>
+                            ${locationEscapeHtml(
+                                locationDisplay(row.ward)
+                            )}
+                        </td>
+
+                        <td>
+                            ${locationEscapeHtml(
+                                locationDisplay(row.polling_unit)
+                            )}
+                        </td>
+
+                        <td class="location-count">
+                            ${Number(row.total_members || 0)}
+                        </td>
+
+                        <td class="location-approved">
+                            ${Number(row.approved_members || 0)}
+                        </td>
+
+                        <td class="location-pending">
+                            ${Number(row.pending_members || 0)}
+                        </td>
+
+                        <td class="location-rejected">
+                            ${Number(row.rejected_members || 0)}
+                        </td>
+                    </tr>
+                `;
+
+            })
+            .join("");
+
+}
+
+
+const locationLgaFilter =
+    document.getElementById(
+        "locationLgaFilter"
+    );
+
+
+if (locationLgaFilter) {
+
+    locationLgaFilter.addEventListener(
+        "change",
+        function () {
+
+            renderWardDrilldown(
+                this.value
+            );
+
+        }
+    );
+
+}
+
+
+const refreshLocationStats =
+    document.getElementById(
+        "refreshLocationStats"
+    );
+
+
+if (refreshLocationStats) {
+
+    refreshLocationStats.addEventListener(
+        "click",
+        function () {
+
+            loadOMGLocationStats();
+
+        }
+    );
+
+}
+
+
+loadOMGLocationStats();
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
