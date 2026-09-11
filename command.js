@@ -167,8 +167,9 @@
 
             const registeredMembers = members.filter(m => normalize(m.lga) === lgaKey);
             const approvedMembers = registeredMembers.filter(m => normalize(m.membership_status) === "APPROVED");
+            const approvedMemberCount = approvedMembers.length;
             const registeredPUs = new Set(registeredMembers.map(m => normalize(m.ward) + "||" + normalize(m.polling_unit)).filter(Boolean)).size;
-            const verifiedPUs = new Set(approvedMembers.map(m => normalize(m.ward) + "||" + normalize(m.polling_unit)).filter(Boolean)).size;
+            const verifiedPUs = new Set(approvedMemberRecords.map(m => normalize(m.ward) + "||" + normalize(m.polling_unit)).filter(Boolean)).size;
 
             const layers = [
                 pct(pillarAssigned, 10),
@@ -187,7 +188,7 @@
                 lgaKey, totalWards, totalPUs,
                 pillarAssigned, lgaLeadershipAssigned, wardPillarAssigned, puCaptainAssigned, connectorAssigned,
                 assignedTotal, requiredTotal, gap: Math.max(0, requiredTotal - assignedTotal),
-                score, status, registeredMembers: registeredMembers.length, approvedMembers: approvedMembers.length,
+                score, status, registeredMembers: registeredMembers.length, approvedMemberCount,
                 registeredPUs, verifiedPUs
             };
         });
@@ -222,9 +223,10 @@
         const puCaptains = lgaAssignments.filter(a => normalize(a.role_code) === "POLLING_UNIT_CAPTAIN");
         const connectors = lgaAssignments.filter(a => normalize(a.role_code) === "POLLING_UNIT_CONNECTOR");
         const lgaMembers = members.filter(m => normalize(m.lga) === lgaKey);
-        const approvedMembers = lgaMembers.filter(m => normalize(m.membership_status) === "APPROVED");
+        const approvedMemberRecords = lgaMembers.filter(m => normalize(m.membership_status) === "APPROVED");
+        const approvedMemberCount = approvedMemberRecords.length;
         const registeredPuKeys = new Set(lgaMembers.map(m => normalize(m.ward) + "||" + normalize(m.polling_unit)));
-        const approvedPuKeys = new Set(approvedMembers.map(m => normalize(m.ward) + "||" + normalize(m.polling_unit)));
+        const approvedPuKeys = new Set(approvedMemberRecords.map(m => normalize(m.ward) + "||" + normalize(m.polling_unit)));
         const uncoveredPus = [];
         const pendingOnlyPus = [];
         const rejectedOnlyPus = [];
@@ -252,7 +254,7 @@
             const approvedPuCount = new Set(lgaMembers.filter(m => normalize(m.ward) === wardKey && normalize(m.membership_status) === "APPROVED").map(m => normalize(m.polling_unit))).size;
             return { name:w.name, puCount, wardPillarCount, captainCount, connectorCount, approvedPuCount };
         });
-        return { ...row, lga, wards, lgaAssignments, lgaLeadership, lgaPillars, wardPillars, puCaptains, connectors, lgaMembers, approvedMemberRecords: approvedMembers, uncoveredPus, pendingOnlyPus, rejectedOnlyPus, recentActivities, wardDetails, registeredPuKeys, approvedPuKeys };
+        return { ...row, lga, wards, lgaAssignments, lgaLeadership, lgaPillars, wardPillars, puCaptains, connectors, lgaMembers, approvedMemberRecords, approvedMemberCount, uncoveredPus, pendingOnlyPus, rejectedOnlyPus, recentActivities, wardDetails, registeredPuKeys, approvedPuKeys };
     }
 
     function openLgaProfile(lgaKey) {
@@ -264,7 +266,7 @@
         $("profileHealthStatus").textContent = profile.status;
         $("profileCommandScore").textContent = `${profile.score}%`;
         $("profileRegisteredMembers").textContent = profile.registeredMembers.toLocaleString();
-        $("profileApprovedMembers").textContent = profile.approvedMembers.toLocaleString();
+        $("profileApprovedMembers").textContent = profile.approvedMemberCount.toLocaleString();
         $("profileRegisteredPus").textContent = profile.registeredPUs.toLocaleString();
         $("profileVerifiedPus").textContent = profile.verifiedPUs.toLocaleString();
         $("profilePillars").textContent = `${profile.pillarAssigned}/10`;
@@ -315,7 +317,7 @@
                 <td class="readiness-mini">${r.connectorAssigned}/${r.totalPUs * 8}</td>
                 <td><span class="readiness-bar"><i style="width:${r.score}%"></i></span><span class="readiness-percent">${r.score}%</span></td>
                 <td><span class="readiness-badge ${badgeClass}">${r.status}</span></td>
-                <td class="readiness-mini">${r.registeredMembers} reg / ${r.approvedMembers} approved</td>
+                <td class="readiness-mini">${r.registeredMembers} reg / ${r.approvedMemberCount} approved</td>
                 <td><button class="profile-button" data-profile="${esc(r.lgaKey)}">VIEW PROFILE</button></td>
             </tr>`;
         }).join("") || '<tr><td colspan="10">No LGAs match the selected filters.</td></tr>';
