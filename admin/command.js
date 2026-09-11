@@ -7,7 +7,9 @@
 
     let hierarchy = null;
     let assignments = [];
+    let members = [];
     let slots = [];
+    let readinessRows = [];
     let currentSlot = null;
 
     const $ = (id) => document.getElementById(id);
@@ -29,9 +31,9 @@
     ];
 
     const WARD_ROLES = [
-        ["WARD_MANDATE_PILLAR", "Ward Pillar", 1],
-        ["WARD_MANDATE_PILLAR", "Ward Pillar", 2],
-        ["WARD_MANDATE_PILLAR", "Ward Pillar", 3],
+        ["WARD_PILLAR", "Ward Pillar", 1],
+        ["WARD_PILLAR", "Ward Pillar", 2],
+        ["WARD_PILLAR", "Ward Pillar", 3],
         ["WARD_MANDATE_CAPTAIN", "Ward Mandate Captain", 1],
         ["WARD_DEPUTY_MANDATE_CAPTAIN", "Ward Deputy Mandate Captain", 1],
         ["SECRETARY", "Secretary", 1],
@@ -71,6 +73,24 @@
         assignments = Array.isArray(data) ? data : [];
     }
 
+    async function loadMembers() {
+        members = [];
+        let from = 0;
+        const pageSize = 1000;
+        while (true) {
+            const to = from + pageSize - 1;
+            const { data, error } = await db
+                .from("members")
+                .select("id,full_name,membership_status,lga,ward,polling_unit,polling_unit_code")
+                .range(from, to);
+            if (error) throw error;
+            if (!Array.isArray(data) || data.length === 0) break;
+            members.push(...data);
+            if (data.length < pageSize) break;
+            from += pageSize;
+        }
+    }
+
     function addSlot(scopeType, scopeKey, scopeName, roleCode, roleTitle, slotNumber) {
         slots.push({ scopeType, scopeKey, scopeName, roleCode, roleTitle, slotNumber });
     }
@@ -78,7 +98,7 @@
     function buildSlots() {
         slots = [];
         hierarchy.state.lgas.forEach(function (lga) {
-            for (let i = 1; i <= 10; i++) addSlot("LGA", normalize(lga.name), lga.name, "MANDATE_PILLAR", "Mandate Pillar", i);
+            for (let i = 1; i <= 10; i++) addSlot("LGA", normalize(lga.name), lga.name, "OCHOUdo_PILLAR", "Mandate Pillar", i);
             LGA_FUNCTIONAL_ROLES.forEach(r => addSlot("LGA", normalize(lga.name), lga.name, r[0], r[1], r[2]));
             (lga.wards || []).forEach(function (ward) {
                 WARD_ROLES.forEach(r => addSlot("WARD", normalize(lga.name) + "||" + normalize(ward.name), lga.name + " • " + ward.name, r[0], r[1], r[2]));
@@ -112,6 +132,118 @@
         });
     }
 
+    function isActiveAssignment(a) {
+        return !!a && normalize(a.status) === "ACTIVE" && !!a.full_name;
+    }
+
+    function countAssignments(scopeType, scopeKey, roleCodes) {
+        const codes = Array.isArray(roleCodes) ? roleCodes.map(normalize) : [normalize(roleCodes)];
+        return assignments.filter(a =>
+            normalize(a.scope_type) === normalize(scopeType) &&
+            normalize(a.scope_key) === normalize(scopeKey) &&
+            codes.includes(normalize(a.role_code)) &&
+            isActiveAssignment(a)
+        ).length;
+    }
+
+    function buildReadinessRows() {
+        readinessRows = hierarchy.state.lgas.map(function (lga) {
+            const lgaKey = normalize(lga.name);
+            const wards = lga.wards || [];
+            const totalWards = wards.length;
+            const totalPUs = wards.reduce((sum, w) => sum + (w.pollingUnits || []).length, 0);
+            const pillarAssigned = countAssignments("LGA", lgaKey, "OCHOUdo_PILLAR");
+            const lgaLeadershipCodes = LGA_FUNCTIONAL_ROLES.map(r => r[0]);
+            const lgaLeadershipAssigned = countAssignments("LGA", lgaKey, lgaLeadershipCodes);
+            let wardPillarAssigned = 0;
+            wards.forEach(function (ward) {
+                const wardKey = lgaKey + "||" + normalize(ward.name);
+                wardPillarAssigned += countAssignments("WARD", wardKey, ["WARD_PILLAR"]);
+            });
+            const puCaptainAssigned = countAssignmentsByRoleInLga(lgaKey, "POLLING_UNIT_CAPTAIN");
+            const connectorAssigned = countAssignmentsByRoleInLga(lgaKey, "POLLING_UNIT_CONNECTOR");
+
+            const registeredMembers = members.filter(m => normalize(m.lga) === lgaKey);
+            const approvedMembers = registeredMembers.filter(m => normalize(m.membership_status) === "APPROVED");
+            const registeredPUs = new Set(registeredMembers.map(m => normalize(m.ward) + "||" + normalize(m.polling_unit)).filter(Boolean)).size;
+            const verifiedPUs = new Set(approvedMembers.map(m => normalize(m.ward) + "||" + normalize(m.polling_unit)).filter(Boolean)).size;
+
+            const layers = [
+                pct(pillarAssigned, 10),
+                pct(lgaLeadershipAssigned, LGA_FUNCTIONAL_ROLES.length),
+                pct(wardPillarAssigned, totalWards * 3),
+                pct(puCaptainAssigned, totalPUs),
+                pct(connectorAssigned, totalPUs * 8)
+            ];
+            const score = Math.round(layers.reduce((a,b) => a+b, 0) / layers.length);
+            const status = score >= 80 ? "READY" : score >= 50 ? "DEVELOPING" : score > 0 ? "STARTING" : "NOT READY";
+            const assignedTotal = pillarAssigned + lgaLeadershipAssigned + wardPillarAssigned + puCaptainAssigned + connectorAssigned;
+            const requiredTotal = 10 + LGA_FUNCTIONAL_ROLES.length + totalWards * 3 + totalPUs + totalPUs * 8;
+
+            return {
+                name: lga.name,
+                lgaKey, totalWards, totalPUs,
+                pillarAssigned, lgaLeadershipAssigned, wardPillarAssigned, puCaptainAssigned, connectorAssigned,
+                assignedTotal, requiredTotal, gap: Math.max(0, requiredTotal - assignedTotal),
+                score, status, registeredMembers: registeredMembers.length, approvedMembers: approvedMembers.length,
+                registeredPUs, verifiedPUs
+            };
+        });
+    }
+
+    function countAssignmentsByRoleInLga(lgaKey, roleCode) {
+        return assignments.filter(function (a) {
+            if (normalize(a.role_code) !== normalize(roleCode) || !isActiveAssignment(a)) return false;
+            return normalize(a.scope_key).startsWith(lgaKey + "||");
+        }).length;
+    }
+
+    function pct(value, total) {
+        if (!total) return 100;
+        return Math.min(100, Math.round((value / total) * 100));
+    }
+
+    function renderReadiness() {
+        const search = normalize($("readinessSearch").value);
+        const statusFilter = $("readinessStatus").value;
+        const sort = $("readinessSort").value;
+        let rows = readinessRows.filter(r => (!search || normalize(r.name).includes(search)) && (!statusFilter || r.status === statusFilter));
+        rows.sort(function(a,b) {
+            if (sort === "score-asc") return a.score - b.score || a.name.localeCompare(b.name);
+            if (sort === "gap-desc") return b.gap - a.gap || a.name.localeCompare(b.name);
+            if (sort === "lga-asc") return a.name.localeCompare(b.name);
+            return b.score - a.score || a.name.localeCompare(b.name);
+        });
+        $("readinessBody").innerHTML = rows.map(function(r) {
+            const badgeClass = r.status === "READY" ? "readiness-ready" : r.status === "DEVELOPING" ? "readiness-developing" : r.status === "STARTING" ? "readiness-starting" : "readiness-none";
+            return `<tr>
+                <td class="readiness-lga">${esc(r.name)}</td>
+                <td class="readiness-mini">${r.pillarAssigned}/10</td>
+                <td class="readiness-mini">${r.lgaLeadershipAssigned}/${LGA_FUNCTIONAL_ROLES.length}</td>
+                <td class="readiness-mini">${r.wardPillarAssigned}/${r.totalWards * 3}</td>
+                <td class="readiness-mini">${r.puCaptainAssigned}/${r.totalPUs}</td>
+                <td class="readiness-mini">${r.connectorAssigned}/${r.totalPUs * 8}</td>
+                <td><span class="readiness-bar"><i style="width:${r.score}%"></i></span><span class="readiness-percent">${r.score}%</span></td>
+                <td><span class="readiness-badge ${badgeClass}">${r.status}</span></td>
+                <td class="readiness-mini">${r.registeredMembers} reg / ${r.approvedMembers} approved</td>
+            </tr>`;
+        }).join("") || '<tr><td colspan="9">No LGAs match the selected filters.</td></tr>';
+
+        const average = readinessRows.length ? Math.round(readinessRows.reduce((sum,r) => sum + r.score, 0) / readinessRows.length) : 0;
+        const ready = readinessRows.filter(r => r.status === "READY").length;
+        const developing = readinessRows.filter(r => r.status === "DEVELOPING").length;
+        const starting = readinessRows.filter(r => r.status === "STARTING").length;
+        const none = readinessRows.filter(r => r.status === "NOT READY").length;
+        const gaps = readinessRows.reduce((sum,r) => sum + r.gap, 0);
+        $("stateReadinessScore").textContent = `${average}%`;
+        $("stateReadinessText").textContent = `${readinessRows.filter(r => r.score > 0).length} of 27 LGAs have at least one command position assigned.`;
+        $("readyLgas").textContent = ready;
+        $("developingLgas").textContent = developing;
+        $("startingLgas").textContent = starting;
+        $("notReadyLgas").textContent = none;
+        $("stateCommandGaps").textContent = gaps.toLocaleString();
+    }
+
     function render() {
         const rows = filteredSlots();
         $("commandBody").innerHTML = rows.slice(0, 500).map(function (slot) {
@@ -136,17 +268,19 @@
         });
 
         const assigned = slots.filter(s => !!findAssignment(s) && normalize(findAssignment(s).status) === "ACTIVE").length;
-        const lgaPillars = slots.filter(s => s.scopeType === "LGA" && s.roleCode === "MANDATE_PILLAR").length;
+        const lgaPillars = slots.filter(s => s.scopeType === "LGA" && s.roleCode === "OCHOUdo_PILLAR").length;
         const lgaCaptains = slots.filter(s => s.scopeType === "LGA" && s.roleCode === "MANDATE_CAPTAIN").length;
-        const wardPillars = slots.filter(s => s.scopeType === "WARD" && s.roleCode === "WARD_MANDATE_PILLAR").length;
+        const wardPillars = slots.filter(s => s.scopeType === "WARD" && s.roleCode === "WARD_PILLAR").length;
         const puCaptains = slots.filter(s => s.roleCode === "POLLING_UNIT_CAPTAIN").length;
         const puConnectors = slots.filter(s => s.roleCode === "POLLING_UNIT_CONNECTOR").length;
-        $("lgaPillarSlots").textContent = `${assignedLga(lgaPillars, "MANDATE_PILLAR")} / ${lgaPillars}`;
+        $("lgaPillarSlots").textContent = `${assignedLga(lgaPillars, "OCHOUdo_PILLAR")} / ${lgaPillars}`;
         $("lgaCaptainSlots").textContent = `${assignedLga(lgaCaptains, "MANDATE_CAPTAIN")} / ${lgaCaptains}`;
-        $("wardPillarSlots").textContent = `${assignedRole(wardPillars, "WARD_MANDATE_PILLAR")} / ${wardPillars}`;
+        $("wardPillarSlots").textContent = `${assignedRole(wardPillars, "WARD_PILLAR")} / ${wardPillars}`;
         $("puCaptainSlots").textContent = `${assignedRole(puCaptains, "POLLING_UNIT_CAPTAIN")} / ${puCaptains}`;
         $("puConnectorSlots").textContent = `${assignedRole(puConnectors, "POLLING_UNIT_CONNECTOR")} / ${puConnectors}`;
         setMessage(`${assigned.toLocaleString()} command positions currently assigned out of ${slots.length.toLocaleString()} defined positions.`);
+        buildReadinessRows();
+        renderReadiness();
     }
 
     function assignedLga(total, role) { return slots.filter(s => s.scopeType === "LGA" && s.roleCode === role && findAssignment(s)).length; }
@@ -202,10 +336,13 @@
     async function start() {
         try {
             const ok = await requireAdmin(); if (!ok) return;
-            await loadHierarchy(); await loadAssignments(); buildSlots(); render();
+            await loadHierarchy(); await loadAssignments(); await loadMembers(); buildSlots(); render();
             $("commandSearch").addEventListener("input", render);
             $("commandLevel").addEventListener("change", render);
             $("commandStatus").addEventListener("change", render);
+            $("readinessSearch").addEventListener("input", renderReadiness);
+            $("readinessStatus").addEventListener("change", renderReadiness);
+            $("readinessSort").addEventListener("change", renderReadiness);
             $("commandCancel").addEventListener("click", closeModal);
             $("commandForm").addEventListener("submit", saveAssignment);
             $("commandModal").addEventListener("click", e => { if (e.target === $("commandModal")) closeModal(); });

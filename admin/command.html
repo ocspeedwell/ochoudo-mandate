@@ -52,6 +52,38 @@
         .command-form-grid textarea { min-height:85px; resize:vertical; }
         .command-form-grid .full { grid-column:1/-1; }
         .modal-actions { display:flex; justify-content:flex-end; gap:9px; margin-top:17px; }
+
+        .readiness-hero{display:grid;grid-template-columns:1fr 290px;gap:14px;align-items:stretch;margin-bottom:20px}
+        .readiness-score-card{background:#071b49;color:#fff;border-radius:15px;padding:20px;display:flex;flex-direction:column;justify-content:center}
+        .readiness-score-card span{font-size:10px;font-weight:900;letter-spacing:.1em;opacity:.8}
+        .readiness-score-card strong{font-size:42px;line-height:1;margin:8px 0}
+        .readiness-score-card small{font-size:11px;opacity:.85;line-height:1.45}
+        .readiness-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:16px}
+        .readiness-stat{border:1px solid #e1e6ef;border-radius:11px;padding:13px;background:#fbfcfe}
+        .readiness-stat span{display:block;color:#71809b;font-size:9px;font-weight:900;letter-spacing:.07em}
+        .readiness-stat strong{display:block;color:#071b49;font-size:22px;margin-top:5px}
+        .readiness-toolbar{display:grid;grid-template-columns:1fr 190px 190px;gap:10px;margin-bottom:14px}
+        .readiness-toolbar input,.readiness-toolbar select{min-height:42px;border:1px solid #dce2eb;border-radius:9px;padding:0 12px;font:inherit;color:#26334a;background:#fff}
+        .readiness-table-wrap{overflow-x:auto;border:1px solid #e6eaf1;border-radius:12px}
+        .readiness-table{width:100%;min-width:980px;border-collapse:collapse}
+        .readiness-table th,.readiness-table td{padding:11px 12px;border-bottom:1px solid #edf0f5;text-align:left;vertical-align:middle}
+        .readiness-table th{background:#f7f9fc;color:#61708a;font-size:9px;font-weight:900;letter-spacing:.06em}
+        .readiness-table td{font-size:12px;color:#2d3a51}
+        .readiness-table tr:last-child td{border-bottom:0}
+        .readiness-lga{font-weight:900;color:#071b49;white-space:nowrap}
+        .readiness-mini{font-size:11px;color:#65728a;white-space:nowrap}
+        .readiness-bar{width:105px;height:7px;background:#e8edf4;border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:7px}
+        .readiness-bar i{display:block;height:100%;background:#071b49;border-radius:99px}
+        .readiness-percent{font-weight:900;color:#071b49;white-space:nowrap}
+        .readiness-badge{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:6px 9px;font-size:9px;font-weight:900;letter-spacing:.04em;white-space:nowrap}
+        .readiness-ready{background:#e5f5eb;color:#17633a}
+        .readiness-developing{background:#fff3d7;color:#966000}
+        .readiness-starting{background:#e9eff8;color:#36557e}
+        .readiness-none{background:#fde9e9;color:#b11f28}
+        .readiness-gap{font-weight:900;color:#b11f28}
+        .readiness-note{padding:12px 14px;background:#f5f7fb;border-radius:9px;color:#65728a;font-size:12px;line-height:1.5;margin-bottom:15px}
+        @media(max-width:900px){.readiness-hero{grid-template-columns:1fr}.readiness-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.readiness-toolbar{grid-template-columns:1fr}}
+        @media(max-width:600px){.readiness-summary{grid-template-columns:1fr 1fr}.readiness-score-card strong{font-size:36px}}
         @media(max-width:900px) { .command-grid{grid-template-columns:repeat(2,minmax(0,1fr));} .structure-grid{grid-template-columns:repeat(2,minmax(0,1fr));} .command-toolbar{grid-template-columns:1fr;} }
         @media(max-width:600px) { .command-grid{grid-template-columns:1fr 1fr;} .structure-grid{grid-template-columns:1fr;} .command-panel{padding:16px;} .command-hero{padding:20px;} .command-form-grid{grid-template-columns:1fr;} .command-form-grid .full{grid-column:auto;} }
     </style>
@@ -79,6 +111,63 @@
             <article class="command-stat"><span>WARD PILLAR SLOTS</span><strong id="wardPillarSlots">0</strong></article>
             <article class="command-stat"><span>POLLING UNIT CAPTAINS</span><strong id="puCaptainSlots">0</strong></article>
             <article class="command-stat"><span>POLLING UNIT CONNECTORS</span><strong id="puConnectorSlots">0</strong></article>
+        </section>
+
+        <section class="command-panel">
+            <div class="readiness-hero">
+                <div>
+                    <span class="command-kicker">PHASE 3A</span>
+                    <h2 style="margin-top:6px;">Command Readiness Intelligence</h2>
+                    <p style="margin-bottom:10px;">Measure how prepared each LGA is to operate the OMG grassroots command structure, from LGA leadership through Ward Pillars to Polling Unit Captains and Connectors.</p>
+                    <div class="readiness-note"><strong>How the score works:</strong> each of the five command layers carries equal weight: LGA Mandate Pillars, LGA leadership, Ward Pillars, Polling Unit Captains and Polling Unit Connectors. The score measures assigned positions against the positions required by the electoral hierarchy.</div>
+                </div>
+                <div class="readiness-score-card">
+                    <span>STATEWIDE COMMAND READINESS</span>
+                    <strong id="stateReadinessScore">0%</strong>
+                    <small id="stateReadinessText">Loading readiness intelligence...</small>
+                </div>
+            </div>
+            <div class="readiness-summary">
+                <article class="readiness-stat"><span>LGAs READY</span><strong id="readyLgas">0</strong></article>
+                <article class="readiness-stat"><span>LGAs DEVELOPING</span><strong id="developingLgas">0</strong></article>
+                <article class="readiness-stat"><span>LGAs STARTING</span><strong id="startingLgas">0</strong></article>
+                <article class="readiness-stat"><span>LGAs NOT READY</span><strong id="notReadyLgas">0</strong></article>
+                <article class="readiness-stat"><span>COMMAND GAPS</span><strong id="stateCommandGaps">0</strong></article>
+            </div>
+            <div class="readiness-toolbar">
+                <input id="readinessSearch" type="search" placeholder="Search LGA...">
+                <select id="readinessStatus">
+                    <option value="">ALL READINESS</option>
+                    <option value="READY">READY</option>
+                    <option value="DEVELOPING">DEVELOPING</option>
+                    <option value="STARTING">STARTING</option>
+                    <option value="NOT READY">NOT READY</option>
+                </select>
+                <select id="readinessSort">
+                    <option value="score-desc">SORT: READINESS HIGH TO LOW</option>
+                    <option value="score-asc">SORT: READINESS LOW TO HIGH</option>
+                    <option value="gap-desc">SORT: COMMAND GAP HIGH TO LOW</option>
+                    <option value="lga-asc">SORT: LGA A-Z</option>
+                </select>
+            </div>
+            <div class="readiness-table-wrap">
+                <table class="readiness-table">
+                    <thead>
+                        <tr>
+                            <th>LGA</th>
+                            <th>PILLARS</th>
+                            <th>LGA LEADERSHIP</th>
+                            <th>WARD PILLARS</th>
+                            <th>PU CAPTAINS</th>
+                            <th>CONNECTORS</th>
+                            <th>READINESS</th>
+                            <th>STATUS</th>
+                            <th>MEMBERSHIP</th>
+                        </tr>
+                    </thead>
+                    <tbody id="readinessBody"><tr><td colspan="9">Loading...</td></tr></tbody>
+                </table>
+            </div>
         </section>
 
         <section class="command-panel">
