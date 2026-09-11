@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMG Admin Dashboard</title>
+    <link rel="icon" href="../assets/ochoudo-favicon.png">
+    <link rel="stylesheet" href="admin.css">
+
+    <style>
+        /* =========================================================
+           OMG PHASE 2 DASHBOARD
+           Grassroots Coverage Intelligence
+        ========================================================= */
+
+        .coverage-section {
+            margin-top: 28px;
+        }
+
+        .coverage-hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(260px, .6fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .coverage-overview,
+        .coverage-score-card,
+        .coverage-panel {
+            background: #fff;
+            border: 1px solid #e6eaf1;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(7, 27, 73, .06);
+        }
+
+        .coverage-overview {
+            padding: 24px;
+        }
+
+        .coverage-kicker,
+        .coverage-score-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .14em;
+            color: #71809b;
+        }
+
+        .coverage-overview h2 {
+            margin: 6px 0 8px;
+            color: #071b49;
+            font-size: 24px;
+        }
+
+        .coverage-overview p {
+            margin: 0;
+            color: #65728a;
+            line-height: 1.6;
+        }
+
+        .coverage-score-card {
+            padding: 24px;
+            background: linear-gradient(145deg, #071b49, #102b63);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 150px;
+        }
+
+        .coverage-score-card .coverage-score-label {
+            color: rgba(255,255,255,.72);
+        }
+
+        .coverage-score {
+            margin-top: 6px;
+            font-size: 44px;
+            line-height: 1;
+            font-weight: 900;
+        }
+
+        .coverage-score-sub {
+            margin-top: 8px;
+            font-size: 13px;
+            color: rgba(255,255,255,.76);
+        }
+
+        .coverage-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .coverage-stat {
+            background: #fff;
+            border: 1px solid #e6eaf1;
+            border-radius: 14px;
+            padding: 17px;
+            box-shadow: 0 6px 18px rgba(7, 27, 73, .045);
+        }
+
+        .coverage-stat span {
+            display: block;
+            font-size: 10px;
+            line-height: 1.35;
+            font-weight: 800;
+            letter-spacing: .08em;
+            color: #78849a;
+        }
+
+        .coverage-stat strong {
+            display: block;
+            margin-top: 8px;
+            color: #071b49;
+            font-size: 26px;
+            line-height: 1;
+        }
+
+        .coverage-panel {
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
+        .coverage-panel-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .coverage-panel-header h2 {
+            margin: 3px 0 0;
+            color: #071b49;
+            font-size: 20px;
+        }
+
+        .coverage-panel-header p {
+            margin: 5px 0 0;
+            color: #78849a;
+            font-size: 13px;
+        }
+
+        .coverage-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .coverage-toolbar select,
+        .coverage-toolbar input {
+            min-height: 42px;
+            border: 1px solid #dce2eb;
+            border-radius: 9px;
+            padding: 0 12px;
+            background: #fff;
+            color: #25324a;
+            font: inherit;
+        }
+
+        .coverage-toolbar input {
+            flex: 1 1 220px;
+        }
+
+        .coverage-toolbar select {
+            min-width: 180px;
+        }
+
+        .coverage-table-wrap {
+            overflow-x: auto;
+            border: 1px solid #e6eaf1;
+            border-radius: 12px;
+        }
+
+        .coverage-table {
+            width: 100%;
+            min-width: 900px;
+            border-collapse: collapse;
+        }
+
+        .coverage-table th,
+        .coverage-table td {
+            padding: 12px 13px;
+            border-bottom: 1px solid #edf0f5;
+            text-align: left;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .coverage-table th {
+            background: #f7f9fc;
+            color: #61708a;
+            font-size: 10px;
+            letter-spacing: .08em;
+            font-weight: 800;
+        }
+
+        .coverage-table td {
+            color: #26334a;
+            font-size: 13px;
+        }
+
+        .coverage-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .coverage-table tbody tr:hover {
+            background: #fafbfd;
+        }
+
+        .coverage-name {
+            color: #071b49;
+            font-weight: 800;
+        }
+
+        .coverage-muted {
+            color: #7b879b;
+        }
+
+        .coverage-progress {
+            width: 110px;
+            height: 7px;
+            background: #e9edf3;
+            border-radius: 999px;
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 7px;
+        }
+
+        .coverage-progress span {
+            display: block;
+            height: 100%;
+            background: #071b49;
+            border-radius: inherit;
+        }
+
+        .coverage-percent {
+            font-weight: 800;
+            color: #071b49;
+        }
+
+        .coverage-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 104px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: .04em;
+        }
+
+        .coverage-covered {
+            color: #14633b;
+            background: #e8f7ee;
+        }
+
+        .coverage-partial {
+            color: #8a5a00;
+            background: #fff4d8;
+        }
+
+        .coverage-none {
+            color: #9d2020;
+            background: #fdeaea;
+        }
+
+        .coverage-action {
+            border: 0;
+            background: #071b49;
+            color: #fff;
+            border-radius: 7px;
+            padding: 8px 11px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .05em;
+            cursor: pointer;
+        }
+
+        .coverage-action:hover {
+            background: #102f6d;
+        }
+
+        .coverage-empty {
+            padding: 26px;
+            text-align: center;
+            color: #7b879b;
+        }
+
+        .coverage-drilldown[hidden] {
+            display: none;
+        }
+
+        .coverage-breadcrumb {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            align-items: center;
+            margin-bottom: 14px;
+            font-size: 12px;
+            color: #71809b;
+        }
+
+        .coverage-breadcrumb button {
+            border: 0;
+            background: transparent;
+            color: #071b49;
+            padding: 0;
+            font: inherit;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .coverage-breadcrumb .current {
+            color: #7b879b;
+            font-weight: 700;
+        }
+
+        .coverage-loading {
+            padding: 20px;
+            color: #71809b;
+            text-align: center;
+        }
+
+        .coverage-updated {
+            margin-top: 12px;
+            font-size: 11px;
+            color: #8792a6;
+        }
+
+        @media (max-width: 1100px) {
+            .coverage-stat-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .coverage-hero {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .coverage-stat-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .coverage-overview,
+            .coverage-score-card,
+            .coverage-panel {
+                border-radius: 12px;
+            }
+
+            .coverage-panel {
+                padding: 16px;
+            }
+
+            .coverage-panel-header {
+                display: block;
+            }
+
+            .coverage-toolbar select {
+                flex: 1 1 100%;
+                width: 100%;
+            }
+
+            .coverage-stat {
+                padding: 14px;
+            }
+
+            .coverage-stat strong {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body class="admin-body dashboard-body">
+    <header class="admin-topbar">
+        <div class="admin-topbar-brand">
+            <img src="../assets/ochoudo-logo.png" alt="Ochoudo Mandate Group">
+            <div>
+                <strong>OMG ADMIN</strong>
+                <span>MEMBERSHIP MANAGEMENT</span>
+            </div>
+        </div>
+
+        <div class="admin-topbar-actions">
+            <span id="adminUserEmail" class="admin-user-email"></span>
+            <button type="button" id="logoutButton" class="admin-logout-button">LOG OUT</button>
+        </div>
+    </header>
+
+    <main class="admin-dashboard">
+        <section class="dashboard-heading">
+            <div>
+                <div class="admin-kicker">MEMBERSHIP MANAGEMENT</div>
+                <h1>Dashboard</h1>
+                <p>Monitor membership registrations, approval activity and grassroots coverage across Imo State.</p>
+            </div>
+            <a href="../index.html" class="dashboard-home-link">VIEW WEBSITE</a>
+        </section>
+
+        <div id="dashboardMessage" class="admin-message" role="alert" aria-live="polite"></div>
+
+        <section class="stats-grid" aria-label="Membership statistics">
+            <article class="stat-card stat-total">
+                <span>TOTAL MEMBERS</span>
+                <strong id="totalMembers">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>PENDING APPROVAL</span>
+                <strong id="pendingMembers">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>APPROVED MEMBERS</span>
+                <strong id="approvedMembers">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>REJECTED</span>
+                <strong id="rejectedMembers">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>REGISTERED TODAY</span>
+                <strong id="todayRegistrations">0</strong>
+            </article>
+            <article class="stat-card">
+                <span>NDC MEMBERS</span>
+                <strong id="ndcMembers">0</strong>
+            </article>
+        </section>
+
+        <section class="coverage-section" aria-label="Grassroots coverage intelligence">
+            <div class="coverage-hero">
+                <div class="coverage-overview">
+                    <span class="coverage-kicker">PHASE 2</span>
+                    <h2>Full Grassroots Coverage Intelligence</h2>
+                    <p>
+                        Measure actual mobilisation coverage against the complete electoral hierarchy,
+                        from all 27 LGAs down to individual polling units.
+                    </p>
+                    <div id="coverageUpdated" class="coverage-updated"></div>
+                </div>
+
+                <div class="coverage-score-card">
+                    <span class="coverage-score-label">STATEWIDE POLLING UNIT COVERAGE</span>
+                    <strong id="stateCoveragePercent" class="coverage-score">0%</strong>
+                    <span id="stateCoverageSub" class="coverage-score-sub">0 of 0 polling units covered</span>
+                </div>
+            </div>
+
+            <div class="coverage-stat-grid">
+                <article class="coverage-stat">
+                    <span>LGAs</span>
+                    <strong id="coverageLgas">0 / 27</strong>
+                </article>
+                <article class="coverage-stat">
+                    <span>WARDS</span>
+                    <strong id="coverageWards">0</strong>
+                </article>
+                <article class="coverage-stat">
+                    <span>WARDS COVERED</span>
+                    <strong id="coverageWardsCovered">0</strong>
+                </article>
+                <article class="coverage-stat">
+                    <span>POLLING UNITS</span>
+                    <strong id="coveragePollingUnits">0</strong>
+                </article>
+                <article class="coverage-stat">
+                    <span>POLLING UNITS COVERED</span>
+                    <strong id="coveragePollingUnitsCovered">0</strong>
+                </article>
+                <article class="coverage-stat">
+                    <span>ZERO-COVERAGE UNITS</span>
+                    <strong id="coveragePollingUnitsZero">0</strong>
+                </article>
+            </div>
+
+            <section class="coverage-panel">
+                <div class="coverage-panel-header">
+                    <div>
+                        <span class="coverage-kicker">LGA INTELLIGENCE</span>
+                        <h2>27-LGA Coverage Map</h2>
+                        <p>Every LGA is shown, including LGAs with zero registered members.</p>
+                    </div>
+                </div>
+
+                <div class="coverage-toolbar">
+                    <input id="lgaSearch" type="search" placeholder="Search LGA...">
+                    <select id="lgaCoverageFilter">
+                        <option value="">ALL COVERAGE STATUS</option>
+                        <option value="covered">COVERED</option>
+                        <option value="partial">PARTIALLY COVERED</option>
+                        <option value="none">NOT COVERED</option>
+                    </select>
+                    <select id="lgaSort">
+                        <option value="coverage-desc">SORT: COVERAGE HIGH TO LOW</option>
+                        <option value="coverage-asc">SORT: COVERAGE LOW TO HIGH</option>
+                        <option value="members-desc">SORT: MEMBERS HIGH TO LOW</option>
+                        <option value="members-asc">SORT: MEMBERS LOW TO HIGH</option>
+                        <option value="name-asc">SORT: LGA NAME</option>
+                    </select>
+                </div>
+
+                <div class="coverage-table-wrap">
+                    <table class="coverage-table">
+                        <thead>
+                            <tr>
+                                <th>LGA</th>
+                                <th>WARDS</th>
+                                <th>WARDS COVERED</th>
+                                <th>POLLING UNITS</th>
+                                <th>PU COVERED</th>
+                                <th>MEMBERS</th>
+                                <th>COVERAGE</th>
+                                <th>STATUS</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="lgaCoverageBody">
+                            <tr><td colspan="9" class="coverage-loading">Loading grassroots intelligence...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="coverageDrilldown" class="coverage-panel coverage-drilldown" hidden>
+                <div class="coverage-breadcrumb" id="coverageBreadcrumb"></div>
+
+                <div class="coverage-panel-header">
+                    <div>
+                        <span id="drilldownKicker" class="coverage-kicker">WARD INTELLIGENCE</span>
+                        <h2 id="drilldownTitle">Select an LGA</h2>
+                        <p id="drilldownDescription"></p>
+                    </div>
+                </div>
+
+                <div class="coverage-table-wrap">
+                    <table class="coverage-table">
+                        <thead id="drilldownHead"></thead>
+                        <tbody id="drilldownBody"></tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+
+        <section class="dashboard-panel">
+            <div class="panel-header">
+                <div>
+                    <span class="panel-kicker">MEMBERS</span>
+                    <h2>Membership Directory</h2>
+                </div>
+                <a href="members.html" class="admin-secondary-button" style="text-decoration:none;">OPEN DIRECTORY</a>
+            </div>
+            <p class="panel-placeholder">
+                Search, filter and review membership registrations, then approve, reject or return members to pending status.
+            </p>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
