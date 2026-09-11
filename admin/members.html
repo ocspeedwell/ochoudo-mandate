@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMG Admin | Membership Directory</title>
+    <link rel="icon" href="../assets/ochoudo-favicon.png">
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        .directory-toolbar { margin-top: 28px; padding: 22px; background:#fff; border:1px solid var(--border); border-radius:12px; box-shadow:0 8px 25px rgba(8,43,82,.05); }
+        .directory-filters { display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto; gap:12px; align-items:end; }
+        .directory-field label { display:block; margin:0 0 7px; color:var(--navy); font-size:11px; font-weight:800; letter-spacing:1px; }
+        .directory-field input,.directory-field select { width:100%; min-height:42px; padding:10px 12px; border:1px solid #c8d3e1; border-radius:8px; background:#fff; color:var(--ink); outline:none; }
+        .directory-field input:focus,.directory-field select:focus { border-color:var(--navy); box-shadow:0 0 0 3px rgba(8,43,82,.08); }
+        .directory-reset { min-height:42px; padding:10px 15px; border:1px solid var(--navy); border-radius:8px; background:#fff; color:var(--navy); font-weight:800; cursor:pointer; }
+        .directory-meta { display:flex; justify-content:space-between; align-items:center; gap:15px; margin-top:18px; color:var(--muted); font-size:13px; }
+        .directory-table-wrap { margin-top:18px; background:#fff; border:1px solid var(--border); border-radius:12px; overflow:auto; box-shadow:0 8px 25px rgba(8,43,82,.05); }
+        .directory-table { width:100%; min-width:900px; border-collapse:collapse; }
+        .directory-table th { padding:14px 15px; text-align:left; background:#f4f7fb; color:var(--navy); font-size:10px; letter-spacing:1px; white-space:nowrap; }
+        .directory-table td { padding:15px; border-top:1px solid #edf1f5; color:var(--ink); font-size:13px; vertical-align:middle; }
+        .directory-table tr:hover td { background:#fbfcfe; }
+        .member-id { font-weight:800; color:var(--navy); white-space:nowrap; }
+        .member-name { font-weight:800; }
+        .member-sub { margin-top:3px; color:var(--muted); font-size:11px; }
+        .status-badge { display:inline-block; padding:5px 9px; border-radius:999px; font-size:10px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; }
+        .status-pending { background:#fff4d8; color:#8a6100; }
+        .status-approved { background:#e4f5e9; color:#176b35; }
+        .status-rejected { background:#fde7e8; color:#a51d24; }
+        .view-member-button { padding:8px 12px; border:1px solid var(--navy); border-radius:7px; background:#fff; color:var(--navy); font-size:11px; font-weight:800; cursor:pointer; }
+        .empty-state { padding:45px 20px; text-align:center; color:var(--muted); }
+        .pagination { display:flex; justify-content:flex-end; align-items:center; gap:10px; margin-top:18px; }
+        .pagination button { padding:9px 13px; border:1px solid var(--navy); border-radius:7px; background:#fff; color:var(--navy); font-weight:800; cursor:pointer; }
+        .pagination button:disabled { opacity:.45; cursor:not-allowed; }
+        .pagination span { color:var(--muted); font-size:12px; }
+        .member-modal { position:fixed; inset:0; z-index:1000; display:none; align-items:center; justify-content:center; padding:20px; background:rgba(6,31,61,.65); }
+        .member-modal.show { display:flex; }
+        .member-modal-card { width:min(100%,900px); max-height:90vh; overflow:auto; background:#fff; border-radius:14px; box-shadow:0 25px 80px rgba(0,0,0,.25); }
+        .member-modal-header { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:20px 24px; border-bottom:1px solid var(--border); }
+        .member-modal-header h2 { margin:0; color:var(--navy); font-size:24px; }
+        .modal-close { width:36px; height:36px; border:0; border-radius:50%; background:#eef2f7; color:var(--navy); font-size:22px; cursor:pointer; }
+        .member-modal-body { padding:24px; }
+        .member-profile-top { display:grid; grid-template-columns:130px 1fr; gap:24px; align-items:start; margin-bottom:24px; }
+        .member-profile-photo { width:130px; height:160px; object-fit:cover; border-radius:8px; border:1px solid var(--border); background:#eef2f7; }
+        .photo-placeholder { width:130px; height:160px; display:flex; align-items:center; justify-content:center; text-align:center; padding:10px; border:1px solid var(--border); border-radius:8px; background:#f4f7fb; color:var(--muted); font-size:11px; font-weight:800; }
+        .member-profile-title h3 { margin:3px 0 8px; color:var(--navy); font-size:25px; }
+        .member-profile-title p { margin:4px 0; color:var(--muted); }
+        .member-detail-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+        .member-detail-box { padding:13px; border:1px solid #e2e8f0; border-radius:8px; background:#fafbfd; }
+        .member-detail-box span { display:block; margin-bottom:5px; color:var(--muted); font-size:10px; font-weight:800; letter-spacing:.8px; }
+        .member-detail-box strong { color:var(--ink); font-size:13px; line-height:1.4; word-break:break-word; }
+        .member-detail-box.wide { grid-column:1/-1; }
+        .member-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; padding-top:20px; border-top:1px solid var(--border); }
+        .member-actions button { padding:11px 16px; border:0; border-radius:8px; color:#fff; font-weight:800; cursor:pointer; }
+        .approve-button { background:#1b7b3a; }
+        .reject-button { background:var(--red); }
+        .pending-button { background:var(--navy); }
+        .member-actions button:disabled { opacity:.6; cursor:wait; }
+        .modal-message { width:100%; min-height:20px; color:var(--red); font-size:12px; font-weight:700; }
+        @media (max-width:900px) { .directory-filters { grid-template-columns:1fr 1fr; } .directory-reset { width:100%; } }
+        @media (max-width:600px) { .directory-filters { grid-template-columns:1fr; } .member-profile-top { grid-template-columns:1fr; } .member-profile-photo,.photo-placeholder { width:110px; height:135px; } .member-detail-grid { grid-template-columns:1fr; } .member-detail-box.wide { grid-column:auto; } .member-modal { padding:10px; } .member-modal-body { padding:18px; } }
+    </style>
+</head>
+<body class="admin-body dashboard-body">
+<header class="admin-topbar">
+    <div class="admin-topbar-brand">
+        <img src="../assets/ochoudo-logo.png" alt="Ochoudo Mandate Group">
+        <div><strong>OMG ADMIN</strong><span>MEMBERSHIP MANAGEMENT</span></div>
+    </div>
+    <div class="admin-topbar-actions">
+        <span id="adminUserEmail" class="admin-user-email"></span>
+        <button type="button" id="logoutButton" class="admin-logout-button">LOG OUT</button>
+    </div>
+</header>
+
+<main class="admin-dashboard">
+    <section class="dashboard-heading">
+        <div>
+            <div class="admin-kicker">MEMBERSHIP MANAGEMENT</div>
+            <h1>Membership Directory</h1>
+            <p>Search, review and manage Ochoudo Mandate Group membership registrations.</p>
+        </div>
+        <a href="dashboard.html" class="dashboard-home-link">← DASHBOARD</a>
+    </section>
+
+    <div id="directoryMessage" class="admin-message" role="alert" aria-live="polite"></div>
+
+    <section class="directory-toolbar">
+        <div class="directory-filters">
+            <div class="directory-field">
+                <label for="memberSearch">SEARCH</label>
+                <input id="memberSearch" type="search" placeholder="Name, Membership ID, phone or email">
+            </div>
+            <div class="directory-field">
+                <label for="statusFilter">STATUS</label>
+                <select id="statusFilter"><option value="">ALL STATUSES</option><option value="Pending">PENDING</option><option value="Approved">APPROVED</option><option value="Rejected">REJECTED</option></select>
+            </div>
+            <div class="directory-field">
+                <label for="ndcFilter">NDC</label>
+                <select id="ndcFilter"><option value="">ALL</option><option value="true">NDC MEMBERS</option><option value="false">NON-NDC</option></select>
+            </div>
+            <div class="directory-field">
+                <label for="genderFilter">GENDER</label>
+                <select id="genderFilter"><option value="">ALL GENDERS</option><option value="Male">MALE</option><option value="Female">FEMALE</option><option value="Other">OTHER</option></select>
+            </div>
+            <button type="button" id="resetFilters" class="directory-reset">RESET</button>
+        </div>
+        <div class="directory-meta"><span id="directoryCount">Loading members...</span><span id="pageInfo"></span></div>
+    </section>
+
+    <section class="directory-table-wrap">
+        <table class="directory-table">
+            <thead><tr><th>MEMBERSHIP ID</th><th>MEMBER</th><th>PHONE</th><th>LGA</th><th>WARD</th><th>STATUS</th><th>ACTION</th></tr></thead>
+            <tbody id="membersTableBody"></tbody>
+        </table>
+        <div id="emptyState" class="empty-state" hidden>No membership records match your search.</div>
+    </section>
+
+    <div class="pagination">
+        <button type="button" id="previousPage" disabled>← PREVIOUS</button>
+        <span id="paginationText">PAGE 1</span>
+        <button type="button" id="nextPage" disabled>NEXT →</button>
+    </div>
+</main>
+
+<div id="memberModal" class="member-modal" aria-hidden="true">
+    <div class="member-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalMemberName">
+        <div class="member-modal-header"><h2>Member Record</h2><button type="button" id="closeModal" class="modal-close" aria-label="Close">×</button></div>
+        <div class="member-modal-body">
+            <div class="member-profile-top">
+                <div id="memberPhotoContainer" class="photo-placeholder">MEMBER PHOTO</div>
+                <div class="member-profile-title"><div class="admin-kicker">MEMBERSHIP RECORD</div><h3 id="modalMemberName">MEMBER NAME</h3><p id="modalMemberId">OMG-2026-000000</p><p id="modalMemberStatus">PENDING</p></div>
+            </div>
+            <div id="memberDetailGrid" class="member-detail-grid"></div>
+            <div class="member-actions">
+                <div id="modalMessage" class="modal-message"></div>
+                <button type="button" id="approveMember" class="approve-button">APPROVE MEMBERSHIP</button>
+                <button type="button" id="rejectMember" class="reject-button">REJECT MEMBERSHIP</button>
+                <button type="button" id="pendingMember" class="pending-button">RETURN TO PENDING</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="admin.js"></script>
+<script src="members.js"></script>
+</body>
+</html>
