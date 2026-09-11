@@ -2,8 +2,8 @@
     "use strict";
 
 // OMG Command Centre version marker and cache-busting diagnostic.
-window.OMG_COMMAND_VERSION = "PHASE-3D";
-console.log("OMG Command Centre PHASE-3D loaded");
+window.OMG_COMMAND_VERSION = "PHASE-3D-FIX-1";
+console.log("OMG Command Centre PHASE-3D-FIX-1 loaded");
 
     const SUPABASE_URL = "https://yopqftofkvwrpyyluffw.supabase.co";
     const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_k3whUGyuDbdQU6GA6egeuQ_k-g-nFoL";
@@ -526,9 +526,14 @@ console.log("OMG Command Centre PHASE-3D loaded");
     }
 
     async function loadActivities() {
-        const { data, error } = await db.rpc("get_omg_activity_log");
-        if (error) throw error;
-        activities = data || [];
+        try {
+            const { data, error } = await db.rpc("get_omg_activity_log");
+            if (error) throw error;
+            activities = Array.isArray(data) ? data : [];
+        } catch (error) {
+            console.warn("Activity log unavailable; continuing without activity records.", error);
+            activities = [];
+        }
     }
 
     async function saveActivity(event) {
