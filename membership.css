@@ -2819,3 +2819,416 @@
         color: #d71920 !important;
     }
 }
+/* =========================================================
+   OCHOUDO MANDATE GROUP
+   VERIFICATION CARD
+   FINAL MOBILE OVERRIDE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    /* Keep verification page inside phone width */
+    .verified-result {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 25px 12px 45px !important;
+        overflow-x: hidden !important;
+    }
+
+
+    /* Keep the ID card in LANDSCAPE format */
+    .verified-result .membership-id-card {
+        display: flex !important;
+        flex-direction: column !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        height: auto !important;
+        aspect-ratio: 1.9 / 1 !important;
+
+        margin: 0 auto !important;
+
+        overflow: hidden !important;
+
+        box-sizing: border-box !important;
+
+        border-radius: 9px !important;
+    }
+
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .verified-result .membership-card-header {
+        display: flex !important;
+        flex-direction: row !important;
+
+        align-items: center !important;
+        justify-content: space-between !important;
+
+        width: 100% !important;
+
+        height: 23% !important;
+        min-height: 0 !important;
+
+        padding: 3% 3.5% !important;
+
+        box-sizing: border-box !important;
+
+        flex-shrink: 0 !important;
+    }
+
+
+    /* Logo stays on the LEFT */
+    .verified-result .membership-brand {
+        display: flex !important;
+        align-items: center !important;
+
+        width: 42% !important;
+    }
+
+
+    .verified-result .membership-card-logo {
+        display: block !important;
+
+        width: 100% !important;
+        max-width: 155px !important;
+
+        height: auto !important;
+    }
+
+
+    /* Title stays on the RIGHT */
+    .verified-result .membership-card-title {
+        display: flex !important;
+        flex-direction: column !important;
+
+        align-items: flex-end !important;
+
+        text-align: right !important;
+
+        width: 48% !important;
+    }
+
+
+    .verified-result .membership-card-title span {
+        font-size: clamp(5px, 1.6vw, 9px) !important;
+        letter-spacing: 1px !important;
+    }
+
+
+    .verified-result .membership-card-title strong {
+        font-size: clamp(8px, 2.8vw, 17px) !important;
+        line-height: 1.1 !important;
+    }
+
+
+    /* =====================================================
+       BODY
+       ===================================================== */
+
+    .verified-result .membership-card-body {
+        display: grid !important;
+
+        grid-template-columns: 22% 1fr !important;
+
+        gap: 3% !important;
+
+        width: 100% !important;
+
+        height: 67% !important;
+        min-height: 0 !important;
+
+        flex: 0 0 67% !important;
+
+        padding: 3% 3.5% !important;
+
+        box-sizing: border-box !important;
+
+        overflow: hidden !important;
+    }
+
+
+    /* =====================================================
+       PHOTO
+       ===================================================== */
+
+    .verified-result .membership-photo-area {
+        display: flex !important;
+
+        flex-direction: column !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        width: 100% !important;
+
+        min-width: 0 !important;
+    }
+
+
+    .verified-result .membership-photo-frame {
+        width: 82% !important;
+
+        height: auto !important;
+
+        aspect-ratio: 0.82 !important;
+
+        min-width: 0 !important;
+
+        border-width: 2px !important;
+
+        border-radius: 5px !important;
+
+        overflow: hidden !important;
+    }
+
+
+    .verified-result .membership-photo-frame img {
+        width: 100% !important;
+        height: 100% !important;
+
+        object-fit: cover !important;
+    }
+
+
+    .verified-result .member-label {
+        margin-top: 3px !important;
+
+        font-size: clamp(4px, 1.3vw, 8px) !important;
+
+        letter-spacing: 1px !important;
+    }
+
+
+    /* =====================================================
+       INFORMATION
+       ===================================================== */
+
+    .verified-result .membership-information {
+        display: flex !important;
+
+        flex-direction: column !important;
+
+        width: 100% !important;
+
+        min-width: 0 !important;
+
+        overflow: hidden !important;
+    }
+
+
+    /* =====================================================
+       MEMBERSHIP ID
+       ===================================================== */
+
+    .verified-result .membership-number-box {
+        display: flex !important;
+
+        flex-direction: row !important;
+
+        align-items: center !important;
+        justify-content: space-between !important;
+
+        width: 100% !important;
+
+        height: 22% !important;
+        min-height: 0 !important;
+
+        padding: 2% 3% !important;
+
+        box-sizing: border-box !important;
+
+        border-width: 2px !important;
+
+        border-radius: 5px !important;
+    }
+
+
+    .verified-result .membership-number-box span {
+        font-size: clamp(4px, 1.2vw, 8px) !important;
+
+        letter-spacing: .8px !important;
+    }
+
+
+    .verified-result .membership-number-box strong {
+        font-size: clamp(7px, 2.6vw, 17px) !important;
+
+        white-space: nowrap !important;
+    }
+
+
+    /* =====================================================
+       NAME
+       ===================================================== */
+
+    .verified-result .member-name-block {
+        margin-top: 2% !important;
+    }
+
+
+    .verified-result .member-name-block span {
+        margin-bottom: 1px !important;
+
+        font-size: clamp(4px, 1.2vw, 7px) !important;
+
+        letter-spacing: .8px !important;
+    }
+
+
+    .verified-result .member-name-block strong {
+        font-size: clamp(7px, 2.5vw, 17px) !important;
+
+        line-height: 1.05 !important;
+
+        white-space: nowrap !important;
+
+        overflow: hidden !important;
+
+        text-overflow: ellipsis !important;
+    }
+
+
+    /* =====================================================
+       DETAILS
+       ===================================================== */
+
+    .verified-result .member-details-grid {
+        display: grid !important;
+
+        grid-template-columns: 1fr 1fr !important;
+
+        gap: 2% 3% !important;
+
+        margin-top: 2% !important;
+    }
+
+
+    .verified-result .member-detail {
+        height: auto !important;
+
+        min-height: 0 !important;
+
+        padding: 2% 3% !important;
+
+        box-sizing: border-box !important;
+
+        overflow: hidden !important;
+    }
+
+
+    .verified-result .member-detail-wide {
+        grid-column: 1 / -1 !important;
+    }
+
+
+    .verified-result .member-detail span {
+        display: block !important;
+
+        margin-bottom: 1px !important;
+
+        font-size: clamp(3px, 1.1vw, 6px) !important;
+
+        letter-spacing: .6px !important;
+    }
+
+
+    .verified-result .member-detail strong {
+        display: block !important;
+
+        font-size: clamp(5px, 1.7vw, 10px) !important;
+
+        line-height: 1.05 !important;
+
+        white-space: nowrap !important;
+
+        overflow: hidden !important;
+
+        text-overflow: ellipsis !important;
+    }
+
+
+    /* =====================================================
+       FOOTER
+       ===================================================== */
+
+    .verified-result .membership-card-footer {
+        display: flex !important;
+
+        flex-direction: row !important;
+
+        align-items: center !important;
+        justify-content: space-between !important;
+
+        width: 100% !important;
+
+        height: 10% !important;
+        min-height: 0 !important;
+
+        padding: 2% 3.5% !important;
+
+        box-sizing: border-box !important;
+
+        flex-shrink: 0 !important;
+
+        font-size: clamp(3px, 1.1vw, 7px) !important;
+
+        letter-spacing: .4px !important;
+    }
+
+
+    .verified-result .card-accent {
+        width: 6% !important;
+
+        height: 3px !important;
+
+        flex-shrink: 0 !important;
+    }
+
+
+    /* =====================================================
+       STATUS
+       ===================================================== */
+
+    .verified-result .verified-status {
+        margin-top: 15px !important;
+
+        padding: 12px 8px !important;
+
+        font-size: 12px !important;
+    }
+
+
+    /* =====================================================
+       BUTTONS
+       ===================================================== */
+
+    .verified-result .verification-actions {
+        display: flex !important;
+
+        flex-direction: column !important;
+
+        align-items: center !important;
+
+        gap: 10px !important;
+
+        margin-top: 15px !important;
+    }
+
+
+    .verified-result .verification-actions button {
+        width: 100% !important;
+
+        max-width: 320px !important;
+
+        min-width: 0 !important;
+
+        padding: 11px 15px !important;
+
+        font-size: 10px !important;
+    }
+}
