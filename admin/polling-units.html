@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>OMG Command Centre</title>
+<title>NARDTOPUS | OMG Command Centre</title>
 <link href="../assets/ochoudo-favicon.png" rel="icon"/>
 <link href="admin.css" rel="stylesheet"/>
 <style>
@@ -170,10 +170,89 @@
         @media(max-width:1050px){.pu-summary{grid-template-columns:repeat(3,minmax(0,1fr))}}
         @media(max-width:900px){.pu-toolbar{grid-template-columns:1fr}.pu-profile-list{grid-template-columns:1fr}.pu-connector-grid{grid-template-columns:1fr}}
         @media(max-width:600px){.pu-summary{grid-template-columns:1fr 1fr}}
+
+        /* NARDTOPUS PLATFORM BRANDING */
+        .nardtopus-platform-bar {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:18px;
+            padding:12px 16px;
+            margin:0 0 18px;
+            background:#071b49;
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:14px;
+            box-shadow:0 10px 28px rgba(7,27,73,.12);
+        }
+        .nardtopus-platform-brand {
+            display:flex;
+            align-items:center;
+            gap:11px;
+            min-width:0;
+        }
+        .nardtopus-platform-mark {
+            width:48px;
+            height:48px;
+            flex:0 0 48px;
+            border-radius:10px;
+            object-fit:cover;
+            background:#041226;
+            border:1px solid rgba(255,255,255,.12);
+        }
+        .nardtopus-platform-name {
+            display:block;
+            color:#fff;
+            font-size:15px;
+            line-height:1.1;
+            font-weight:950;
+            letter-spacing:.08em;
+        }
+        .nardtopus-platform-subtitle {
+            display:block;
+            margin-top:4px;
+            color:rgba(255,255,255,.72);
+            font-size:9px;
+            line-height:1.35;
+            font-weight:800;
+            letter-spacing:.09em;
+        }
+        .nardtopus-platform-deployment {
+            flex:0 0 auto;
+            text-align:right;
+            color:#f2c75c;
+            font-size:9px;
+            line-height:1.45;
+            font-weight:900;
+            letter-spacing:.08em;
+        }
+        .nardtopus-platform-deployment span {
+            display:block;
+            color:rgba(255,255,255,.62);
+            font-size:8px;
+            margin-top:2px;
+        }
+        @media(max-width:600px){
+            .nardtopus-platform-bar{align-items:flex-start;}
+            .nardtopus-platform-deployment{display:none;}
+            .nardtopus-platform-mark{width:42px;height:42px;flex-basis:42px;}
+        }
     </style>
 </head>
 <body>
 <main class="dashboard-body command-page">
+<div class="nardtopus-platform-bar" aria-label="NARDTOPUS platform branding">
+    <div class="nardtopus-platform-brand">
+        <img class="nardtopus-platform-mark" src="../assets/nardtopus-mark.png" alt="NARDTOPUS">
+        <div>
+            <span class="nardtopus-platform-name">NARDTOPUS</span>
+            <span class="nardtopus-platform-subtitle">GRASSROOTS INTELLIGENCE &amp; OPERATIONS PLATFORM</span>
+        </div>
+    </div>
+    <div class="nardtopus-platform-deployment">
+        PLATFORM DEPLOYMENT
+        <span>OCHOUdo MANDATE GROUP (OMG)</span>
+    </div>
+</div>
 <section class="command-hero">
 <span class="command-kicker">PHASE 3</span>
 <h1>Polling Unit Operations</h1>
