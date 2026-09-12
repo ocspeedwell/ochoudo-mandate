@@ -22,6 +22,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
 
     const $ = (id) => document.getElementById(id);
     const normalize = (value) => String(value || "").trim().replace(/\s+/g, " ").toUpperCase();
+    const compareText = (a, b) => String(a == null ? "" : a).localeCompare(String(b == null ? "" : b));
     const esc = (value) => String(value == null ? "" : value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 
     const LGA_FUNCTIONAL_ROLES = [
@@ -286,7 +287,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
         $("profilePuCaptains").textContent = `${profile.puCaptainAssigned}/${profile.totalPUs}`;
         $("profileConnectors").textContent = `${profile.connectorAssigned}/${profile.totalPUs * 8}`;
         $("profileActivityCount").textContent = profile.recentActivities.length.toLocaleString();
-        const latest = profile.recentActivities.slice().sort((a,b)=>String(b.activity_date).localeCompare(String(a.activity_date)))[0];
+        const latest = profile.recentActivities.slice().sort((a,b)=>compareText(b.activity_date, String(a.activity_date)))[0];
         $("profileLatestActivity").textContent = latest ? latest.activity_date : "None recorded";
         $("profileUncoveredPus").textContent = profile.uncoveredPus.length.toLocaleString();
         $("profilePendingPus").textContent = profile.pendingOnlyPus.length.toLocaleString();
@@ -386,7 +387,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
         const leadershipItems = [...profile.pillarSlots.map((a,i)=>({title:`Ward Pillar ${i+1}`,name:a ? a.full_name : "VACANT"})), ...profile.leadership.map(x=>({title:x.roleTitle,name:x.assignment ? x.assignment.full_name : "VACANT"}))];
         $("wardLeadershipList").innerHTML = leadershipItems.map(x=>`<div class="ward-profile-item"><span>${esc(x.title)}</span><strong class="${x.name === "VACANT" ? "vacant" : ""}">${esc(x.name)}</strong></div>`).join("");
         $("wardProfileActivityCount").textContent = profile.recentActivities.length.toLocaleString();
-        const latest = profile.recentActivities.slice().sort((a,b)=>String(b.activity_date).localeCompare(String(a.activity_date)))[0];
+        const latest = profile.recentActivities.slice().sort((a,b)=>compareText(b.activity_date, String(a.activity_date)))[0];
         $("wardProfileLatestActivity").textContent = latest ? latest.activity_date : "None recorded";
         const priority=[];
         if(profile.pillarAssigned<3) priority.push(`Fill ${3-profile.pillarAssigned} remaining Ward Pillar position${3-profile.pillarAssigned===1?'':'s'}.`);
@@ -406,10 +407,10 @@ console.log("OMG Command Centre PHASE-3C loaded");
         const search=normalize($("wardSearch").value); const statusFilter=$("wardStatus").value; const sort=$("wardSort").value;
         let rows=wardReadinessRows.filter(r=>(!search || normalize(r.wardName+" "+r.lgaName).includes(search)) && (!statusFilter || r.status===statusFilter));
         rows.sort(function(a,b){
-            if(sort==="score-asc") return a.score-b.score || a.lgaName.localeCompare(b.lgaName) || a.wardName.localeCompare(b.wardName);
-            if(sort==="gap-desc") return b.gap-a.gap || a.lgaName.localeCompare(b.lgaName);
-            if(sort==="ward-asc") return a.wardName.localeCompare(b.wardName) || a.lgaName.localeCompare(b.lgaName);
-            return b.score-a.score || a.lgaName.localeCompare(b.lgaName) || a.wardName.localeCompare(b.wardName);
+            if(sort==="score-asc") return a.score-b.score || compareText(a.lgaName, b.lgaName) || compareText(a.wardName, b.wardName);
+            if(sort==="gap-desc") return b.gap-a.gap || compareText(a.lgaName, b.lgaName);
+            if(sort==="ward-asc") return compareText(a.wardName, b.wardName) || compareText(a.lgaName, b.lgaName);
+            return b.score-a.score || compareText(a.lgaName, b.lgaName) || compareText(a.wardName, b.wardName);
         });
         $("wardBody").innerHTML=rows.map(r=>{const badgeClass=r.status==="READY"?"ward-ready":r.status==="DEVELOPING"?"ward-developing":r.status==="STARTING"?"ward-starting":"ward-none"; return `<tr><td class="ward-mini">${esc(r.lgaName)}</td><td class="ward-name">${esc(r.wardName)}</td><td class="ward-mini">${r.pillarAssigned}/3</td><td class="ward-mini">${r.leadershipAssigned}/11</td><td class="ward-mini">${r.puCaptainAssigned}/${r.totalPUs}</td><td class="ward-mini">${r.connectorAssigned}/${r.totalPUs*8}</td><td class="ward-mini">${r.verifiedPUs}/${r.totalPUs}</td><td><span class="ward-readiness-bar"><i style="width:${r.score}%"></i></span><span class="ward-readiness-percent">${r.score}%</span></td><td><span class="ward-status ${badgeClass}">${r.status}</span></td><td class="ward-mini">${r.registeredMembers} reg / ${r.approvedMembers} approved</td><td><button class="profile-button" data-ward-profile="${esc(r.wardKey)}">VIEW PROFILE</button></td></tr>`;}).join("") || '<tr><td colspan="11">No wards match the selected filters.</td></tr>';
         $("wardBody").querySelectorAll("[data-ward-profile]").forEach(btn=>btn.addEventListener("click",()=>openWardProfile(btn.dataset.wardProfile)));
@@ -424,10 +425,10 @@ console.log("OMG Command Centre PHASE-3C loaded");
         const sort = $("readinessSort").value;
         let rows = readinessRows.filter(r => (!search || normalize(r.name).includes(search)) && (!statusFilter || r.status === statusFilter));
         rows.sort(function(a,b) {
-            if (sort === "score-asc") return a.score - b.score || a.name.localeCompare(b.name);
-            if (sort === "gap-desc") return b.gap - a.gap || a.name.localeCompare(b.name);
-            if (sort === "lga-asc") return a.name.localeCompare(b.name);
-            return b.score - a.score || a.name.localeCompare(b.name);
+            if (sort === "score-asc") return a.score - b.score || compareText(a.name, b.name);
+            if (sort === "gap-desc") return b.gap - a.gap || compareText(a.name, b.name);
+            if (sort === "lga-asc") return compareText(a.name, b.name);
+            return b.score - a.score || compareText(a.name, b.name);
         });
         $("readinessBody").innerHTML = rows.map(function(r) {
             const badgeClass = r.status === "READY" ? "readiness-ready" : r.status === "DEVELOPING" ? "readiness-developing" : r.status === "STARTING" ? "readiness-starting" : "readiness-none";
@@ -482,7 +483,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
             const activityScore = Math.min(100, recent * 20);
             const health = Math.round(commandScore * 0.45 + membershipScore * 0.20 + puCoverage * 0.15 + connectorCoverage * 0.10 + activityScore * 0.10);
             const status = health >= 75 ? "ACTIVE" : health >= 45 ? "DEVELOPING" : health > 0 ? "WATCH" : "CRITICAL";
-            const latest = lgaActivities.slice().sort((a,b) => String(b.activity_date).localeCompare(String(a.activity_date)))[0];
+            const latest = lgaActivities.slice().sort((a,b) => compareText(b.activity_date, String(a.activity_date)))[0];
             return { ...r, recent, approvedPu, health, status, latestActivity: latest ? latest.activity_date : "" };
         });
     }
@@ -494,10 +495,10 @@ console.log("OMG Command Centre PHASE-3C loaded");
         const sort = $("healthSort").value;
         let filtered = rows.filter(r => (!search || normalize(r.name).includes(search)) && (!statusFilter || r.status === statusFilter));
         filtered.sort(function(a,b){
-            if(sort === "health-asc") return a.health-b.health || a.name.localeCompare(b.name);
-            if(sort === "activity-desc") return String(b.latestActivity).localeCompare(String(a.latestActivity)) || b.health-a.health;
-            if(sort === "gap-desc") return b.gap-a.gap || a.name.localeCompare(b.name);
-            return b.health-a.health || a.name.localeCompare(b.name);
+            if(sort === "health-asc") return a.health-b.health || compareText(a.name, b.name);
+            if(sort === "activity-desc") return compareText(b.latestActivity, String(a.latestActivity)) || b.health-a.health;
+            if(sort === "gap-desc") return b.gap-a.gap || compareText(a.name, b.name);
+            return b.health-a.health || compareText(a.name, b.name);
         });
         $("healthBody").innerHTML = filtered.map(function(r){
             const cls = r.status === "ACTIVE" ? "health-active" : r.status === "DEVELOPING" ? "health-developing" : r.status === "WATCH" ? "health-watch" : "health-critical";
@@ -515,7 +516,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
     }
 
     function renderActivities() {
-        const rows = activities.slice().sort((a,b)=>String(b.activity_date).localeCompare(String(a.activity_date))).slice(0,100);
+        const rows = activities.slice().sort((a,b)=>compareText(b.activity_date, String(a.activity_date))).slice(0,100);
         $("activityBody").innerHTML = rows.map(function(a){
             return `<tr><td class="activity-date">${esc(a.activity_date || "-")}</td><td class="activity-type">${esc(a.activity_type)}</td><td>${esc(a.lga_name)}</td><td>${esc(a.ward_name || "-")}</td><td>${esc(a.polling_unit_name || "-")}</td><td>${esc(a.notes || "-")}</td><td><button class="assign-button remove" data-activity-remove="${esc(a.id)}">REMOVE</button></td></tr>`;
         }).join("") || '<tr><td colspan="7">No activities recorded yet.</td></tr>';
