@@ -1,0 +1,24 @@
+<!-- Add inside the existing admin dashboard/topbar navigation. -->
+<a href="admin-users.html" class="admin-secondary-button" id="administrationLink" hidden>ADMINISTRATION</a>
+<script>
+(async function () {
+  try {
+    if (!window.supabase) return;
+    const db = window.supabase.createClient(
+      "https://yopqftofkvwrpyyluffw.supabase.co",
+      "sb_publishable_k3whUGyuDbdQU6GA6egeuQ_k-g-nFoL"
+    );
+    const { data: session } = await db.auth.getSession();
+    if (!session.session) return;
+    const { data, error } = await db.rpc("omg_get_my_admin_profile");
+    if (error) return;
+    const profile = Array.isArray(data) ? data[0] : data;
+    if (profile?.role_code === "super_admin" && profile.active === true) {
+      const link = document.getElementById("administrationLink");
+      if (link) link.hidden = false;
+    }
+  } catch (e) {
+    console.warn("Administrator navigation unavailable", e);
+  }
+})();
+</script>

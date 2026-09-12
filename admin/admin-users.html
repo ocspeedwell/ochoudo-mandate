@@ -5,19 +5,78 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NARDTOPUS | Administrator Management</title>
 <link rel="icon" href="../assets/ochoudo-favicon.png">
+<link rel="stylesheet" href="admin.css">
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#26334a;font-family:Arial,Helvetica,sans-serif}.top{background:#071b49;color:#fff;padding:15px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:11px}.brand img{width:38px;height:38px;object-fit:cover;border-radius:7px}.brand strong{display:block;letter-spacing:.12em;font-size:14px}.brand span{display:block;font-size:9px;opacity:.7;letter-spacing:.08em;margin-top:3px}.top-actions{display:flex;gap:8px;align-items:center}.top a,.top button{border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;padding:9px 11px;border-radius:7px;text-decoration:none;font-size:10px;font-weight:800;cursor:pointer}.wrap{width:min(1180px,calc(100% - 32px));margin:28px auto 60px}.hero{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:18px}.kicker{color:#d71920;font-size:10px;font-weight:900;letter-spacing:.14em}.hero h1{margin:5px 0 6px;color:#071b49;font-size:28px}.hero p{margin:0;color:#68758d;font-size:13px}.panel{background:#fff;border:1px solid #e3e8f0;border-radius:15px;padding:20px;margin-bottom:18px;box-shadow:0 7px 22px rgba(7,27,73,.05)}.panel h2{margin:0;color:#071b49;font-size:18px}.panel p{color:#71809b;font-size:12px;line-height:1.55}.form{display:grid;grid-template-columns:1.1fr 1.1fr 1fr auto;gap:10px;align-items:end}.field label{display:block;color:#61708a;font-size:9px;font-weight:900;letter-spacing:.07em;margin-bottom:5px}.field input,.field select{width:100%;min-height:42px;border:1px solid #d7dfea;border-radius:8px;padding:0 11px;font:inherit;background:#fff}.btn{min-height:42px;border:0;border-radius:8px;padding:0 15px;background:#071b49;color:#fff;font-size:10px;font-weight:900;cursor:pointer}.btn:disabled{opacity:.55;cursor:not-allowed}.message{margin-top:12px;padding:11px 13px;border-radius:8px;background:#f3f6fa;color:#61708a;font-size:11px}.table-wrap{overflow:auto;border:1px solid #e4e9f1;border-radius:10px}.table{width:100%;border-collapse:collapse;min-width:850px}.table th,.table td{padding:11px 12px;border-bottom:1px solid #edf0f5;text-align:left;font-size:11px}.table th{background:#f7f9fc;color:#61708a;font-size:9px;letter-spacing:.06em}.table tr:last-child td{border-bottom:0}.name{font-weight:900;color:#071b49}.sub{color:#71809b;font-size:10px;margin-top:3px}.badge{display:inline-flex;border-radius:999px;padding:5px 8px;font-size:8px;font-weight:900}.active{background:#e5f5eb;color:#17633a}.inactive{background:#fde9e9;color:#b11f28}.role{font-weight:900;color:#071b49}.actions{display:flex;gap:6px}.small{min-height:30px;padding:0 9px;border-radius:6px;font-size:9px}.edit{background:#eef3fa;color:#071b49}.danger{background:#fdeaea;color:#a21e27}.modal{position:fixed;inset:0;background:rgba(7,27,73,.5);display:flex;align-items:center;justify-content:center;padding:18px;z-index:10}.modal[hidden]{display:none}.modal-card{width:min(100%,520px);background:#fff;border-radius:14px;padding:21px}.modal-card h3{margin:0;color:#071b49}.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}.modal-grid .full{grid-column:1/-1}.modal-grid label{display:block;color:#61708a;font-size:9px;font-weight:900}.modal-grid input,.modal-grid select{width:100%;margin-top:5px;min-height:40px;border:1px solid #d7dfea;border-radius:7px;padding:0 10px;font:inherit}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.muted{color:#71809b;font-size:11px}.role-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.role-card{border:1px solid #e1e6ef;border-radius:10px;padding:12px;background:#fbfcfe}.role-card strong{display:block;color:#071b49;font-size:11px}.role-card span{display:block;color:#71809b;font-size:10px;line-height:1.45;margin-top:5px}@media(max-width:850px){.form{grid-template-columns:1fr 1fr}.role-cards{grid-template-columns:1fr 1fr}}@media(max-width:560px){.top{padding:13px 14px}.top-actions a:first-child{display:none}.wrap{width:min(100% - 20px,1180px)}.hero{display:block}.form,.modal-grid,.role-cards{grid-template-columns:1fr}.modal-grid .full{grid-column:auto}}
+.role-access{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.permission-chip{display:inline-flex;padding:4px 7px;border-radius:999px;background:#eef3fa;color:#16355e;font-size:8px;font-weight:800}.security-note{margin-top:14px;padding:12px 14px;border-left:3px solid #c7a24a;background:#faf8f1;color:#68758d;font-size:11px;line-height:1.55}.admin-user-role{font-weight:900;color:#071b49}.modal-overlay{position:fixed;inset:0;background:rgba(7,27,73,.5);display:flex;align-items:center;justify-content:center;padding:18px;z-index:100}.modal-overlay[hidden]{display:none}.modal-card{width:min(100%,540px);background:#fff;border-radius:15px;padding:22px;box-shadow:0 18px 50px rgba(7,27,73,.2)}.modal-card h2{margin:0;color:#071b49}.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.modal-grid .full{grid-column:1/-1}.modal-grid label{display:block;color:#61708a;font-size:9px;font-weight:900;letter-spacing:.07em}.modal-grid input,.modal-grid select{width:100%;margin-top:6px;min-height:42px;border:1px solid #d7dfea;border-radius:8px;padding:0 10px;font:inherit}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.role-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.role-card{height:100%;padding:15px;border:1px solid #e3e8f0;border-radius:12px;background:#fbfcfe}.role-card p{margin:8px 0 0;color:#71809b;font-size:11px;line-height:1.5}.admin-table-wrap{overflow:auto}.admin-table{width:100%;border-collapse:collapse;min-width:900px}.admin-table th,.admin-table td{padding:11px 12px;border-bottom:1px solid #edf0f5;text-align:left;font-size:11px}.admin-table th{color:#61708a;font-size:9px;letter-spacing:.06em;background:#f7f9fc}.admin-table td small{display:block;margin-top:4px;color:#71809b;font-size:9px}.form-group input,.form-group select{width:100%;min-height:42px;border:1px solid #d7dfea;border-radius:8px;padding:0 10px;font:inherit}.form-group label{display:block;color:#61708a;font-size:9px;font-weight:900;letter-spacing:.07em;margin-bottom:5px}@media(max-width:900px){.role-cards{grid-template-columns:1fr 1fr}}@media(max-width:650px){.role-cards{grid-template-columns:1fr}.modal-grid{grid-template-columns:1fr}.modal-grid .full{grid-column:auto}}
 </style>
 </head>
-<body>
-<header class="top"><div class="brand"><img src="../assets/nardtopus-mark.png" alt="NARDTOPUS"><div><strong>NARDTOPUS</strong><span>GRASSROOTS INTELLIGENCE &amp; OPERATIONS PLATFORM</span></div></div><div class="top-actions"><a href="dashboard.html">DASHBOARD</a><button id="logoutButton">LOG OUT</button></div></header>
-<main class="wrap">
-<section class="hero"><div><div class="kicker">PLATFORM SECURITY</div><h1>Administrator Management</h1><p>Create administrators, assign roles and control access to the OCHOUDO MANDATE GROUP deployment.</p></div></section>
-<section class="panel"><h2>Add Administrator</h2><p>The new administrator receives an email invitation to establish their password. No password is created or exposed by the Super Administrator.</p><div class="form"><div class="field"><label>FULL NAME</label><input id="newFullName" type="text" placeholder="Full name"></div><div class="field"><label>EMAIL ADDRESS</label><input id="newEmail" type="email" placeholder="name@example.com"></div><div class="field"><label>ROLE</label><select id="newRole"></select></div><button class="btn" id="createButton">SEND INVITATION</button></div><div class="message" id="pageMessage" role="alert" aria-live="polite"></div></section>
-<section class="panel"><h2>Administrator Roles</h2><p>Access is role-based. The Super Administrator is the only role that can create administrators or change administrator access.</p><div class="role-cards" id="roleCards"></div></section>
-<section class="panel"><h2>Current Administrators</h2><p>Manage administrator roles and activation status.</p><div class="table-wrap"><table class="table"><thead><tr><th>ADMINISTRATOR</th><th>ROLE</th><th>ACCESS</th><th>STATUS</th><th>ACTIONS</th></tr></thead><tbody id="adminTableBody"></tbody></table></div></section>
+<body class="admin-body">
+<header class="admin-topbar">
+    <div class="admin-topbar-brand">
+        <img src="../assets/nardtopus-mark.png" alt="NARDTOPUS">
+        <div><strong>NARDTOPUS</strong><span>GRASSROOTS INTELLIGENCE &amp; OPERATIONS PLATFORM</span></div>
+    </div>
+    <div class="admin-topbar-actions">
+        <a href="dashboard.html" class="admin-secondary-button">DASHBOARD</a>
+        <button type="button" id="logoutButton" class="admin-logout-button">LOG OUT</button>
+    </div>
+</header>
+
+<main class="admin-dashboard">
+    <section class="dashboard-heading">
+        <div>
+            <div class="admin-kicker">PLATFORM SECURITY</div>
+            <h1>Administrator Management</h1>
+            <p>Create administrators, assign roles and control access to the OCHOUDO MANDATE GROUP deployment.</p>
+        </div>
+        <a href="../index.html" class="dashboard-home-link">VIEW WEBSITE</a>
+    </section>
+
+    <div id="pageMessage" class="admin-message" role="alert" aria-live="polite"></div>
+
+    <section class="dashboard-panel">
+        <div class="panel-header">
+            <div><span class="panel-kicker">SUPER ADMINISTRATOR</span><h2>Add Administrator</h2></div>
+        </div>
+        <p>Create an administrator account without sharing a password. The invited person receives an email and establishes their own password.</p>
+        <div class="stats-grid" style="grid-template-columns:1.1fr 1.1fr 1fr auto;align-items:end;">
+            <div class="form-group"><label for="newFullName">FULL NAME</label><input id="newFullName" type="text" placeholder="Full name"></div>
+            <div class="form-group"><label for="newEmail">EMAIL ADDRESS</label><input id="newEmail" type="email" placeholder="name@example.com"></div>
+            <div class="form-group"><label for="newRole">ROLE</label><select id="newRole"></select></div>
+            <button type="button" class="admin-primary-button" id="createButton">SEND INVITATION</button>
+        </div>
+        <div class="security-note"><strong>SECURITY:</strong> Invitations are issued server-side. The Supabase secret key is never placed in browser code.</div>
+    </section>
+
+    <section class="dashboard-panel">
+        <div class="panel-header"><div><span class="panel-kicker">ACCESS MODEL</span><h2>Administrator Roles</h2></div></div>
+        <p>Each role has a defined set of NARDTOPUS permissions. The role model can be expanded as the commercial platform evolves.</p>
+        <div id="roleCards" class="role-cards"></div>
+    </section>
+
+    <section class="dashboard-panel">
+        <div class="panel-header"><div><span class="panel-kicker">ACCESS CONTROL</span><h2>Current Administrators</h2></div></div>
+        <p>Change role or activate/deactivate administrator access. The last active Super Administrator cannot be removed or demoted.</p>
+        <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>ADMINISTRATOR</th><th>ROLE</th><th>ACCESS</th><th>STATUS</th><th>ACTION</th></tr></thead><tbody id="adminTableBody"></tbody></table></div>
+    </section>
 </main>
-<div class="modal" id="editModal" hidden><div class="modal-card"><h3>Edit Administrator</h3><div class="muted" id="editEmail"></div><div class="modal-grid"><div class="full"><label>FULL NAME</label><input id="editFullName"></div><div><label>ROLE</label><select id="editRole"></select></div><div><label>STATUS</label><select id="editActive"><option value="true">ACTIVE</option><option value="false">INACTIVE</option></select></div></div><div class="message" id="editMessage"></div><div class="modal-actions"><button class="btn small edit" id="cancelEdit">CANCEL</button><button class="btn small" id="saveEdit">SAVE CHANGES</button></div></div></div>
+
+<div class="modal-overlay" id="editModal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+        <span class="panel-kicker">ACCESS CONTROL</span>
+        <h2 id="editTitle">Edit Administrator</h2>
+        <p id="editEmail" class="admin-message"></p>
+        <div class="modal-grid">
+            <div class="full"><label for="editFullName">FULL NAME</label><input id="editFullName" type="text"></div>
+            <div><label for="editRole">ROLE</label><select id="editRole"></select></div>
+            <div><label for="editActive">STATUS</label><select id="editActive"><option value="true">ACTIVE</option><option value="false">INACTIVE</option></select></div>
+        </div>
+        <div id="editMessage" class="admin-message"></div>
+        <div class="modal-actions"><button type="button" class="admin-secondary-button" id="cancelEdit">CANCEL</button><button type="button" class="admin-primary-button" id="saveEdit">SAVE CHANGES</button></div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="admin-users.js"></script>
-</body></html>
+<script src="admin-users.js?v=20260912-1"></script>
+</body>
+</html>

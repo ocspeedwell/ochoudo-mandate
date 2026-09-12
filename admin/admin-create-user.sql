@@ -1,0 +1,5 @@
+-- No browser-side SQL is required for administrator creation.
+-- The Edge Function performs the privileged Auth invitation and inserts
+-- the matching admin_users row after verifying the caller is a Super Administrator.
+--
+-- Prerequisite: run NARDTOPUS-SAFE-ROLE-MIGRATION.sql first.
