@@ -595,6 +595,8 @@ console.log("OMG Command Centre PHASE-3C loaded");
         buildWardReadinessRows();
         renderReadiness();
         renderWardReadiness();
+        renderHealth();
+        renderActivities();
     }
 
     function assignedLga(total, role) { return slots.filter(s => s.scopeType === "LGA" && s.roleCode === role && findAssignment(s)).length; }
@@ -650,24 +652,27 @@ console.log("OMG Command Centre PHASE-3C loaded");
     async function start() {
         try {
             const ok = await requireAdmin(); if (!ok) return;
-            await loadHierarchy(); await loadAssignments(); await loadMembers(); try { await loadActivities(); } catch (activityError) { activities = []; console.warn("Activity log unavailable on Command Centre; continuing without it.", activityError); } buildSlots(); render();
-            $("commandSearch").addEventListener("input", render);
-            $("commandLevel").addEventListener("change", render);
-            $("commandStatus").addEventListener("change", render);
-            $("readinessSearch").addEventListener("input", renderReadiness);
-            $("readinessStatus").addEventListener("change", renderReadiness);
-            $("readinessSort").addEventListener("change", renderReadiness);
-            $("wardSearch").addEventListener("input", renderWardReadiness);
-            $("wardStatus").addEventListener("change", renderWardReadiness);
-            $("wardSort").addEventListener("change", renderWardReadiness);
-            $("commandCancel").addEventListener("click", closeModal);
-            $("commandForm").addEventListener("submit", saveAssignment);
-            $("commandModal").addEventListener("click", e => { if (e.target === $("commandModal")) closeModal(); });
+            await loadHierarchy();
+            await loadAssignments();
+            await loadMembers();
+            try { await loadActivities(); } catch (activityError) { activities = []; console.warn("Activity log unavailable on Deployment page; continuing without it.", activityError); }
+            buildSlots();
+            buildReadinessRows();
+            buildWardReadinessRows();
+            renderHealth();
+            renderActivities();
+            $("healthSearch").addEventListener("input", renderHealth);
+            $("healthStatus").addEventListener("change", renderHealth);
+            $("healthSort").addEventListener("change", renderHealth);
+            $("activityForm").addEventListener("submit", saveActivity);
+            $("activityDate").value = new Date().toISOString().slice(0,10);
             $("profileClose").addEventListener("click", closeProfile);
             $("profileModal").addEventListener("click", e => { if (e.target === $("profileModal")) closeProfile(); });
-            $("wardProfileClose").addEventListener("click", closeWardProfile);
-            $("wardProfileModal").addEventListener("click", e => { if (e.target === $("wardProfileModal")) closeWardProfile(); });
-        } catch (error) { console.error(error); setMessage(error.message || "Unable to load command centre."); }
+        } catch (error) {
+            console.error(error);
+            const target = $("stateHealthText");
+            if (target) target.textContent = error.message || "Unable to load deployment intelligence.";
+        }
     }
 
     document.addEventListener("DOMContentLoaded", start);
