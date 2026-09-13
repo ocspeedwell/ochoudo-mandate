@@ -8,21 +8,21 @@ const communities = [
         name: "Owerri Municipal",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/FPKsQOW3Ja91NPOlk7ANRU"
+        link: "https://chat.whatsapp.com/FaUfsJvtRfaCe9MaqYxjVd"
     },
 
     {
         name: "Owerri North",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/ElPpaTeC42BHeNoMjGhWx7"
+        link: "https://chat.whatsapp.com/FPKsQOW3Ja91NPOlk7ANRU"
     },
 
     {
         name: "Owerri West",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/FaUfsJvtRfaCe9MaqYxjVd"
+        link: "https://chat.whatsapp.com/ElPpaTeC42BHeNoMjGhWx7"
     },
 
     {
