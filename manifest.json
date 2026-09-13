@@ -1,0 +1,19 @@
+{
+  "name": "Ochoudo Mandate Group",
+  "short_name": "Ochoudo Mandate",
+  "description": "The official Ochoudo Mandate Group platform.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#0b3d91",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
