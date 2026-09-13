@@ -93,6 +93,7 @@ const communities = [
         location: "Imo State, Nigeria",
         category: "imo",
         link: "https://chat.whatsapp.com/Dl5o4XP9Zb11Vz7mGmzimK"
+         link: "https://chat.whatsapp.com/KaDyu9OesMl2laMhG8q8Vc"
     },
 
     {
@@ -113,7 +114,7 @@ const communities = [
         name: "Ideato North",
         location: "Imo State, Nigeria",
         category: "imo",
-        
+         link: "https://chat.whatsapp.com/CPVAT57iI2kC0d6y3V1oU0"
     },
 
     {
