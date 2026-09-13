@@ -1,0 +1,19 @@
+{
+  "name": "Ochoudo Mandate Admin",
+  "short_name": "Mandate Admin",
+  "description": "Ochoudo Mandate Group administration dashboard.",
+  "start_url": "/admin/login.html",
+  "scope": "/admin/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#0b3d91",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
