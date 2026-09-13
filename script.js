@@ -43,7 +43,7 @@ const communities = [
         name: "Ngor Okpala",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/IruhSXQSYt5IWQII6sYvh8"
+        link: "https://chat.whatsapp.com/G9IcXJjbOWvGA8lMnfPfaY"
     },
 
     {
@@ -57,7 +57,7 @@ const communities = [
         name: "Ahiazu Mbaise",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/G9IcXJjbOWvGA8lMnfPfaY"
+        link: "https://chat.whatsapp.com/IruhSXQSYt5IWQII6sYvh8"
     },
 
     {
