@@ -92,8 +92,7 @@ const communities = [
         name: "Isiala Mbano",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/Dl5o4XP9Zb11Vz7mGmzimK"
-         link: "https://chat.whatsapp.com/KaDyu9OesMl2laMhG8q8Vc"
+        link: "https://chat.whatsapp.com/KaDyu9OesMl2laMhG8q8Vc"
     },
 
     {
