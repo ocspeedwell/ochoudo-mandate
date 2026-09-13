@@ -22,6 +22,23 @@ console.log("OMG Command Centre PHASE-3C loaded");
 
     const $ = (id) => document.getElementById(id);
     const normalize = (value) => String(value || "").trim().replace(/\s+/g, " ").toUpperCase();
+
+
+    // Defensive electoral-data validation.
+    // Only well-formed polling units are counted or displayed.
+    const isValidPollingUnit = (unit) => Boolean(
+        unit &&
+        typeof unit === "object" &&
+        String(unit.id || "").trim() &&
+        String(unit.name || "").trim() &&
+        String(unit.delimitation || "").trim()
+    );
+
+    const getValidPollingUnits = (ward) =>
+        Array.isArray(ward && ward.pollingUnits)
+            ? ward.pollingUnits.filter(isValidPollingUnit)
+            : [];
+
     const esc = (value) => String(value == null ? "" : value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 
     const LGA_FUNCTIONAL_ROLES = [
@@ -110,7 +127,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
             LGA_FUNCTIONAL_ROLES.forEach(r => addSlot("LGA", normalize(lga.name), lga.name, r[0], r[1], r[2]));
             (lga.wards || []).forEach(function (ward) {
                 WARD_ROLES.forEach(r => addSlot("WARD", normalize(lga.name) + "||" + normalize(ward.name), lga.name + " • " + ward.name, r[0], r[1], r[2]));
-                (ward.pollingUnits || []).forEach(function (unit) {
+                getValidPollingUnits(ward).forEach(function (unit) {
                     addSlot("POLLING_UNIT", normalize(lga.name) + "||" + normalize(ward.name) + "||" + normalize(unit.name), lga.name + " • " + ward.name + " • " + unit.name, "POLLING_UNIT_CAPTAIN", "Polling Unit Captain", 1);
                     for (let i = 1; i <= 8; i++) addSlot("POLLING_UNIT", normalize(lga.name) + "||" + normalize(ward.name) + "||" + normalize(unit.name), lga.name + " • " + ward.name + " • " + unit.name, "POLLING_UNIT_CONNECTOR", "Polling Unit Connector", i);
                 });
@@ -159,7 +176,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
             const lgaKey = normalize(lga.name);
             const wards = lga.wards || [];
             const totalWards = wards.length;
-            const totalPUs = wards.reduce((sum, w) => sum + (w.pollingUnits || []).length, 0);
+            const totalPUs = wards.reduce((sum, w) => sum + getValidPollingUnits(w).length, 0);
             const pillarAssigned = countAssignments("LGA", lgaKey, "OCHOUdo_PILLAR");
             const lgaLeadershipCodes = LGA_FUNCTIONAL_ROLES.map(r => r[0]);
             const lgaLeadershipAssigned = countAssignments("LGA", lgaKey, lgaLeadershipCodes);
@@ -243,7 +260,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
             if (!memberByPu.has(key)) memberByPu.set(key, []);
             memberByPu.get(key).push(m);
         });
-        wards.forEach(w => (w.pollingUnits || []).forEach(u => {
+        wards.forEach(w => getValidPollingUnits(w).forEach(u => {
             const key = normalize(w.name) + "||" + normalize(u.name);
             const puMembers = memberByPu.get(key) || [];
             if (!puMembers.length) uncoveredPus.push({ ward: w.name, name: u.name, code: u.delimitation || "" });
@@ -253,7 +270,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
         const recentActivities = activities.filter(a => normalize(a.lga_name) === lgaKey && isRecentActivity(a));
         const wardDetails = wards.map(w => {
             const wardKey = normalize(w.name);
-            const puCount = (w.pollingUnits || []).length;
+            const puCount = getValidPollingUnits(w).length;
             const wardPillarCount = lgaAssignments.filter(a => normalize(a.scope_type) === "WARD" && normalize(a.scope_key) === lgaKey + "||" + wardKey && normalize(a.role_code) === "WARD_PILLAR").length;
             const captainCount = lgaAssignments.filter(a => normalize(a.scope_type) === "POLLING_UNIT" && normalize(a.scope_key).startsWith(lgaKey + "||" + wardKey + "||") && normalize(a.role_code) === "POLLING_UNIT_CAPTAIN").length;
             const connectorCount = lgaAssignments.filter(a => normalize(a.scope_type) === "POLLING_UNIT" && normalize(a.scope_key).startsWith(lgaKey + "||" + wardKey + "||") && normalize(a.role_code) === "POLLING_UNIT_CONNECTOR").length;
@@ -321,7 +338,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
             const lgaKey = normalize(lga.name);
             (lga.wards || []).forEach(function(ward) {
                 const wardKey = lgaKey + "||" + normalize(ward.name);
-                const pus = ward.pollingUnits || [];
+                const pus = getValidPollingUnits(ward);
                 const totalPUs = pus.length;
                 const pillarAssigned = countAssignments("WARD", wardKey, "WARD_PILLAR");
                 const leadershipCodes = WARD_ROLES.filter(r => normalize(r[0]) !== "WARD_PILLAR").map(r => r[0]);
@@ -348,7 +365,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
         if (!row) return null;
         const lga = hierarchy.state.lgas.find(x => normalize(x.name) === row.lgaKey);
         const ward = lga ? (lga.wards || []).find(x => normalize(x.name) === normalize(row.wardName)) : null;
-        const pus = ward ? (ward.pollingUnits || []) : [];
+        const pus = ward ? getValidPollingUnits(ward) : [];
         const wardMembers = members.filter(m => normalize(m.lga) === row.lgaKey && normalize(m.ward) === normalize(row.wardName));
         const approvedMembers = wardMembers.filter(m => normalize(m.membership_status) === "APPROVED");
         const leadership = getWardLeadershipSlots(row.lgaName, row.wardName);
