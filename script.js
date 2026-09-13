@@ -176,21 +176,21 @@ const communities = [
         name: "Njaba",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/CCQtBsv2rOY1UZ03l93NIl"
+        link: "https://chat.whatsapp.com/IsU7Xzm4JWn1YZ0JP8tGWj"
     },
 
     {
         name: "Nwangele",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/LxXHoK2gxon21NYn600uNq"
+        link: "https://chat.whatsapp.com/E8USOKKOfVx8YR73CEXEJo"
     },
 
     {
         name: "Isu",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/DdpBEjQs5ZDE15BJWJeyqM"
+        link: "https://chat.whatsapp.com/KPad30ipb8F4vl7LEJk5Ld"
     },
 
 
