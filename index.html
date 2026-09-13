@@ -20,6 +20,10 @@
     <!-- Website Styles -->
     <link rel="stylesheet" href="style.css">
 
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0b3d91">
+<link rel="apple-touch-icon" href="/logo.png">
+    
 </head>
 
 
@@ -664,7 +668,15 @@
     <!-- JAVASCRIPT -->
 
     <script src="script.js"></script>
-
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js")
+      .then(() => console.log("Ochoudo Mandate PWA registered"))
+      .catch(error => console.error("PWA registration failed:", error));
+  });
+}
+</script>
 
 </body>
 
