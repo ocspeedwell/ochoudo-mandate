@@ -148,14 +148,14 @@ const communities = [
         name: "Oru West",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/CPVAT57iI2kC0d6y3V1oU0"
+        link: "https://chat.whatsapp.com/GRmXDsGgOjfHJNzqQJwhCu"
     },
 
     {
         name: "Oru West",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/KaDyu9OesMl2laMhG8q8Vc"
+        link: "https://chat.whatsapp.com/GRmXDsGgOjfHJNzqQJwhCu"
     },
 
     {
