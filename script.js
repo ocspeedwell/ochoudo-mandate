@@ -43,7 +43,7 @@ const communities = [
         name: "Ngor Okpala",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/G9IcXJjbOWvGA8lMnfPfaY"
+        link: "https://chat.whatsapp.com/IHqyB15TaId3VvtoFsjaHO"
     },
 
     {
@@ -64,28 +64,28 @@ const communities = [
         name: "Ezinihitte Mbaise",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/IHqyB15TaId3VvtoFsjaHO"
+        link: "https://chat.whatsapp.com/G9IcXJjbOWvGA8lMnfPfaY"
     },
 
     {
         name: "Obowo",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/IPgJwDmvNAz2ehHpKIgsJ3"
+        link: "https://chat.whatsapp.com/LxXHoK2gxon21NYn600uNq"
     },
 
     {
         name: "Okigwe",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/CPVAT57iI2kC0d6y3V1oU0"
+        link: "https://chat.whatsapp.com/CCQtBsv2rOY1UZ03l93NIl"
     },
 
     {
         name: "Onuimo",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/HZRQjTn1XNbCLMBg3g58UC"
+        link: "https://chat.whatsapp.com/DHFJOEcVrygCv2h7pgvGd9"
     },
 
     {
@@ -99,56 +99,56 @@ const communities = [
         name: "Ehime Mbano",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/IWIOPu9om51D49kk2C4DLy"
+        link: "https://chat.whatsapp.com/BVbuY466t3j7R11GKciXeA"
     },
 
     {
         name: "Ihitte Uboma",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/LEzDYMsCAzxFFLQ94PKZZb"
+        link: "https://chat.whatsapp.com/DdpBEjQs5ZDE15BJWJeyqM"
     },
 
     {
         name: "Ideato North",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/HU145ZKbzpmDuqEGb6T39W"
+        
     },
 
     {
         name: "Ideato South",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/GRmXDsGgOjfHJNzqQJwhCu"
+        link: "https://chat.whatsapp.com/IPgJwDmvNAz2ehHpKIgsJ3"
     },
 
     {
         name: "Orlu",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/KPad30ipb8F4vl7LEJk5Ld"
-    },
-
-    {
-        name: "Orlu East",
-        location: "Imo State, Nigeria",
-        category: "imo",
-        link: "https://chat.whatsapp.com/IsU7Xzm4JWn1YZ0JP8tGWj"
-    },
-
-    {
-        name: "Orsu",
-        location: "Imo State, Nigeria",
-        category: "imo",
-        link: "https://chat.whatsapp.com/E8USOKKOfVx8YR73CEXEJo"
+        link: "https://chat.whatsapp.com/LEzDYMsCAzxFFLQ94PKZZb"
     },
 
     {
         name: "Oru East",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/HrLaetq5qCR16t8FUWu56Z"
+        link: "https://chat.whatsapp.com/HU145ZKbzpmDuqEGb6T39W"
+    },
+
+    {
+        name: "Orsu",
+        location: "Imo State, Nigeria",
+        category: "imo",
+       link: "https://chat.whatsapp.com/IWIOPu9om51D49kk2C4DLy"
+    },
+
+    {
+        name: "Oru West",
+        location: "Imo State, Nigeria",
+        category: "imo",
+        link: "https://chat.whatsapp.com/CPVAT57iI2kC0d6y3V1oU0"
     },
 
     {
@@ -162,14 +162,14 @@ const communities = [
         name: "Oguta",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/BVbuY466t3j7R11GKciXeA"
+        link: "https://chat.whatsapp.com/HZRQjTn1XNbCLMBg3g58UC"
     },
 
     {
         name: "Ohaji Egbema",
         location: "Imo State, Nigeria",
         category: "imo",
-        link: "https://chat.whatsapp.com/DHFJOEcVrygCv2h7pgvGd9"
+        link: "https://chat.whatsapp.com/Dl5o4XP9Zb11Vz7mGmzimK"
     },
 
     {
