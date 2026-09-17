@@ -591,7 +591,7 @@ uppercaseFieldIds.forEach(function (fieldId) {
                 ) {
 
                     alert(
-                        "The photograph must not exceed 2MB."
+                        "The photograph must not exceed 10MB."
                     );
 
 
