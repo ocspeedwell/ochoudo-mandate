@@ -2,8 +2,8 @@
     "use strict";
 
 // OMG Command Centre version marker and cache-busting diagnostic.
-window.OMG_COMMAND_VERSION = "PHASE-3C";
-console.log("OMG Command Centre PHASE-3C loaded");
+window.OMG_COMMAND_VERSION = "PHASE-3D";
+console.log("OMG Command Centre PHASE-3D loaded");
 
     const SUPABASE_URL = "https://yopqftofkvwrpyyluffw.supabase.co";
     const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_k3whUGyuDbdQU6GA6egeuQ_k-g-nFoL";
@@ -52,7 +52,10 @@ console.log("OMG Command Centre PHASE-3C loaded");
         ["YOUTH_LEADER", "Youth Leader", 1],
         ["FINANCIAL_SECRETARY", "Financial Secretary", 1],
         ["TREASURER", "Treasurer", 1],
-        ["WELFARE_OFFICER", "Welfare Officer", 1]
+        ["WELFARE_OFFICER", "Welfare Officer", 1],
+        ["ORGANISING_SECRETARY", "Organising Secretary", 1],
+        ["AUDITOR", "Auditor", 1],
+        ["LEGAL_ADVISER", "Legal Adviser", 1]
     ];
 
     const WARD_ROLES = [
@@ -69,7 +72,10 @@ console.log("OMG Command Centre PHASE-3C loaded");
         ["YOUTH_LEADER", "Youth Leader", 1],
         ["FINANCIAL_SECRETARY", "Financial Secretary", 1],
         ["TREASURER", "Treasurer", 1],
-        ["WELFARE_OFFICER", "Welfare Officer", 1]
+        ["WELFARE_OFFICER", "Welfare Officer", 1],
+        ["ORGANISING_SECRETARY", "Organising Secretary", 1],
+        ["AUDITOR", "Auditor", 1],
+        ["LEGAL_ADVISER", "Legal Adviser", 1]
     ];
 
     function setMessage(text) { $("commandMessage").textContent = text; }
@@ -129,7 +135,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
                 WARD_ROLES.forEach(r => addSlot("WARD", normalize(lga.name) + "||" + normalize(ward.name), lga.name + " • " + ward.name, r[0], r[1], r[2]));
                 getValidPollingUnits(ward).forEach(function (unit) {
                     addSlot("POLLING_UNIT", normalize(lga.name) + "||" + normalize(ward.name) + "||" + normalize(unit.name), lga.name + " • " + ward.name + " • " + unit.name, "POLLING_UNIT_CAPTAIN", "Polling Unit Captain", 1);
-                    for (let i = 1; i <= 8; i++) addSlot("POLLING_UNIT", normalize(lga.name) + "||" + normalize(ward.name) + "||" + normalize(unit.name), lga.name + " • " + ward.name + " • " + unit.name, "POLLING_UNIT_CONNECTOR", "Polling Unit Connector", i);
+                    for (let i = 1; i <= 9; i++) addSlot("POLLING_UNIT", normalize(lga.name) + "||" + normalize(ward.name) + "||" + normalize(unit.name), lga.name + " • " + ward.name + " • " + unit.name, "POLLING_UNIT_CONNECTOR", "Polling Unit Connector", i);
                 });
             });
         });
@@ -199,12 +205,12 @@ console.log("OMG Command Centre PHASE-3C loaded");
                 pct(lgaLeadershipAssigned, LGA_FUNCTIONAL_ROLES.length),
                 pct(wardPillarAssigned, totalWards * 3),
                 pct(puCaptainAssigned, totalPUs),
-                pct(connectorAssigned, totalPUs * 8)
+                pct(connectorAssigned, totalPUs * 9)
             ];
             const score = Math.round(layers.reduce((a,b) => a+b, 0) / layers.length);
             const status = score >= 80 ? "READY" : score >= 50 ? "DEVELOPING" : score > 0 ? "STARTING" : "NOT READY";
             const assignedTotal = pillarAssigned + lgaLeadershipAssigned + wardPillarAssigned + puCaptainAssigned + connectorAssigned;
-            const requiredTotal = 10 + LGA_FUNCTIONAL_ROLES.length + totalWards * 3 + totalPUs + totalPUs * 8;
+            const requiredTotal = 10 + LGA_FUNCTIONAL_ROLES.length + totalWards * 3 + totalPUs + totalPUs * 9;
 
             return {
                 name: lga.name,
@@ -301,7 +307,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
         $("profileLeadership").textContent = `${profile.lgaLeadershipAssigned}/${LGA_FUNCTIONAL_ROLES.length}`;
         $("profileWardPillars").textContent = `${profile.wardPillarAssigned}/${profile.totalWards * 3}`;
         $("profilePuCaptains").textContent = `${profile.puCaptainAssigned}/${profile.totalPUs}`;
-        $("profileConnectors").textContent = `${profile.connectorAssigned}/${profile.totalPUs * 8}`;
+        $("profileConnectors").textContent = `${profile.connectorAssigned}/${profile.totalPUs * 9}`;
         $("profileActivityCount").textContent = profile.recentActivities.length.toLocaleString();
         const latest = profile.recentActivities.slice().sort((a,b)=>String(b.activity_date).localeCompare(String(a.activity_date)))[0];
         $("profileLatestActivity").textContent = latest ? latest.activity_date : "None recorded";
@@ -313,7 +319,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
         if (profile.lgaLeadershipAssigned < LGA_FUNCTIONAL_ROLES.length) priority.push(`Complete ${LGA_FUNCTIONAL_ROLES.length - profile.lgaLeadershipAssigned} remaining LGA leadership position${LGA_FUNCTIONAL_ROLES.length-profile.lgaLeadershipAssigned===1?'':'s'}.`);
         if (profile.wardPillarAssigned < profile.totalWards * 3) priority.push(`Establish ${profile.totalWards * 3 - profile.wardPillarAssigned} remaining Ward Pillar position${profile.totalWards*3-profile.wardPillarAssigned===1?'':'s'}.`);
         if (profile.puCaptainAssigned < profile.totalPUs) priority.push(`Assign ${profile.totalPUs - profile.puCaptainAssigned} remaining Polling Unit Captain${profile.totalPUs-profile.puCaptainAssigned===1?'':'s'}.`);
-        if (profile.connectorAssigned < profile.totalPUs * 8) priority.push(`Build the remaining ${profile.totalPUs * 8 - profile.connectorAssigned} connector slot${profile.totalPUs*8-profile.connectorAssigned===1?'':'s'}.`);
+        if (profile.connectorAssigned < profile.totalPUs * 9) priority.push(`Build the remaining ${profile.totalPUs * 9 - profile.connectorAssigned} connector slot${profile.totalPUs*9-profile.connectorAssigned===1?'':'s'}.`);
         if (profile.verifiedPUs < profile.totalPUs) priority.push(`Expand approved membership coverage across ${profile.totalPUs - profile.verifiedPUs} uncovered polling unit${profile.totalPUs-profile.verifiedPUs===1?'':'s'}.`);
         if (!profile.recentActivities.length) priority.push("Record a recent organisational activity to establish an operational activity baseline.");
         $("profilePriorityList").innerHTML = priority.slice(0,6).map(x=>`<li>${esc(x)}</li>`).join("") || "<li>No immediate priority gaps identified.</li>";
@@ -349,11 +355,11 @@ console.log("OMG Command Centre PHASE-3C loaded");
                 const approvedMembers = wardMembers.filter(m => normalize(m.membership_status) === "APPROVED");
                 const registeredPUs = new Set(wardMembers.map(m => normalize(m.polling_unit)).filter(Boolean)).size;
                 const verifiedPUs = new Set(approvedMembers.map(m => normalize(m.polling_unit)).filter(Boolean)).size;
-                const layers = [pct(pillarAssigned, 3), pct(leadershipAssigned, 11), pct(puCaptainAssigned, totalPUs), pct(connectorAssigned, totalPUs * 8), pct(verifiedPUs, totalPUs)];
+                const layers = [pct(pillarAssigned, 3), pct(leadershipAssigned, 14), pct(puCaptainAssigned, totalPUs), pct(connectorAssigned, totalPUs * 9), pct(verifiedPUs, totalPUs)];
                 const score = Math.round(layers.reduce((a,b) => a+b, 0) / layers.length);
                 const status = score >= 80 ? "READY" : score >= 50 ? "DEVELOPING" : score > 0 ? "STARTING" : "NOT READY";
                 const assignedTotal = pillarAssigned + leadershipAssigned + puCaptainAssigned + connectorAssigned;
-                const requiredTotal = 3 + 11 + totalPUs + totalPUs * 8;
+                const requiredTotal = 3 + 14 + totalPUs + totalPUs * 9;
                 const recentActivities = activities.filter(a => normalize(a.lga_name) === lgaKey && normalize(a.ward_name) === normalize(ward.name) && isRecentActivity(a));
                 wardReadinessRows.push({ lgaName:lga.name, lgaKey, wardName:ward.name, wardKey, totalPUs, pillarAssigned, leadershipAssigned, puCaptainAssigned, connectorAssigned, registeredMembers:wardMembers.length, approvedMembers:approvedMembers.length, registeredPUs, verifiedPUs, recentActivities:recentActivities.length, score, status, gap:Math.max(0, requiredTotal-assignedTotal) });
             });
@@ -397,9 +403,9 @@ console.log("OMG Command Centre PHASE-3C loaded");
         $("wardProfileRegisteredPus").textContent = profile.registeredPUs.toLocaleString();
         $("wardProfileVerifiedPus").textContent = profile.verifiedPUs.toLocaleString();
         $("wardProfilePillars").textContent = `${profile.pillarAssigned}/3`;
-        $("wardProfileLeadership").textContent = `${profile.leadershipAssigned}/11`;
+        $("wardProfileLeadership").textContent = `${profile.leadershipAssigned}/14`;
         $("wardProfilePuCaptains").textContent = `${profile.puCaptainAssigned}/${profile.totalPUs}`;
-        $("wardProfileConnectors").textContent = `${profile.connectorAssigned}/${profile.totalPUs * 8}`;
+        $("wardProfileConnectors").textContent = `${profile.connectorAssigned}/${profile.totalPUs * 9}`;
         const leadershipItems = [...profile.pillarSlots.map((a,i)=>({title:`Ward Pillar ${i+1}`,name:a ? a.full_name : "VACANT"})), ...profile.leadership.map(x=>({title:x.roleTitle,name:x.assignment ? x.assignment.full_name : "VACANT"}))];
         $("wardLeadershipList").innerHTML = leadershipItems.map(x=>`<div class="ward-profile-item"><span>${esc(x.title)}</span><strong class="${x.name === "VACANT" ? "vacant" : ""}">${esc(x.name)}</strong></div>`).join("");
         $("wardProfileActivityCount").textContent = profile.recentActivities.length.toLocaleString();
@@ -407,13 +413,13 @@ console.log("OMG Command Centre PHASE-3C loaded");
         $("wardProfileLatestActivity").textContent = latest ? latest.activity_date : "None recorded";
         const priority=[];
         if(profile.pillarAssigned<3) priority.push(`Fill ${3-profile.pillarAssigned} remaining Ward Pillar position${3-profile.pillarAssigned===1?'':'s'}.`);
-        if(profile.leadershipAssigned<11) priority.push(`Complete ${11-profile.leadershipAssigned} remaining Ward leadership position${11-profile.leadershipAssigned===1?'':'s'}.`);
+        if(profile.leadershipAssigned<14) priority.push(`Complete ${14-profile.leadershipAssigned} remaining Ward leadership position${14-profile.leadershipAssigned===1?'':'s'}.`);
         if(profile.puCaptainAssigned<profile.totalPUs) priority.push(`Assign ${profile.totalPUs-profile.puCaptainAssigned} remaining Polling Unit Captain${profile.totalPUs-profile.puCaptainAssigned===1?'':'s'}.`);
-        if(profile.connectorAssigned<profile.totalPUs*8) priority.push(`Build the remaining ${profile.totalPUs*8-profile.connectorAssigned} connector slot${profile.totalPUs*8-profile.connectorAssigned===1?'':'s'}.`);
+        if(profile.connectorAssigned<profile.totalPUs*9) priority.push(`Build the remaining ${profile.totalPUs*9-profile.connectorAssigned} connector slot${profile.totalPUs*9-profile.connectorAssigned===1?'':'s'}.`);
         if(profile.verifiedPUs<profile.totalPUs) priority.push(`Expand approved membership coverage across ${profile.totalPUs-profile.verifiedPUs} uncovered polling unit${profile.totalPUs-profile.verifiedPUs===1?'':'s'}.`);
         if(!profile.recentActivities.length) priority.push("Record a recent ward activity to establish an operational baseline.");
         $("wardProfilePriorityList").innerHTML = priority.slice(0,6).map(x=>`<li>${esc(x)}</li>`).join("") || "<li>No immediate priority gaps identified.</li>";
-        $("wardProfilePuBody").innerHTML = profile.puDetails.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.code || "-")}</td><td>${u.verified ? "VERIFIED" : "NOT VERIFIED"}</td><td class="${u.captain === "VACANT" ? "command-vacant" : "command-assigned"}">${esc(u.captain)}</td><td>${u.connectorCount}/8</td><td>${u.puActivities}</td></tr>`).join("") || '<tr><td colspan="6">No polling units available.</td></tr>';
+        $("wardProfilePuBody").innerHTML = profile.puDetails.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.code || "-")}</td><td>${u.verified ? "VERIFIED" : "NOT VERIFIED"}</td><td class="${u.captain === "VACANT" ? "command-vacant" : "command-assigned"}">${esc(u.captain)}</td><td>${u.connectorCount}/9</td><td>${u.puActivities}</td></tr>`).join("") || '<tr><td colspan="6">No polling units available.</td></tr>';
         $("wardProfileModal").hidden=false;
     }
 
@@ -428,7 +434,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
             if(sort==="ward-asc") return a.wardName.localeCompare(b.wardName) || a.lgaName.localeCompare(b.lgaName);
             return b.score-a.score || a.lgaName.localeCompare(b.lgaName) || a.wardName.localeCompare(b.wardName);
         });
-        $("wardBody").innerHTML=rows.map(r=>{const badgeClass=r.status==="READY"?"ward-ready":r.status==="DEVELOPING"?"ward-developing":r.status==="STARTING"?"ward-starting":"ward-none"; return `<tr><td class="ward-mini">${esc(r.lgaName)}</td><td class="ward-name">${esc(r.wardName)}</td><td class="ward-mini">${r.pillarAssigned}/3</td><td class="ward-mini">${r.leadershipAssigned}/11</td><td class="ward-mini">${r.puCaptainAssigned}/${r.totalPUs}</td><td class="ward-mini">${r.connectorAssigned}/${r.totalPUs*8}</td><td class="ward-mini">${r.verifiedPUs}/${r.totalPUs}</td><td><span class="ward-readiness-bar"><i style="width:${r.score}%"></i></span><span class="ward-readiness-percent">${r.score}%</span></td><td><span class="ward-status ${badgeClass}">${r.status}</span></td><td class="ward-mini">${r.registeredMembers} reg / ${r.approvedMembers} approved</td><td><button class="profile-button" data-ward-profile="${esc(r.wardKey)}">VIEW PROFILE</button></td></tr>`;}).join("") || '<tr><td colspan="11">No wards match the selected filters.</td></tr>';
+        $("wardBody").innerHTML=rows.map(r=>{const badgeClass=r.status==="READY"?"ward-ready":r.status==="DEVELOPING"?"ward-developing":r.status==="STARTING"?"ward-starting":"ward-none"; return `<tr><td class="ward-mini">${esc(r.lgaName)}</td><td class="ward-name">${esc(r.wardName)}</td><td class="ward-mini">${r.pillarAssigned}/3</td><td class="ward-mini">${r.leadershipAssigned}/14</td><td class="ward-mini">${r.puCaptainAssigned}/${r.totalPUs}</td><td class="ward-mini">${r.connectorAssigned}/${r.totalPUs*8}</td><td class="ward-mini">${r.verifiedPUs}/${r.totalPUs}</td><td><span class="ward-readiness-bar"><i style="width:${r.score}%"></i></span><span class="ward-readiness-percent">${r.score}%</span></td><td><span class="ward-status ${badgeClass}">${r.status}</span></td><td class="ward-mini">${r.registeredMembers} reg / ${r.approvedMembers} approved</td><td><button class="profile-button" data-ward-profile="${esc(r.wardKey)}">VIEW PROFILE</button></td></tr>`;}).join("") || '<tr><td colspan="11">No wards match the selected filters.</td></tr>';
         $("wardBody").querySelectorAll("[data-ward-profile]").forEach(btn=>btn.addEventListener("click",()=>openWardProfile(btn.dataset.wardProfile)));
         const avg=wardReadinessRows.length?Math.round(wardReadinessRows.reduce((s,r)=>s+r.score,0)/wardReadinessRows.length):0;
         $("stateWardReadinessScore").textContent=`${avg}%`; $("stateWardReadinessText").textContent=`${wardReadinessRows.filter(r=>r.score>0).length} of ${wardReadinessRows.length} wards have at least one active readiness layer.`;
@@ -454,7 +460,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
                 <td class="readiness-mini">${r.lgaLeadershipAssigned}/${LGA_FUNCTIONAL_ROLES.length}</td>
                 <td class="readiness-mini">${r.wardPillarAssigned}/${r.totalWards * 3}</td>
                 <td class="readiness-mini">${r.puCaptainAssigned}/${r.totalPUs}</td>
-                <td class="readiness-mini">${r.connectorAssigned}/${r.totalPUs * 8}</td>
+                <td class="readiness-mini">${r.connectorAssigned}/${r.totalPUs * 9}</td>
                 <td><span class="readiness-bar"><i style="width:${r.score}%"></i></span><span class="readiness-percent">${r.score}%</span></td>
                 <td><span class="readiness-badge ${badgeClass}">${r.status}</span></td>
                 <td class="readiness-mini">${r.registeredMembers} reg / ${r.approvedMemberCount} approved</td>
@@ -493,7 +499,7 @@ console.log("OMG Command Centre PHASE-3C loaded");
             const recent = lgaActivities.filter(isRecentActivity).length;
             const approvedPu = r.verifiedPUs;
             const puCoverage = r.totalPUs ? pct(r.puCaptainAssigned, r.totalPUs) : 100;
-            const connectorCoverage = r.totalPUs ? pct(r.connectorAssigned, r.totalPUs * 8) : 100;
+            const connectorCoverage = r.totalPUs ? pct(r.connectorAssigned, r.totalPUs * 9) : 100;
             const commandScore = r.score;
             const membershipScore = r.totalPUs ? pct(approvedPu, r.totalPUs) : 100;
             const activityScore = Math.min(100, recent * 20);
