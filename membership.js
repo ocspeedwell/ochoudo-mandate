@@ -12,6 +12,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const confirmButton = document.getElementById("confirmRegistration");
 
     const photoInput = document.getElementById("photo");
+    const cameraPhotoInput = document.getElementById("cameraPhoto");
+    const openCameraButton = document.getElementById("openCamera");
+    const openGalleryButton = document.getElementById("openGallery");
     const photoUpload = document.querySelector(".photo-upload");
 
     const lgaSelect = document.getElementById("lga");
@@ -536,91 +539,247 @@ uppercaseFieldIds.forEach(function (fieldId) {
 
     /* =========================================================
        PHOTO SELECTION
+       Camera + Gallery + automatic image compression
     ========================================================= */
 
-    if (photoInput) {
+    const MAX_PHOTO_SIZE = 2 * 1024 * 1024; // 2 MB final upload target
+    const MAX_PHOTO_DIMENSION = 1600;
+    const JPEG_QUALITY_START = 0.86;
 
-        photoInput.addEventListener(
-            "change",
-            function () {
+    function setPhotoInputFile(file) {
+        if (!photoInput || !file) return;
 
-                const file =
-                    photoInput.files &&
-                    photoInput.files[0];
-
-
-                if (!file) {
-                    return;
-                }
-
-
-                const allowedTypes = [
-                    "image/jpeg",
-                    "image/png",
-                    "image/webp"
-                ];
-
-
-                if (
-                    !allowedTypes.includes(
-                        file.type
-                    )
-                ) {
-
-                    alert(
-                        "Please select a JPG, PNG or WebP image."
-                    );
-
-
-                    photoInput.value =
-                        "";
-
-
-                    selectedPhoto =
-                        null;
-
-
-                    return;
-
-                }
-
-
-                if (
-                    file.size >
-                    2 * 1024 * 1024
-                ) {
-
-                    alert(
-                        "The photograph must not exceed 10MB."
-                    );
-
-
-                    photoInput.value =
-                        "";
-
-
-                    selectedPhoto =
-                        null;
-
-
-                    return;
-
-                }
-
-
-                selectedPhoto =
-                    file;
-
-
-                showPhotoPreview(
-                    file
-                );
-
-            }
-        );
-
+        try {
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            photoInput.files = dataTransfer.files;
+        } catch (error) {
+            console.warn("Could not copy processed photograph into #photo.", error);
+        }
     }
 
+    function createPhotoFile(blob, originalFile) {
+        const baseName =
+            (originalFile && originalFile.name
+                ? originalFile.name.replace(/\.[^/.]+$/, "")
+                : "passport-photograph");
+
+        return new File(
+            [blob],
+            baseName + ".jpg",
+            {
+                type: "image/jpeg",
+                lastModified: Date.now()
+            }
+        );
+    }
+
+    function loadImageFromFile(file) {
+        return new Promise(function (resolve, reject) {
+            const url = URL.createObjectURL(file);
+            const image = new Image();
+
+            image.onload = function () {
+                URL.revokeObjectURL(url);
+                resolve(image);
+            };
+
+            image.onerror = function () {
+                URL.revokeObjectURL(url);
+                reject(new Error("The selected image could not be read."));
+            };
+
+            image.src = url;
+        });
+    }
+
+    function canvasToBlob(canvas, quality) {
+        return new Promise(function (resolve, reject) {
+            canvas.toBlob(
+                function (blob) {
+                    if (blob) {
+                        resolve(blob);
+                    } else {
+                        reject(new Error("The browser could not process the photograph."));
+                    }
+                },
+                "image/jpeg",
+                quality
+            );
+        });
+    }
+
+    async function compressPhoto(file) {
+        if (!file) {
+            throw new Error("No photograph was selected.");
+        }
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
+
+        if (!allowedTypes.includes(file.type)) {
+            throw new Error("Please select a JPG, PNG or WebP image.");
+        }
+
+        // If the image is already comfortably below the limit, keep it.
+        if (file.size <= MAX_PHOTO_SIZE) {
+            return file;
+        }
+
+        const image = await loadImageFromFile(file);
+
+        let width = image.naturalWidth || image.width;
+        let height = image.naturalHeight || image.height;
+
+        const scale = Math.min(
+            1,
+            MAX_PHOTO_DIMENSION / Math.max(width, height)
+        );
+
+        width = Math.max(1, Math.round(width * scale));
+        height = Math.max(1, Math.round(height * scale));
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        const context = canvas.getContext("2d", {
+            alpha: false
+        });
+
+        if (!context) {
+            throw new Error("Your browser could not prepare the photograph.");
+        }
+
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, width, height);
+        context.drawImage(image, 0, 0, width, height);
+
+        let quality = JPEG_QUALITY_START;
+        let blob = await canvasToBlob(canvas, quality);
+
+        // Gradually reduce JPEG quality if necessary.
+        while (blob.size > MAX_PHOTO_SIZE && quality > 0.45) {
+            quality -= 0.07;
+            blob = await canvasToBlob(canvas, quality);
+        }
+
+        // If still too large, reduce dimensions and try again.
+        while (blob.size > MAX_PHOTO_SIZE && Math.max(width, height) > 900) {
+            width = Math.max(1, Math.round(width * 0.82));
+            height = Math.max(1, Math.round(height * 0.82));
+
+            canvas.width = width;
+            canvas.height = height;
+
+            context.fillStyle = "#ffffff";
+            context.fillRect(0, 0, width, height);
+            context.drawImage(image, 0, 0, width, height);
+
+            quality = 0.70;
+            blob = await canvasToBlob(canvas, quality);
+        }
+
+        if (blob.size > MAX_PHOTO_SIZE) {
+            throw new Error("The photograph could not be reduced below 2MB.");
+        }
+
+        return createPhotoFile(blob, file);
+    }
+
+    async function processSelectedPhoto(file) {
+        if (!file) return;
+
+        try {
+            if (photoUpload) {
+                photoUpload.classList.add("photo-processing");
+            }
+
+            const processedFile = await compressPhoto(file);
+
+            selectedPhoto = processedFile;
+            setPhotoInputFile(processedFile);
+
+            showPhotoPreview(processedFile);
+
+            const selectedName =
+                document.getElementById("selectedPhotoName");
+
+            if (selectedName) {
+                selectedName.textContent =
+                    processedFile.name +
+                    " • " +
+                    formatFileSize(processedFile.size);
+            }
+
+        } catch (error) {
+            console.error("Photograph processing error:", error);
+
+            alert(
+                error && error.message
+                    ? error.message
+                    : "We could not process this photograph. Please try another image."
+            );
+
+            if (photoInput) {
+                photoInput.value = "";
+            }
+
+            if (cameraPhotoInput) {
+                cameraPhotoInput.value = "";
+            }
+
+            selectedPhoto = null;
+
+        } finally {
+            if (photoUpload) {
+                photoUpload.classList.remove("photo-processing");
+            }
+        }
+    }
+
+    // Gallery button opens the normal #photo file picker.
+    if (openGalleryButton && photoInput) {
+        openGalleryButton.addEventListener("click", function () {
+            photoInput.click();
+        });
+    }
+
+    // Camera button opens the dedicated camera input.
+    if (openCameraButton && cameraPhotoInput) {
+        openCameraButton.addEventListener("click", function () {
+            cameraPhotoInput.click();
+        });
+    }
+
+    // Gallery selection.
+    if (photoInput) {
+        photoInput.addEventListener("change", function () {
+            const file =
+                photoInput.files &&
+                photoInput.files[0];
+
+            if (file) {
+                processSelectedPhoto(file);
+            }
+        });
+    }
+
+    // Camera capture.
+    if (cameraPhotoInput) {
+        cameraPhotoInput.addEventListener("change", function () {
+            const file =
+                cameraPhotoInput.files &&
+                cameraPhotoInput.files[0];
+
+            if (file) {
+                processSelectedPhoto(file);
+            }
+        });
+    }
 
     /* =========================================================
        PHOTO PREVIEW
@@ -725,7 +884,11 @@ uppercaseFieldIds.forEach(function (fieldId) {
             "click",
             function () {
 
-                photoInput.click();
+                if (openGalleryButton) {
+                    openGalleryButton.click();
+                } else if (photoInput) {
+                    photoInput.click();
+                }
 
             }
         );
@@ -1805,7 +1968,7 @@ function setPreview(id, value) {
                         message =
                             "Your photograph could not be uploaded.\n\n" +
                             "Please check that the image is JPG, PNG or WebP, " +
-                            "and not larger than 2MB.\n\n" +
+                            "and not larger than 2MB after processing.\n\n" +
                             "If the problem continues, please contact the Ochoudo Mandate Group.";
 
                     }
