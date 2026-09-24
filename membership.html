@@ -1665,6 +1665,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!photoInput || !cameraInput || !openCamera || !openGallery) return;
 
+    const MAX_OUTPUT_BYTES = 2 * 1024 * 1024; // Keep uploaded photos comfortably below 10MB.
+    const MAX_WIDTH = 1600;
+    const MAX_HEIGHT = 1600;
+
     openCamera.addEventListener("click", function () {
         cameraInput.click();
     });
@@ -1673,39 +1677,113 @@ document.addEventListener("DOMContentLoaded", function () {
         photoInput.click();
     });
 
-    function useSelectedPhoto(file) {
+    function setPhotoFile(file) {
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        photoInput.files = dataTransfer.files;
+        selectedPhotoName.textContent = "Selected: " + file.name;
+    }
+
+    function compressImage(file) {
+        return new Promise((resolve, reject) => {
+            if (!file || !file.type.startsWith("image/")) {
+                reject(new Error("Please select a valid image file."));
+                return;
+            }
+
+            // Already small enough, no conversion required.
+            if (file.size <= MAX_OUTPUT_BYTES && file.type === "image/jpeg") {
+                resolve(file);
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onerror = () => reject(new Error("Could not read the selected photo."));
+            reader.onload = function () {
+                const img = new Image();
+                img.onerror = () => reject(new Error("Could not process the selected photo."));
+                img.onload = function () {
+                    let width = img.naturalWidth;
+                    let height = img.naturalHeight;
+
+                    const scale = Math.min(1, MAX_WIDTH / width, MAX_HEIGHT / height);
+                    width = Math.round(width * scale);
+                    height = Math.round(height * scale);
+
+                    const canvas = document.createElement("canvas");
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext("2d", { alpha: false });
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    let quality = 0.86;
+
+                    const makeBlob = () => {
+                        canvas.toBlob(function (blob) {
+                            if (!blob) {
+                                reject(new Error("Could not compress the selected photo."));
+                                return;
+                            }
+
+                            // Reduce quality until the file is safely below 2MB.
+                            if (blob.size > MAX_OUTPUT_BYTES && quality > 0.45) {
+                                quality -= 0.08;
+                                makeBlob();
+                                return;
+                            }
+
+                            const baseName = (file.name || "passport-photo").replace(/\.[^/.]+$/, "");
+                            resolve(new File([blob], baseName + ".jpg", {
+                                type: "image/jpeg",
+                                lastModified: Date.now()
+                            }));
+                        }, "image/jpeg", quality);
+                    };
+
+                    makeBlob();
+                };
+                img.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    async function useSelectedPhoto(file) {
         if (!file) return;
 
-        /*
-         * Put the selected camera file into the existing #photo input.
-         * This means membership.js can continue using #photo exactly as before.
-         */
         try {
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            photoInput.files = dataTransfer.files;
+            selectedPhotoName.textContent = "Processing photo...";
+            const processedFile = await compressImage(file);
+            setPhotoFile(processedFile);
+
+            // Tell membership.js that the final, compressed file is ready.
+            photoInput.dispatchEvent(new Event("change", {
+                bubbles: true,
+                detail: { processedPhoto: true }
+            }));
         } catch (error) {
-            console.error("Unable to assign camera photo:", error);
-            return;
+            console.error("Photo processing error:", error);
+            selectedPhotoName.textContent = "Unable to process photo. Please choose another image.";
+            alert("We could not process this photograph. Please choose another JPG or PNG image.");
         }
-
-        selectedPhotoName.textContent = "Selected: " + file.name;
-
-        // Trigger the same change event your existing membership.js uses.
-        photoInput.dispatchEvent(new Event("change", { bubbles: true }));
     }
+
+    // Capture the original change event before membership.js sees it.
+    // This prevents the original large camera image from triggering the 10MB validation.
+    photoInput.addEventListener("change", function (event) {
+        if (event.detail && event.detail.processedPhoto) return;
+
+        const file = photoInput.files && photoInput.files[0];
+        if (!file) return;
+
+        event.stopImmediatePropagation();
+        useSelectedPhoto(file);
+    }, true);
 
     cameraInput.addEventListener("change", function () {
         const file = cameraInput.files && cameraInput.files[0];
         useSelectedPhoto(file);
-    });
-
-    photoInput.addEventListener("change", function () {
-        const file = photoInput.files && photoInput.files[0];
-
-        if (file) {
-            selectedPhotoName.textContent = "Selected: " + file.name;
-        }
     });
 });
 </script>
