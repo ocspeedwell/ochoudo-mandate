@@ -542,9 +542,9 @@ uppercaseFieldIds.forEach(function (fieldId) {
        Camera + Gallery + automatic image compression
     ========================================================= */
 
-    const MAX_PHOTO_SIZE = 2 * 1024 * 1024; // 2 MB final upload target
-    const MAX_PHOTO_DIMENSION = 1600;
-    const JPEG_QUALITY_START = 0.86;
+    const MAX_PHOTO_SIZE = 900 * 1024; // Keep uploads comfortably below 1 MB
+    const MAX_PHOTO_DIMENSION = 1200;
+    const JPEG_QUALITY_START = 0.78;
 
     function setPhotoInputFile(file) {
         if (!photoInput || !file) return;
@@ -624,11 +624,8 @@ uppercaseFieldIds.forEach(function (fieldId) {
             throw new Error("Please select a JPG, PNG or WebP image.");
         }
 
-        // If the image is already comfortably below the limit, keep it.
-        if (file.size <= MAX_PHOTO_SIZE) {
-            return file;
-        }
-
+        // Always normalize the image through canvas so camera/gallery files
+        // have predictable JPEG format, dimensions, and metadata.
         const image = await loadImageFromFile(file);
 
         let width = image.naturalWidth || image.width;
@@ -679,7 +676,7 @@ uppercaseFieldIds.forEach(function (fieldId) {
             context.fillRect(0, 0, width, height);
             context.drawImage(image, 0, 0, width, height);
 
-            quality = 0.70;
+            quality = 0.60;
             blob = await canvasToBlob(canvas, quality);
         }
 
@@ -1495,63 +1492,65 @@ function setPreview(id, value) {
 
                     if (selectedPhoto) {
 
-                        const extension =
-                            selectedPhoto.name
-                                .split(".")
-                                .pop()
-                                .toLowerCase();
-
+                        // Always upload a normalized JPEG with explicit metadata.
+                        const uploadFile =
+                            selectedPhoto.type === "image/jpeg"
+                                ? selectedPhoto
+                                : new File(
+                                    [selectedPhoto],
+                                    "passport-photograph.jpg",
+                                    {
+                                        type: "image/jpeg",
+                                        lastModified: Date.now()
+                                    }
+                                );
 
                         const fileName =
                             "members/" +
                             crypto.randomUUID() +
-                            "." +
-                            extension;
-
+                            ".jpg";
 
                         console.log(
                             "Uploading photograph:",
-                            fileName
+                            fileName,
+                            "size:",
+                            uploadFile.size,
+                            "type:",
+                            uploadFile.type
                         );
-
 
                         const upload =
                             await db.storage
-                                .from(
-                                    "member-photos"
-                                )
+                                .from("member-photos")
                                 .upload(
                                     fileName,
-                                    selectedPhoto,
+                                    uploadFile,
                                     {
-                                        contentType:
-                                            selectedPhoto.type,
-
-                                        upsert:
-                                            false
+                                        contentType: "image/jpeg",
+                                        cacheControl: "3600",
+                                        upsert: false
                                     }
                                 );
-
 
                         if (upload.error) {
 
                             console.error(
-                                "Photo upload error:",
+                                "Supabase photo upload error:",
                                 upload.error
                             );
 
-
                             throw new Error(
                                 "PHOTO_UPLOAD_FAILED: " +
-                                upload.error.message
+                                (
+                                    upload.error.message ||
+                                    upload.error.error_description ||
+                                    upload.error.name ||
+                                    "Supabase rejected the photograph upload."
+                                )
                             );
-
                         }
 
-
-                        passportUrl =
-                            fileName;
-
+                        passportUrl = fileName;
 
                         console.log(
                             "Photograph uploaded successfully."
@@ -1965,11 +1964,18 @@ function setPreview(id, value) {
                         ) === 0
                     ) {
 
+                        const actualError =
+                            error.message
+                                .replace("PHOTO_UPLOAD_FAILED:", "")
+                                .trim();
+
                         message =
                             "Your photograph could not be uploaded.\n\n" +
-                            "Please check that the image is JPG, PNG or WebP, " +
-                            "and not larger than 2MB after processing.\n\n" +
-                            "If the problem continues, please contact the Ochoudo Mandate Group.";
+                            "The image was processed successfully, but Supabase rejected the upload.\n\n" +
+                            "Server response: " +
+                            actualError +
+                            "\n\n" +
+                            "Please check the member-photos Storage bucket policy.";
 
                     }
 
