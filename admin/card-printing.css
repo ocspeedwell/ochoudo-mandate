@@ -762,8 +762,7 @@
   z-index: 5;
 
   width: 38mm;
-
-  margin-top: 1.15mm;
+  margin-top: 0.6mm;
 
   text-align: center;
 }
@@ -771,15 +770,17 @@
 .signature-block img {
   display: block;
 
-  width: auto;
-  height: 7.4mm;
+  width: 34mm;
+  height: 9mm;
+  max-width: 34mm;
+  max-height: 9mm;
 
-  max-width: 30mm;
-  max-height: none;
-
-  margin: 0 auto 0.15mm;
+  margin: -0.5mm auto 0.2mm;
 
   object-fit: contain;
+
+  /* Stronger, darker signature */
+  filter: contrast(1.7) brightness(0.72);
 }
 
 .signature-block strong {
