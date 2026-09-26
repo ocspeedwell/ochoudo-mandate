@@ -68,17 +68,33 @@ async function photoUrl(member){
   if(error||!data?.photo_url)return null; return data.photo_url;
  }catch(e){console.warn("Photo unavailable",e);return null}
 }
-async function makeFront(member){
- const node=$("frontCardTemplate").content.firstElementChild.cloneNode(true);
- ["member_id","full_name","gender","lga","ward","polling_unit"].forEach(k=>{
-  node.querySelector(`[data-field="${k}"]`).textContent=upper(member[k]);
- });
- node.querySelector('[data-field="registration_date"]').textContent=formatDate(member.registration_date);
- const url=await photoUrl(member);
- if(url){
-  const img=document.createElement("img");img.src=url;img.alt="Member photograph";
-  node.querySelector(".membership-photo-frame").replaceChildren(img);
- }
+async function makeFront(member) {
+  const node = $("frontCardTemplate").content.firstElementChild.cloneNode(true);
+
+  ["member_id", "full_name", "gender", "lga", "ward", "polling_unit"].forEach(k => {
+    const field = node.querySelector(`[data-field="${k}"]`);
+
+    if (field) {
+      field.textContent = upper(member[k]);
+    }
+  });
+
+  const url = await photoUrl(member);
+
+  if (url) {
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = "Member photograph";
+
+    const photoFrame = node.querySelector(".membership-photo-frame");
+
+    if (photoFrame) {
+      photoFrame.replaceChildren(img);
+    }
+  }
+
+  return node;
+}
  return node;
 }
 function makeBack(){return $("backCardTemplate").content.firstElementChild.cloneNode(true)}
