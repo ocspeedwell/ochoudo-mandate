@@ -646,7 +646,7 @@
   object-fit: cover;
   object-position: center top;
 
-  opacity: 0.25;
+  opacity: 0.15;
 
   -webkit-mask-image:
     linear-gradient(to left, #000 55%, transparent 100%);
@@ -805,7 +805,7 @@
 
   padding: 5.1mm 3mm 2.3mm;
 
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.25);
 
   border: 0.5mm solid #e0ae2f;
   border-radius: 2.6mm;
