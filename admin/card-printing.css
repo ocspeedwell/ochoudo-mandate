@@ -1050,3 +1050,21 @@
   background: linear-gradient(to right, rgba(255,255,255,.96), rgba(255,255,255,.20));
   pointer-events: none;
 }
+
+/* =========================================================
+   20. INTEGRATED TS704 CALIBRATION TEST
+   ========================================================= */
+.calibration-button{min-height:42px;padding:10px 16px;border:0;border-radius:8px;background:var(--gold);color:#082b52;font-weight:900;cursor:pointer}
+.calibration-help{margin:-8px 0 15px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;background:#fff8df;border-left:4px solid var(--gold);color:#4b5563;font-size:12px;line-height:1.45}
+.calibration-help strong{color:var(--navy);white-space:nowrap}
+.calibration-card{position:relative;width:85.6mm;height:53.98mm;background:#fff!important;color:#000!important;border:.35mm solid #000;overflow:hidden}
+.calibration-safe-zone{position:absolute;inset:3mm;border:.2mm dashed #666;border-radius:1.5mm}
+.cal-corner{position:absolute;font-size:2mm;font-weight:900}.cal-tl{left:1mm;top:1mm}.cal-tr{right:1mm;top:1mm}.cal-bl{left:1mm;bottom:1mm}.cal-br{right:1mm;bottom:1mm}
+.calibration-card-number{position:absolute;left:50%;top:12.5mm;transform:translateX(-50%);font-size:6mm;line-height:1;font-weight:900;white-space:nowrap}
+.calibration-cross{position:absolute;left:50%;top:50%;width:14mm;height:14mm;transform:translate(-50%,-50%)}
+.calibration-cross:before,.calibration-cross:after{content:"";position:absolute;background:#000}.calibration-cross:before{left:50%;top:0;width:.3mm;height:14mm;transform:translateX(-50%)}.calibration-cross:after{left:0;top:50%;width:14mm;height:.3mm;transform:translateY(-50%)}
+.calibration-horizontal-axis{position:absolute;left:3mm;right:3mm;top:50%;border-top:.12mm dotted #999}.calibration-vertical-axis{position:absolute;top:3mm;bottom:3mm;left:50%;border-left:.12mm dotted #999}
+.calibration-dimensions{position:absolute;left:50%;bottom:6mm;transform:translateX(-50%);font-size:2mm;font-weight:900;white-space:nowrap}
+.calibration-note{position:absolute;left:50%;bottom:2.5mm;transform:translateX(-50%);font-size:1.45mm;font-weight:800;letter-spacing:.08mm;white-space:nowrap}
+.print-sheet.calibration-mode{background:#fff}
+@media print{.calibration-card{border:.35mm solid #000!important}.calibration-safe-zone{border:.2mm dashed #666!important}}
