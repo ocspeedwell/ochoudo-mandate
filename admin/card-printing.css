@@ -635,24 +635,41 @@
 
 .back-watermark {
   position: absolute;
-  z-index: -1;
+  z-index: 0;
 
-  right: -1mm;
-  top: 0;
+  right: 1mm;
+  top: -1mm;
 
-  width: 35mm;
-  height: 60mm;
+  width: 44mm;
+  height: 57mm;
 
   object-fit: cover;
   object-position: center top;
 
-  opacity: 0.15;
+  /* Stronger, clearer portrait while remaining a watermark */
+  opacity: 0.40;
+  filter: saturate(0.82) contrast(0.94);
 
+  /* Gentle fade into the left side of the card */
   -webkit-mask-image:
-    linear-gradient(to left, #000 55%, transparent 100%);
+    linear-gradient(
+      to left,
+      #000 0%,
+      #000 68%,
+      rgba(0, 0, 0, 0.78) 84%,
+      transparent 100%
+    );
 
   mask-image:
-    linear-gradient(to left, #000 55%, transparent 100%);
+    linear-gradient(
+      to left,
+      #000 0%,
+      #000 68%,
+      rgba(0, 0, 0, 0.78) 84%,
+      transparent 100%
+    );
+
+  pointer-events: none;
 }
 
 
@@ -660,6 +677,7 @@
 
 .back-brand {
   position: absolute;
+  z-index: 5;
 
   left: 4.2mm;
   top: 2.8mm;
@@ -754,9 +772,9 @@
   display: block;
 
   width: auto;
-  height: 5.8mm;
+  height: 7.4mm;
 
-  max-width: 24mm;
+  max-width: 30mm;
   max-height: none;
 
   margin: 0 auto 0.15mm;
