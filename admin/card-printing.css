@@ -635,39 +635,25 @@
 
 .back-watermark {
   position: absolute;
-  z-index: 0;
+  z-index: 1;
 
-  right: 1mm;
-  top: -1mm;
+  right: 0;
+  top: 0;
 
-  width: 44mm;
-  height: 57mm;
+  width: 27mm;
+  height: 47.8mm;
 
   object-fit: cover;
-  object-position: center top;
+  object-position: 50% 18%;
 
-  /* Stronger, clearer portrait while remaining a watermark */
-  opacity: 0.40;
-  filter: saturate(0.82) contrast(0.94);
+  opacity: 1;
+  filter: none;
 
-  /* Gentle fade into the left side of the card */
-  -webkit-mask-image:
-    linear-gradient(
-      to left,
-      #000 0%,
-      #000 68%,
-      rgba(0, 0, 0, 0.78) 84%,
-      transparent 100%
-    );
+  border-left: 0.45mm solid #d9aa2b;
+  border-bottom-left-radius: 3mm;
 
-  mask-image:
-    linear-gradient(
-      to left,
-      #000 0%,
-      #000 68%,
-      rgba(0, 0, 0, 0.78) 84%,
-      transparent 100%
-    );
+  -webkit-mask-image: none;
+  mask-image: none;
 
   pointer-events: none;
 }
@@ -677,12 +663,12 @@
 
 .back-brand {
   position: absolute;
-  z-index: 5;
+  z-index: 8;
 
   left: 4.2mm;
   top: 2.8mm;
 
-  width: 35mm;
+  width: 34mm;
   height: 9.5mm;
 
   display: flex;
@@ -707,26 +693,26 @@
 
 .back-left-content {
   position: absolute;
-  z-index: 4;
+  z-index: 6;
 
   left: 4.2mm;
   top: 13.4mm;
 
-  width: 40mm;
+  width: 34.5mm;
 }
 
 
 /* BACK MESSAGE */
 
 .back-message {
-  width: 37.5mm;
+  width: 34mm;
 
   margin: 0 auto;
 
   color: #102b4c;
 
-  font-size: 1.58mm;
-  line-height: 1.38;
+  font-size: 1.48mm;
+  line-height: 1.34;
   font-weight: 500;
 
   text-align: justify;
@@ -737,16 +723,16 @@
 /* BACK SLOGAN */
 
 .back-slogan {
-  width: 38mm;
+  width: 34mm;
 
-  margin-top: 2.1mm;
+  margin-top: 1.8mm;
 
   color: var(--navy);
 
   text-align: center;
 
-  font-size: 2.22mm;
-  line-height: 1.18;
+  font-size: 2.15mm;
+  line-height: 1.16;
 
   font-weight: 900;
   font-style: italic;
@@ -759,10 +745,10 @@
 
 .signature-block {
   position: relative;
-  z-index: 5;
+  z-index: 8;
 
-  width: 38mm;
-  margin-top: 0.6mm;
+  width: 34mm;
+  margin-top: 0.4mm;
 
   text-align: center;
 }
@@ -770,17 +756,18 @@
 .signature-block img {
   display: block;
 
-  width: 34mm;
-  height: 9mm;
-  max-width: 34mm;
-  max-height: 9mm;
+  width: 33mm;
+  height: 9.5mm;
 
-  margin: -0.5mm auto 0.2mm;
+  max-width: 33mm;
+  max-height: 9.5mm;
+
+  margin: -0.8mm auto -0.25mm;
 
   object-fit: contain;
 
-  /* Stronger, darker signature */
-  filter: contrast(1.7) brightness(0.72);
+  /* Stronger rendering of the supplied real signature */
+  filter: contrast(2.4) brightness(0.45);
 }
 
 .signature-block strong {
@@ -814,36 +801,36 @@
 
 .privileges {
   position: absolute;
-  z-index: 6;
+  z-index: 7;
 
-  right: 3.5mm;
+  right: 23.5mm;
   top: 6.6mm;
 
-  width: 35.5mm;
+  width: 28mm;
   min-height: 31.8mm;
 
-  padding: 5.1mm 3mm 2.3mm;
+  padding: 5.1mm 2.2mm 2.1mm;
 
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.91);
 
   border: 0.5mm solid #e0ae2f;
   border-radius: 2.6mm;
 
   box-shadow:
-    0 1.2mm 2.8mm rgba(8, 43, 82, 0.11);
+    0 1.2mm 2.8mm rgba(8, 43, 82, 0.13);
 }
 
 .privileges h3 {
   position: absolute;
 
-  left: 2.3mm;
-  right: 2.3mm;
+  left: 1.7mm;
+  right: 1.7mm;
   top: -3.4mm;
 
   height: 6.1mm;
 
   margin: 0;
-  padding: 1.65mm 1mm 0;
+  padding: 1.65mm 0.7mm 0;
 
   border-radius: 3.2mm;
 
@@ -852,12 +839,11 @@
 
   text-align: center;
 
-  font-size: 1.95mm;
+  font-size: 1.75mm;
   line-height: 1;
 
   font-weight: 900;
-
-  letter-spacing: 0.08mm;
+  letter-spacing: 0.05mm;
 }
 
 .privileges ul {
@@ -870,18 +856,17 @@
 .privileges li {
   display: grid;
 
-  grid-template-columns: 3.5mm 1fr;
-
+  grid-template-columns: 3.1mm 1fr;
   align-items: start;
 
-  gap: 1.05mm;
+  gap: 0.75mm;
 
-  margin: 0 0 1.15mm;
+  margin: 0 0 0.95mm;
 
   color: #173454;
 
-  font-size: 1.43mm;
-  line-height: 1.18;
+  font-size: 1.25mm;
+  line-height: 1.15;
 
   font-weight: 700;
 }
@@ -890,8 +875,8 @@
 /* PRIVILEGE ICONS */
 
 .privileges li i {
-  width: 3.2mm;
-  height: 3.2mm;
+  width: 2.8mm;
+  height: 2.8mm;
 
   display: flex;
   align-items: center;
@@ -901,7 +886,7 @@
 
   color: #fff;
 
-  font-size: 1.35mm;
+  font-size: 1.15mm;
   font-style: normal;
   line-height: 1;
 }
@@ -945,7 +930,7 @@
 /* RED STROKE */
 
 .swoosh-red {
-  z-index: 1;
+  z-index: 9;
 
   height: 10mm;
 
@@ -970,7 +955,7 @@
 /* GOLD STROKE */
 
 .swoosh-gold {
-  z-index: 2;
+  z-index: 10;
 
   height: 9mm;
 
@@ -1001,7 +986,7 @@
 /* NAVY STROKE */
 
 .swoosh-navy {
-  z-index: 3;
+  z-index: 11;
 
   height: 10.5mm;
 
