@@ -10,169 +10,73 @@
 </head>
 <body class="admin-body dashboard-body">
 <header class="admin-topbar">
-  <div class="admin-topbar-brand">
-    <img src="../assets/ochoudo-logo.png" alt="Ochoudo Mandate Group">
-    <div><strong>OMG ADMIN</strong><span>ID CARD PRODUCTION</span></div>
-  </div>
-  <div class="admin-topbar-actions">
-    <span id="adminUserEmail" class="admin-user-email"></span>
-    <button type="button" id="logoutButton" class="admin-logout-button">LOG OUT</button>
-  </div>
+  <div class="admin-topbar-brand"><img src="../assets/ochoudo-logo.png" alt="Ochoudo Mandate Group"><div><strong>OMG ADMIN</strong><span>ID CARD PRODUCTION</span></div></div>
+  <div class="admin-topbar-actions"><span id="adminUserEmail" class="admin-user-email"></span><button type="button" id="logoutButton" class="admin-logout-button">LOG OUT</button></div>
 </header>
-
 <main class="admin-dashboard">
-  <section class="dashboard-heading">
-    <div>
-      <div class="admin-kicker">MEMBERSHIP MANAGEMENT</div>
-      <h1>ID Card Printing</h1>
-      <p>Select approved members, pair two cards per PIXMA TS704a tray, preview and print.</p>
-    </div>
-    <a href="dashboard.html" class="dashboard-home-link">← DASHBOARD</a>
-  </section>
+<section class="dashboard-heading"><div><div class="admin-kicker">MEMBERSHIP MANAGEMENT</div><h1>ID Card Printing</h1><p>Select approved members, pair two cards per PIXMA TS704a tray, preview and print.</p></div><a href="dashboard.html" class="dashboard-home-link">← DASHBOARD</a></section>
+<div id="pageMessage" class="admin-message" role="alert" aria-live="polite"></div>
 
-  <div id="pageMessage" class="admin-message" role="alert" aria-live="polite"></div>
+<section class="print-toolbar no-print">
+<div class="print-filters">
+<div class="field grow"><label for="memberSearch">SEARCH</label><input id="memberSearch" type="search" placeholder="Name or Membership ID"></div>
+<div class="field"><label for="lgaFilter">LGA</label><select id="lgaFilter"><option value="">ALL LGAs</option></select></div>
+<div class="field"><label for="wardFilter">WARD</label><select id="wardFilter"><option value="">ALL WARDS</option></select></div>
+<button id="resetFilters" type="button" class="secondary-button">RESET</button>
+<button id="openCalibration" type="button" class="calibration-button">TS704 CALIBRATION</button>
+</div>
+<div class="toolbar-meta"><span id="directoryCount">Loading approved members...</span><strong id="selectedCount">0 SELECTED</strong></div>
+</section>
 
-  <section class="print-toolbar no-print">
-    <div class="print-filters">
-      <div class="field grow">
-        <label for="memberSearch">SEARCH</label>
-        <input id="memberSearch" type="search" placeholder="Name or Membership ID">
-      </div>
-      <div class="field">
-        <label for="lgaFilter">LGA</label>
-        <select id="lgaFilter"><option value="">ALL LGAs</option></select>
-      </div>
-      <div class="field">
-        <label for="wardFilter">WARD</label>
-        <select id="wardFilter"><option value="">ALL WARDS</option></select>
-      </div>
-      <button id="resetFilters" type="button" class="secondary-button">RESET</button>
-    </div>
-    <div class="toolbar-meta">
-      <span id="directoryCount">Loading approved members...</span>
-      <strong id="selectedCount">0 SELECTED</strong>
-    </div>
-  </section>
+<section class="member-picker no-print"><table><thead><tr><th></th><th>MEMBERSHIP ID</th><th>MEMBER</th><th>LGA</th><th>WARD</th><th>STATUS</th></tr></thead><tbody id="membersTableBody"></tbody></table><div id="emptyState" class="empty-state" hidden>No approved members match your search.</div></section>
 
-  <section class="member-picker no-print">
-    <table>
-      <thead>
-        <tr><th></th><th>MEMBERSHIP ID</th><th>MEMBER</th><th>LGA</th><th>WARD</th><th>STATUS</th></tr>
-      </thead>
-      <tbody id="membersTableBody"></tbody>
-    </table>
-    <div id="emptyState" class="empty-state" hidden>No approved members match your search.</div>
-  </section>
+<section class="queue-bar no-print"><div><strong>PRINT QUEUE</strong><span id="queueSummary">Select exactly two members for the current tray.</span></div><div class="queue-actions"><button id="clearSelection" type="button" class="secondary-button">CLEAR</button><button id="prepareTray" type="button" class="primary-button" disabled>PREPARE 2-CARD TRAY</button></div></section>
 
-  <section class="queue-bar no-print">
-    <div>
-      <strong>PRINT QUEUE</strong>
-      <span id="queueSummary">Select exactly two members for the current tray.</span>
-    </div>
-    <div class="queue-actions">
-      <button id="clearSelection" type="button" class="secondary-button">CLEAR</button>
-      <button id="prepareTray" type="button" class="primary-button" disabled>PREPARE 2-CARD TRAY</button>
-    </div>
-  </section>
+<section id="trayWorkspace" class="tray-workspace" hidden>
+<div class="workspace-head no-print"><div><div class="admin-kicker">CANON PIXMA TS704a</div><h2 id="workspaceTitle">Two-Card Tray Preview</h2></div><div class="side-switch" id="sideSwitch"><button id="showFront" class="active" type="button">FRONT</button><button id="showBack" type="button">BACK</button></div></div>
 
-  <section id="trayWorkspace" class="tray-workspace" hidden>
-    <div class="workspace-head no-print">
-      <div>
-        <div class="admin-kicker">CANON PIXMA TS704a</div>
-        <h2>Two-Card Tray Preview</h2>
-      </div>
-      <div class="side-switch">
-        <button id="showFront" class="active" type="button">FRONT</button>
-        <button id="showBack" type="button">BACK</button>
-      </div>
-    </div>
+<div class="calibration no-print">
+<strong>TRAY CALIBRATION</strong>
+<label>X <input id="offsetX" type="number" step="0.1" value="0"> mm</label>
+<label>Y <input id="offsetY" type="number" step="0.1" value="0"> mm</label>
+<label>Gap <input id="cardGap" type="number" step="0.1" value="8"> mm</label>
+<button id="saveCalibration" type="button" class="secondary-button">SAVE</button>
+<button id="resetCalibration" type="button" class="secondary-button">RESET 0 / 0 / 8</button>
+<button id="printCalibration" type="button" class="calibration-button">PRINT CALIBRATION TEST</button>
+</div>
+<div id="calibrationHelp" class="calibration-help no-print" hidden><strong>CALIBRATION MODE</strong><span>Print at 100% / Actual Size, Portrait, 1 page per sheet, margins none, headers/footers off, borderless off. After printing, measure the displacement of each target from the physical PVC card edges.</span></div>
 
-    <div class="calibration no-print">
-      <strong>TRAY CALIBRATION</strong>
-      <label>X <input id="offsetX" type="number" step="0.1" value="0"> mm</label>
-      <label>Y <input id="offsetY" type="number" step="0.1" value="0"> mm</label>
-      <label>Gap <input id="cardGap" type="number" step="0.1" value="8"> mm</label>
-      <button id="saveCalibration" type="button" class="secondary-button">SAVE</button>
-    </div>
-
-    <div id="printSheet" class="print-sheet front-mode">
-      <div id="cardSlot1" class="card-slot"></div>
-      <div id="cardSlot2" class="card-slot"></div>
-    </div>
-
-    <div class="print-actions no-print">
-      <button id="printFront" type="button" class="primary-button">PRINT FRONT</button>
-      <button id="printBack" type="button" class="back-button">PRINT FIXED BACK</button>
-    </div>
-  </section>
+<div id="printSheet" class="print-sheet front-mode"><div id="cardSlot1" class="card-slot"></div><div id="cardSlot2" class="card-slot"></div></div>
+<div class="print-actions no-print"><button id="printFront" type="button" class="primary-button">PRINT FRONT</button><button id="printBack" type="button" class="back-button">PRINT FIXED BACK</button></div>
+</section>
 </main>
 
 <template id="frontCardTemplate">
-  <article class="membership-id-card physical-card">
-    <div class="membership-card-header">
-      <div class="membership-brand">
-        <img src="../assets/ochoudo-logo3.png" alt="Ochoudo Mandate Group" class="membership-card-logo">
-      </div>
-      <div class="membership-card-title"><span>MEMBERSHIP</span><strong>IDENTIFICATION CARD</strong></div>
-    </div>
-    <div class="membership-card-body">
-      <div class="membership-photo-area">
-        <div class="membership-photo-frame"><div class="card-photo-placeholder">MEMBER PHOTO</div></div>
-        <span class="member-label">MEMBER</span>
-      </div>
-      <div class="membership-information">
-        <div class="membership-number-box"><span>MEMBERSHIP ID</span><strong data-field="member_id"></strong></div>
-        <div class="member-name-block"><span>FULL NAME</span><strong data-field="full_name"></strong></div>
-        <div class="member-details-grid">
-          <div class="member-detail"><span>GENDER</span><strong data-field="gender"></strong></div>
-          <div class="member-detail"><span>LGA</span><strong data-field="lga"></strong></div>
-          <div class="member-detail"><span>WARD</span><strong data-field="ward"></strong></div>
-          <div class="member-detail member-detail-wide"><span>POLLING UNIT</span><strong data-field="polling_unit"></strong></div>
-                 </div>
-      </div>
-    </div>
-    <div class="membership-card-footer"><span>TOGETHER, WE BUILD A NEW IMO THAT WORKS FOR ALL.</span><div class="card-accent"></div></div>
-  </article>
-</template>
-
+<article class="membership-id-card physical-card">
+<div class="membership-card-header"><div class="membership-brand"><img src="../assets/ochoudo-logo3.png" alt="Ochoudo Mandate Group" class="membership-card-logo"></div><div class="membership-card-title"><span>MEMBERSHIP</span><strong>IDENTIFICATION CARD</strong></div></div>
+<div class="membership-card-body"><div class="membership-photo-area"><div class="membership-photo-frame"><div class="card-photo-placeholder">MEMBER PHOTO</div></div><span class="member-label">MEMBER</span></div><div class="membership-information"><div class="membership-number-box"><span>MEMBERSHIP ID</span><strong data-field="member_id"></strong></div><div class="member-name-block"><span>FULL NAME</span><strong data-field="full_name"></strong></div><div class="member-details-grid"><div class="member-detail"><span>GENDER</span><strong data-field="gender"></strong></div><div class="member-detail"><span>LGA</span><strong data-field="lga"></strong></div><div class="member-detail"><span>WARD</span><strong data-field="ward"></strong></div><div class="member-detail member-detail-wide"><span>POLLING UNIT</span><strong data-field="polling_unit"></strong></div></div></div></div>
+<div class="membership-card-footer"><span>TOGETHER, WE BUILD A NEW IMO THAT WORKS FOR ALL.</span><div class="card-accent"></div></div>
+</article></template>
 
 <template id="backCardTemplate">
-  <article class="physical-card cherished-back">
-    <div class="back-soft-shape shape-one"></div>
-    <div class="back-soft-shape shape-two"></div>
-    <img class="back-watermark" src="../assets/ochoudo-card-watermark.jpg" alt="">
-    <div class="back-brand">
-      <img src="../assets/ochoudo-logo-transparent.png" alt="Ochoudo Mandate Group">
-    </div>
-    <div class="back-left-content">
-      <p class="back-message">The bearer of this card is a valued member of the Ochoudo Mandate Group,
-    duly recognised and entitled to all rights, privileges and courtesies
-    accorded to members of the Movement. This card signifies belonging, trust, service and shared commitment to building a better Imo State for all.
-   </p>
-      <div class="back-slogan">Together, We Build a New Imo<br>That Works for All.</div>
-      <div class="signature-block">
-        <img src="../assets/ochoudo-signature.png" alt="Ochoudo signature">
-        <strong>OCHOUDO MARTIN AGBASO</strong>
-        <span>LEADER, OCHOUDO MANDATE GROUP</span>
-      </div>
-    </div>
-    <div class="privileges">
-      <h3>MEMBER PRIVILEGES</h3>
-      <ul>
-        <li class="priv-red"><i>●</i><span>Access to exclusive OMG events and programmes</span></li>
-        <li class="priv-blue"><i>●</i><span>Empowerment and capacity building opportunities</span></li>
-        <li class="priv-gold"><i>●</i><span>Networking with like-minded change agents</span></li>
-        <li class="priv-green"><i>●</i><span>Appointments and Participation in the new Imo we are building</span></li>
-        <li class="priv-purple"><i>●</i><span>Be part of a greater movement for an Imo that works for all</span></li>
-      </ul>
-    </div>
-    <div class="swoosh swoosh-red"></div>
-    <div class="swoosh swoosh-gold"></div>
-    <div class="swoosh swoosh-navy"></div>
-     </article>
-</template>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="admin.js"></script>
-<script src="card-printing.js"></script>
-</body>
-</html>
+<article class="physical-card cherished-back">
+<div class="back-soft-shape shape-one"></div><div class="back-soft-shape shape-two"></div><img class="back-watermark" src="../assets/ochoudo-card-watermark.jpg" alt="">
+<div class="back-brand"><img src="../assets/ochoudo-logo-transparent.png" alt="Ochoudo Mandate Group"></div>
+<div class="back-left-content"><p class="back-message">The bearer of this card is a valued member of the Ochoudo Mandate Group, duly recognised and entitled to all rights, privileges and courtesies accorded to members of the Movement. This card signifies belonging, trust, service and shared commitment to building a better Imo State for all.</p><div class="back-slogan">Together, We Build a New Imo<br>That Works for All.</div><div class="signature-block"><img src="../assets/ochoudo-signature.png" alt="Ochoudo signature"><strong>OCHOUDO MARTIN AGBASO</strong><span>LEADER, OCHOUDO MANDATE GROUP</span></div></div>
+<div class="privileges"><h3>MEMBER PRIVILEGES</h3><ul><li class="priv-red"><i>●</i><span>Access to exclusive OMG events and programmes</span></li><li class="priv-blue"><i>●</i><span>Empowerment and capacity building opportunities</span></li><li class="priv-gold"><i>●</i><span>Networking with like-minded change agents</span></li><li class="priv-green"><i>●</i><span>Appointments and Participation in the new Imo we are building</span></li><li class="priv-purple"><i>●</i><span>Be part of a greater movement for an Imo that works for all</span></li></ul></div>
+<div class="swoosh swoosh-red"></div><div class="swoosh swoosh-gold"></div><div class="swoosh swoosh-navy"></div>
+</article></template>
+
+<template id="calibrationCardTemplate">
+<article class="physical-card calibration-card">
+<div class="calibration-safe-zone"></div>
+<span class="cal-corner cal-tl">TL</span><span class="cal-corner cal-tr">TR</span><span class="cal-corner cal-bl">BL</span><span class="cal-corner cal-br">BR</span>
+<div class="calibration-card-number">CARD <span data-cal-card></span></div>
+<div class="calibration-cross"></div>
+<div class="calibration-horizontal-axis"></div><div class="calibration-vertical-axis"></div>
+<div class="calibration-dimensions">85.60 × 53.98 mm</div>
+<div class="calibration-note">CANON TS704 PVC TRAY CALIBRATION</div>
+</article></template>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="admin.js"></script><script src="card-printing.js"></script>
+</body></html>
