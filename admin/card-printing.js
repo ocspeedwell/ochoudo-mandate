@@ -1,150 +1,321 @@
 (function(){
 "use strict";
+
 const SUPABASE_URL="https://yopqftofkvwrpyyluffw.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_k3whUGyuDbdQU6GA6egeuQ_k-g-nFoL";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 const $=id=>document.getElementById(id);
+
 let members=[], selected=[], side="front";
 
 const esc=v=>String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
 const text=v=>String(v??"").trim();
 const upper=v=>text(v)?text(v).toUpperCase():"NOT PROVIDED";
-function formatDate(v){if(!v)return"NOT PROVIDED";const d=new Date(v+"T00:00:00");return Number.isNaN(d.getTime())?upper(v):d.toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"}).toUpperCase()}
 
 async function requireAdmin(){
- const {data:s,error:e}=await db.auth.getSession(); if(e)throw e;
+ const {data:s,error:e}=await db.auth.getSession();
+ if(e)throw e;
  if(!s.session){location.href="login.html";return null}
- const {data,error}=await db.rpc("is_omg_admin"); if(error)throw error;
- if(data!==true){await db.auth.signOut();location.href="login.html";return null}
- $("adminUserEmail").textContent=s.session.user.email||""; return s.session;
+
+ const {data,error}=await db.rpc("is_omg_admin");
+ if(error)throw error;
+ if(data!==true){
+  await db.auth.signOut();
+  location.href="login.html";
+  return null;
+ }
+
+ $("adminUserEmail").textContent=s.session.user.email||"";
+ return s.session;
 }
-function message(m){$("pageMessage").textContent=m||""}
+
+function message(m){
+ $("pageMessage").textContent=m||"";
+}
+
 async function loadMembers(){
  const {data,error}=await db.from("members")
-  .select("id,member_id,full_name,gender,phone,lga,ward,polling_unit,membership_status,registration_date,created_at")
-  .eq("membership_status","Approved").order("created_at",{ascending:false}).limit(1000);
- if(error)throw error; members=data||[]; populateFilters(); renderMembers();
+  .select("id,member_id,full_name,gender,phone,lga,ward,polling_unit,membership_status,created_at")
+  .eq("membership_status","Approved")
+  .order("created_at",{ascending:false})
+  .limit(1000);
+
+ if(error)throw error;
+ members=data||[];
+ populateFilters();
+ renderMembers();
 }
+
 function populateFilters(){
  const lgas=[...new Set(members.map(m=>m.lga).filter(Boolean))].sort();
  $("lgaFilter").innerHTML='<option value="">ALL LGAs</option>'+lgas.map(v=>`<option>${esc(v)}</option>`).join("");
  updateWardOptions();
 }
+
 function updateWardOptions(){
  const lga=$("lgaFilter").value;
  const wards=[...new Set(members.filter(m=>!lga||m.lga===lga).map(m=>m.ward).filter(Boolean))].sort();
  const old=$("wardFilter").value;
+
  $("wardFilter").innerHTML='<option value="">ALL WARDS</option>'+wards.map(v=>`<option>${esc(v)}</option>`).join("");
  if(wards.includes(old))$("wardFilter").value=old;
 }
+
 function filtered(){
- const q=$("memberSearch").value.trim().toLowerCase(),lga=$("lgaFilter").value,ward=$("wardFilter").value;
- return members.filter(m=>(!q||`${m.full_name} ${m.member_id}`.toLowerCase().includes(q))&&(!lga||m.lga===lga)&&(!ward||m.ward===ward));
+ const q=$("memberSearch").value.trim().toLowerCase();
+ const lga=$("lgaFilter").value;
+ const ward=$("wardFilter").value;
+
+ return members.filter(m=>
+  (!q||`${m.full_name||""} ${m.member_id||""}`.toLowerCase().includes(q))&&
+  (!lga||m.lga===lga)&&
+  (!ward||m.ward===ward)
+ );
 }
+
 function renderMembers(){
- const data=filtered(); $("directoryCount").textContent=`${data.length} approved member${data.length===1?"":"s"}`;
+ const data=filtered();
+
+ $("directoryCount").textContent=`${data.length} approved member${data.length===1?"":"s"}`;
  $("emptyState").hidden=data.length>0;
+
  $("membersTableBody").innerHTML=data.map(m=>{
-  const checked=selected.some(s=>s.id===m.id);
+  const checked=selected.some(s=>String(s.id)===String(m.id));
+
   return `<tr class="${checked?"selected":""}">
    <td><input class="member-check" type="checkbox" data-id="${esc(m.id)}" ${checked?"checked":""}></td>
    <td><span class="member-id">${esc(m.member_id||"-")}</span></td>
    <td><div class="member-name">${esc(upper(m.full_name))}</div><small>${esc(upper(m.gender))}</small></td>
-   <td>${esc(upper(m.lga))}</td><td>${esc(upper(m.ward))}</td><td><span class="status-approved">APPROVED</span></td>
-  </tr>`}).join("");
+   <td>${esc(upper(m.lga))}</td>
+   <td>${esc(upper(m.ward))}</td>
+   <td><span class="status-approved">APPROVED</span></td>
+  </tr>`;
+ }).join("");
+
  updateSelectionUI();
 }
+
 function updateSelectionUI(){
  $("selectedCount").textContent=`${selected.length} SELECTED`;
  $("prepareTray").disabled=selected.length!==2;
+
  $("queueSummary").textContent=selected.length===2
-   ?`${upper(selected[0].full_name)} + ${upper(selected[1].full_name)}`
-   :"Select exactly two members for the current tray.";
+  ?`${upper(selected[0].full_name)} + ${upper(selected[1].full_name)}`
+  :"Select exactly two members for the current tray.";
 }
+
 async function photoUrl(member){
  if(!member.phone||!member.member_id)return null;
+
  try{
-  const {data,error}=await db.functions.invoke("get-member-photo",{body:{phone:member.phone,member_id:member.member_id}});
-  if(error||!data?.photo_url)return null; return data.photo_url;
- }catch(e){console.warn("Photo unavailable",e);return null}
-}
-async function makeFront(member) {
-  const node = $("frontCardTemplate").content.firstElementChild.cloneNode(true);
-
-  ["member_id", "full_name", "gender", "lga", "ward", "polling_unit"].forEach(k => {
-    const field = node.querySelector(`[data-field="${k}"]`);
-
-    if (field) {
-      field.textContent = upper(member[k]);
-    }
+  const {data,error}=await db.functions.invoke("get-member-photo",{
+   body:{phone:member.phone,member_id:member.member_id}
   });
 
-  const url = await photoUrl(member);
-
-  if (url) {
-    const img = document.createElement("img");
-    img.src = url;
-    img.alt = "Member photograph";
-
-    const photoFrame = node.querySelector(".membership-photo-frame");
-
-    if (photoFrame) {
-      photoFrame.replaceChildren(img);
-    }
-  }
-
-  return node;
-}
- return node;
-}
-function makeBack(){return $("backCardTemplate").content.firstElementChild.cloneNode(true)}
-async function renderTray(which){
- side=which; $("showFront").classList.toggle("active",which==="front");$("showBack").classList.toggle("active",which==="back");
- $("cardSlot1").replaceChildren();$("cardSlot2").replaceChildren();
- if(which==="front"){
-  const cards=await Promise.all(selected.map(makeFront));$("cardSlot1").append(cards[0]);$("cardSlot2").append(cards[1]);
- }else{
-  $("cardSlot1").append(makeBack());$("cardSlot2").append(makeBack());
+  if(error||!data?.photo_url)return null;
+  return data.photo_url;
+ }catch(e){
+  console.warn("Photo unavailable",e);
+  return null;
  }
 }
+
+async function makeFront(member){
+ const template=$("frontCardTemplate");
+ if(!template)throw new Error("Front card template was not found.");
+
+ const node=template.content.firstElementChild.cloneNode(true);
+
+ ["member_id","full_name","gender","lga","ward","polling_unit"].forEach(k=>{
+  const field=node.querySelector(`[data-field="${k}"]`);
+  if(field)field.textContent=upper(member[k]);
+ });
+
+ const url=await photoUrl(member);
+
+ if(url){
+  const img=document.createElement("img");
+  img.src=url;
+  img.alt="Member photograph";
+
+  const photoFrame=node.querySelector(".membership-photo-frame");
+  if(photoFrame)photoFrame.replaceChildren(img);
+ }
+
+ return node;
+}
+
+function makeBack(){
+ const template=$("backCardTemplate");
+ if(!template)throw new Error("Back card template was not found.");
+ return template.content.firstElementChild.cloneNode(true);
+}
+
+async function renderTray(which){
+ if(selected.length!==2){
+  message("Select exactly two approved members before preparing the tray.");
+  return;
+ }
+
+ side=which;
+
+ $("showFront").classList.toggle("active",which==="front");
+ $("showBack").classList.toggle("active",which==="back");
+ $("printSheet").classList.toggle("front-mode",which==="front");
+ $("printSheet").classList.toggle("back-mode",which==="back");
+
+ $("cardSlot1").replaceChildren();
+ $("cardSlot2").replaceChildren();
+
+ if(which==="front"){
+  const cards=await Promise.all(selected.map(makeFront));
+  if(cards[0])$("cardSlot1").append(cards[0]);
+  if(cards[1])$("cardSlot2").append(cards[1]);
+ }else{
+  $("cardSlot1").append(makeBack());
+  $("cardSlot2").append(makeBack());
+ }
+}
+
 function applyCalibration(){
- const x=parseFloat($("offsetX").value)||0,y=parseFloat($("offsetY").value)||0,g=parseFloat($("cardGap").value)||0;
+ const x=parseFloat($("offsetX").value)||0;
+ const y=parseFloat($("offsetY").value)||0;
+ const g=parseFloat($("cardGap").value)||0;
+
  $("printSheet").style.setProperty("--offset-x",`${x}mm`);
  $("printSheet").style.setProperty("--offset-y",`${y}mm`);
  $("printSheet").style.setProperty("--card-gap",`${g}mm`);
 }
+
 function loadCalibration(){
- try{const c=JSON.parse(localStorage.getItem("omgTs704Calibration")||"{}");$("offsetX").value=c.x??0;$("offsetY").value=c.y??0;$("cardGap").value=c.gap??8}catch{}
+ try{
+  const c=JSON.parse(localStorage.getItem("omgTs704Calibration")||"{}");
+  $("offsetX").value=c.x??0;
+  $("offsetY").value=c.y??0;
+  $("cardGap").value=c.gap??8;
+ }catch(e){
+  console.warn("Unable to read saved tray calibration.",e);
+ }
+
  applyCalibration();
 }
+
 function saveCalibration(){
- const c={x:parseFloat($("offsetX").value)||0,y:parseFloat($("offsetY").value)||0,gap:parseFloat($("cardGap").value)||0};
- localStorage.setItem("omgTs704Calibration",JSON.stringify(c));applyCalibration();message("TS704a tray calibration saved on this computer.");
+ const c={
+  x:parseFloat($("offsetX").value)||0,
+  y:parseFloat($("offsetY").value)||0,
+  gap:parseFloat($("cardGap").value)||0
+ };
+
+ localStorage.setItem("omgTs704Calibration",JSON.stringify(c));
+ applyCalibration();
+ message("TS704a tray calibration saved on this computer.");
 }
-function doPrint(which){renderTray(which).then(()=>setTimeout(()=>window.print(),250))}
+
+async function doPrint(which){
+ try{
+  await renderTray(which);
+  setTimeout(()=>window.print(),250);
+ }catch(e){
+  console.error(e);
+  message(e.message||"Unable to prepare cards for printing.");
+ }
+}
+
 document.addEventListener("DOMContentLoaded",async()=>{
- try{if(!await requireAdmin())return;loadCalibration();await loadMembers()}catch(e){console.error(e);message(e.message||"Unable to load card printing module.")}
+ try{
+  if(!await requireAdmin())return;
+  loadCalibration();
+  await loadMembers();
+ }catch(e){
+  console.error(e);
+  message(e.message||"Unable to load card printing module.");
+  return;
+ }
+
  $("membersTableBody").addEventListener("change",e=>{
-  const cb=e.target.closest(".member-check");if(!cb)return;
-  const m=members.find(x=>String(x.id)===String(cb.dataset.id));if(!m)return;
+  const cb=e.target.closest(".member-check");
+  if(!cb)return;
+
+  const m=members.find(x=>String(x.id)===String(cb.dataset.id));
+  if(!m)return;
+
   if(cb.checked){
-   if(selected.length>=2){cb.checked=false;message("The TS704a tray holds two cards. Clear a slot before selecting another member.");return}
+   if(selected.length>=2){
+    cb.checked=false;
+    message("The TS704a tray holds two cards. Clear a slot before selecting another member.");
+    return;
+   }
    selected.push(m);
-  }else selected=selected.filter(x=>x.id!==m.id);
+  }else{
+   selected=selected.filter(x=>String(x.id)!==String(m.id));
+  }
+
+  message("");
   renderMembers();
  });
+
  $("memberSearch").addEventListener("input",renderMembers);
- $("lgaFilter").addEventListener("change",()=>{updateWardOptions();renderMembers()});
+
+ $("lgaFilter").addEventListener("change",()=>{
+  updateWardOptions();
+  renderMembers();
+ });
+
  $("wardFilter").addEventListener("change",renderMembers);
- $("resetFilters").addEventListener("click",()=>{$("memberSearch").value="";$("lgaFilter").value="";updateWardOptions();$("wardFilter").value="";renderMembers()});
- $("clearSelection").addEventListener("click",()=>{selected=[];renderMembers();$("trayWorkspace").hidden=true});
- $("prepareTray").addEventListener("click",async()=>{$("trayWorkspace").hidden=false;await renderTray("front");$("trayWorkspace").scrollIntoView({behavior:"smooth"})});
- $("showFront").addEventListener("click",()=>renderTray("front"));
- $("showBack").addEventListener("click",()=>renderTray("back"));
- ["offsetX","offsetY","cardGap"].forEach(id=>$(id).addEventListener("input",applyCalibration));
+
+ $("resetFilters").addEventListener("click",()=>{
+  $("memberSearch").value="";
+  $("lgaFilter").value="";
+  updateWardOptions();
+  $("wardFilter").value="";
+  renderMembers();
+ });
+
+ $("clearSelection").addEventListener("click",()=>{
+  selected=[];
+  renderMembers();
+  $("trayWorkspace").hidden=true;
+ });
+
+ $("prepareTray").addEventListener("click",async()=>{
+  $("trayWorkspace").hidden=false;
+
+  try{
+   await renderTray("front");
+   $("trayWorkspace").scrollIntoView({behavior:"smooth"});
+  }catch(e){
+   console.error(e);
+   message(e.message||"Unable to prepare front cards.");
+  }
+ });
+
+ $("showFront").addEventListener("click",()=>{
+  renderTray("front").catch(e=>{
+   console.error(e);
+   message(e.message||"Unable to display front cards.");
+  });
+ });
+
+ $("showBack").addEventListener("click",()=>{
+  renderTray("back").catch(e=>{
+   console.error(e);
+   message(e.message||"Unable to display card backs.");
+  });
+ });
+
+ ["offsetX","offsetY","cardGap"].forEach(id=>{
+  $(id).addEventListener("input",applyCalibration);
+ });
+
  $("saveCalibration").addEventListener("click",saveCalibration);
  $("printFront").addEventListener("click",()=>doPrint("front"));
  $("printBack").addEventListener("click",()=>doPrint("back"));
- $("logoutButton").addEventListener("click",async()=>{await db.auth.signOut();location.href="login.html"});
+
+ $("logoutButton").addEventListener("click",async()=>{
+  await db.auth.signOut();
+  location.href="login.html";
+ });
 });
+
 })();
