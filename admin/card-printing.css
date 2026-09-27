@@ -666,16 +666,16 @@
 /* =========================================================
    14. SIGNATURE
    ========================================================= */
-.signature-block{position:relative;z-index:12;width:100%;margin-top:1mm;text-align:center}
-.signature-block img{display:block;width:23mm;height:6.5mm;max-width:23mm;max-height:6.5mm;margin:0 auto -.2mm;object-fit:contain;filter:contrast(2.5) brightness(.42)}
+.signature-block{position:relative;z-index:12;width:100%;margin-top:.65mm;text-align:center}
+.signature-block img{display:block;width:29mm;height:8.5mm;max-width:29mm;max-height:8.5mm;margin:-.4mm auto -.45mm;object-fit:contain;transform:scale(1.08);transform-origin:center center;filter:grayscale(1) contrast(3.6) brightness(.28)}
 .signature-block strong{display:block;margin-top:0;color:var(--navy);font-size:1.2mm;line-height:1.1;font-weight:900}
 .signature-block span{display:block;margin-top:.25mm;color:var(--red);font-size:.9mm;line-height:1.05;font-weight:900}
 
 /* =========================================================
    15. MEMBER PRIVILEGES - PROTECTED CENTRE ZONE
    ========================================================= */
-.privileges{position:absolute;z-index:14;left:35mm;top:8mm;width:29mm;height:31mm;min-height:31mm;padding:5.5mm 2.2mm 2mm;background:rgba(255,255,255,.96);border:.45mm solid #e0ae2f;border-radius:2.5mm;box-shadow:0 1mm 2.5mm rgba(8,43,82,.12);overflow:hidden}
-.privileges h3{position:absolute;left:2mm;right:2mm;top:-3.4mm;height:6mm;margin:0;padding:0 .8mm;display:flex;align-items:center;justify-content:center;border-radius:3mm;background:var(--navy);color:#fff;text-align:center;font-size:1.55mm;line-height:1;font-weight:900;letter-spacing:.02mm;white-space:nowrap}
+.privileges{position:absolute;z-index:14;left:35mm;top:8mm;width:29mm;height:31mm;min-height:31mm;padding:5.5mm 2.2mm 2mm;background:rgba(255,255,255,.96);border:.45mm solid #e0ae2f;border-radius:2.5mm;box-shadow:0 1mm 2.5mm rgba(8,43,82,.12);overflow:visible}
+.privileges h3{position:absolute;left:2mm;right:2mm;top:-3.1mm;height:6.2mm;margin:0;padding:0 .8mm;display:flex;align-items:center;justify-content:center;border-radius:3mm;background:var(--navy);color:#fff;text-align:center;font-size:1.55mm;line-height:1;font-weight:900;letter-spacing:.02mm;white-space:nowrap}
 .privileges ul{list-style:none;margin:0;padding:0}
 .privileges li{display:grid;grid-template-columns:2.7mm minmax(0,1fr);align-items:start;gap:.65mm;margin:0 0 .75mm;color:#173454;font-size:1.05mm;line-height:1.13;font-weight:700}
 .privileges li span{min-width:0;overflow-wrap:normal;word-break:normal}
