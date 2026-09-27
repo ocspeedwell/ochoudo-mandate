@@ -303,41 +303,23 @@
 
 
 /* =========================================================
-   9. TS704a TWO-CARD PRINT SHEET
+   9. TS704a TWO-CARD PRINT SHEET - EXACT 100% CR80
    ========================================================= */
-
-.print-sheet {
-  --offset-x: 0mm;
-  --offset-y: 0mm;
-  --card-gap: 8mm;
-
-  position: relative;
-
-  width: 120mm;
-  min-height: 125mm;
-
-  margin: 20px auto;
-
-  padding-top: var(--offset-y);
-  padding-left: var(--offset-x);
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  gap: var(--card-gap);
-
-  background: #f4f4f4;
-  border: 1px dashed #aeb8c5;
+.print-sheet{
+  --card1-x:0mm;--card1-y:0mm;--card2-x:0mm;--card2-y:0mm;--tray-rotation:180deg;
+  position:relative;width:120mm;height:125mm;margin:20px auto;padding:0;
+  background:#f4f4f4;border:1px dashed #aeb8c5;overflow:hidden;
 }
-
+.card-slot{position:absolute;width:85.60mm;height:53.98mm;margin:0;padding:0;transform-origin:center center;}
+#cardSlot1{left:calc(17.20mm + var(--card1-x));top:var(--card1-y);transform:rotate(var(--tray-rotation));}
+#cardSlot2{left:calc(17.20mm + var(--card2-x));top:calc(61.98mm + var(--card2-y));transform:rotate(var(--tray-rotation));}
 
 /* =========================================================
    10. PHYSICAL CR80 CARD
    ========================================================= */
 
 .card-slot {
-  width: 85.6mm;
+  width: 85.60mm;
   height: 53.98mm;
   flex: 0 0 auto;
 }
@@ -345,7 +327,7 @@
 .physical-card {
   position: relative;
 
-  width: 85.6mm;
+  width: 85.60mm;
   height: 53.98mm;
 
   overflow: hidden;
@@ -818,57 +800,8 @@
 
 
 /* =========================================================
-   19. PRINT MODE
+   19. PRINT MODE - handled by dedicated #printPortal rules below
    ========================================================= */
-
-@media print {
-
-  @page {
-    size: 120mm 125mm;
-    margin: 0;
-  }
-
-  html,
-  body {
-    margin: 0 !important;
-    padding: 0 !important;
-
-    background: #fff !important;
-  }
-
-  body * {
-    visibility: hidden !important;
-  }
-
-  #printSheet,
-  #printSheet * {
-    visibility: visible !important;
-  }
-
-  #printSheet {
-    position: absolute !important;
-
-    left: 0 !important;
-    top: 0 !important;
-
-    width: 120mm !important;
-    min-height: 125mm !important;
-
-    margin: 0 !important;
-
-    border: 0 !important;
-    background: #fff !important;
-
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
-  .physical-card {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-}
-
 
 /* Reference-layout refinement: softly blend the portrait into the centre without altering the photo */
 .cherished-back::after {
@@ -900,3 +833,19 @@
 .calibration-note{position:absolute;left:50%;bottom:2.5mm;transform:translateX(-50%);font-size:1.45mm;font-weight:800;letter-spacing:.08mm;white-space:nowrap}
 .print-sheet.calibration-mode{background:#fff}
 @media print{.calibration-card{border:.35mm solid #000!important}.calibration-safe-zone{border:.2mm dashed #666!important}}
+
+/* TS704 independent two-card calibration controls */
+.calibration-group{display:flex;align-items:center;gap:7px;padding:5px 8px;border:1px solid #dfe5ed;border-radius:7px;background:#fff}
+.calibration-group b{font-size:10px;color:var(--navy);letter-spacing:.5px}
+.calibration select{min-height:34px;padding:6px 9px;border:1px solid #c8d3e1;border-radius:8px;background:#fff;color:var(--ink);font-weight:700}
+#printPortal{display:none}
+
+/* Dedicated one-page print portal. Admin UI cannot create blank pages. */
+@media print{
+  @page{size:120mm 125mm;margin:0}
+  html,body{width:120mm!important;height:125mm!important;margin:0!important;padding:0!important;overflow:hidden!important;background:#fff!important}
+  body>*{display:none!important}
+  #printPortal{display:block!important;position:absolute!important;left:0!important;top:0!important;width:120mm!important;height:125mm!important;margin:0!important;padding:0!important;overflow:hidden!important}
+  #printPortal .print-sheet{display:block!important;position:relative!important;width:120mm!important;height:125mm!important;margin:0!important;padding:0!important;border:0!important;background:#fff!important;overflow:hidden!important}
+  #printPortal .physical-card{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+}
