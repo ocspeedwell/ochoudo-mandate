@@ -25,9 +25,37 @@ function applyCalibration(){const c=calibrationValues(),sheet=$("printSheet");sh
 function loadCalibration(){try{const old=JSON.parse(localStorage.getItem("omgTs704Calibration")||"{}"),c=JSON.parse(localStorage.getItem("omgTs704CalibrationV2")||"{}");$("card1X").value=c.c1x??old.x??0;$("card1Y").value=c.c1y??old.y??0;$("card2X").value=c.c2x??old.x??0;$("card2Y").value=c.c2y??0;$("trayRotation").value=String(c.rotation??180)}catch(e){console.warn("Unable to read saved tray calibration.",e)}applyCalibration()}
 function saveCalibration(){const c=calibrationValues();localStorage.setItem("omgTs704CalibrationV2",JSON.stringify(c));applyCalibration();message(`TS704 preset saved. Card 1: X ${c.c1x}, Y ${c.c1y} mm. Card 2: X ${c.c2x}, Y ${c.c2y} mm. Rotation ${c.rotation}°.`)}
 function resetCalibration(){$("card1X").value=0;$("card1Y").value=0;$("card2X").value=0;$("card2Y").value=0;$("trayRotation").value="180";applyCalibration();message("Calibration reset. CR80 remains locked at 85.60 × 53.98 mm; rotation reset to 180°.")}
-function preparePrintPortal(){const portal=$("printPortal"),sheet=$("printSheet");portal.replaceChildren(sheet.cloneNode(true))}
-async function doPrint(which){try{const ok=await renderTray(which);if(ok){preparePrintPortal();setTimeout(()=>window.print(),250)}}catch(e){console.error(e);message(e.message||"Unable to prepare cards for printing.")}}
-function printCalibration(){renderCalibration();preparePrintPortal();setTimeout(()=>window.print(),200)}
+async function awaitPrintImages(root){
+  const images=[...root.querySelectorAll("img")];
+  await Promise.all(images.map(async img=>{
+    if(!img.getAttribute("src"))return;
+    if(!img.complete){await new Promise((resolve,reject)=>{const timeout=setTimeout(()=>reject(new Error("Image loading timed out: "+(img.alt||"photo"))),12000);img.addEventListener("load",()=>{clearTimeout(timeout);resolve()},{once:true});img.addEventListener("error",()=>{clearTimeout(timeout);reject(new Error("Image could not load: "+(img.alt||"photo")))},{once:true})})}
+    if(!img.naturalWidth)throw new Error("Image is missing from print: "+(img.alt||"photo"));
+    if(typeof img.decode==="function")await img.decode();
+  }));
+}
+async function preparePrintPortal(){
+  const portal=$("printPortal"),sheet=$("printSheet");
+  // Prefer embedding member photos into the print clone to avoid a fresh
+  // cross-origin/signed URL request during Chrome's print preview.
+  const copy=sheet.cloneNode(true);
+  const originalPhotos=[...sheet.querySelectorAll(".membership-photo-frame img")];
+  const clonedPhotos=[...copy.querySelectorAll(".membership-photo-frame img")];
+  originalPhotos.forEach((source,i)=>{
+    if(!source.complete||!source.naturalWidth)return;
+    try{
+      const canvas=document.createElement("canvas");canvas.width=source.naturalWidth;canvas.height=source.naturalHeight;
+      canvas.getContext("2d").drawImage(source,0,0);
+      clonedPhotos[i].src=canvas.toDataURL("image/png");
+    }catch(e){console.warn("Photo could not be embedded; using original URL",e)}
+  });
+  portal.replaceChildren(copy);
+  await awaitPrintImages(portal);
+  if(clonedPhotos.length && clonedPhotos.length!==2)throw new Error("Member photographs are incomplete. Printing cancelled.");
+  if(side==="front" && !calibrationMode && clonedPhotos.length!==2)throw new Error("Member photographs are missing. Printing cancelled. Check photo access and retry.");
+}
+async function doPrint(which){try{const ok=await renderTray(which);if(ok){await preparePrintPortal();window.print()}}catch(e){console.error(e);message(e.message||"Unable to prepare cards for printing.")}}
+async function printCalibration(){try{renderCalibration();await preparePrintPortal();window.print()}catch(e){console.error(e);message(e.message||"Calibration preview failed.")}}
 document.addEventListener("DOMContentLoaded",async()=>{try{if(!await requireAdmin())return;loadCalibration();await loadMembers()}catch(e){console.error(e);message(e.message||"Unable to load card printing module.");return}
 $("membersTableBody").addEventListener("change",e=>{const cb=e.target.closest(".member-check");if(!cb)return;const m=members.find(x=>String(x.id)===String(cb.dataset.id));if(!m)return;if(cb.checked){if(selected.length>=2){cb.checked=false;message("The TS704a tray holds two cards. Clear a slot before selecting another member.");return}selected.push(m)}else selected=selected.filter(x=>String(x.id)!==String(m.id));message("");renderMembers()});
 $("memberSearch").addEventListener("input",renderMembers);$("lgaFilter").addEventListener("change",()=>{updateWardOptions();renderMembers()});$("wardFilter").addEventListener("change",renderMembers);
