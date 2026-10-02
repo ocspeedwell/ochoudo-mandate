@@ -1178,3 +1178,428 @@
     opacity: 1 !important;
   }
 }
+/* =========================================================
+   OMG ID CARD - CHERISHED BACK FINAL REFINEMENT
+   Paste at END of existing card-printing.css
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   1. CHERISHED STATEMENT
+   Center the statement and balance it with the slogan
+   --------------------------------------------------------- */
+
+.cherished-back .back-left-content {
+    position: absolute;
+    z-index: 15;
+    left: 4mm;
+    top: 12mm;
+    width: 31mm;
+    text-align: center;
+}
+
+.cherished-back .back-message {
+    width: 100%;
+    margin: 0 auto;
+
+    color: #102b4c;
+
+    font-size: 1.45mm;
+    line-height: 1.28;
+    font-weight: 600;
+
+    text-align: center;
+
+    white-space: normal;
+    overflow-wrap: normal;
+    word-break: normal;
+}
+
+
+/* ---------------------------------------------------------
+   2. SLOGAN
+   Force into TWO lines
+   --------------------------------------------------------- */
+
+.cherished-back .back-slogan {
+    width: 34mm;
+    margin: 2.1mm -1.5mm 0;
+
+    color: #12345b;
+
+    text-align: center;
+    font-size: 2.35mm;
+    line-height: 1.18;
+    font-weight: 900;
+    font-style: italic;
+
+    white-space: normal;
+    overflow-wrap: normal;
+    word-break: normal;
+}
+
+
+/* ---------------------------------------------------------
+   3. SIGNATURE AREA
+   Larger, darker and dominant.
+   Keep everything safely ABOVE the waves.
+   --------------------------------------------------------- */
+
+.cherished-back .signature-block {
+    position: relative;
+    z-index: 25;
+
+    width: 34mm;
+    margin: 1.3mm -1.5mm 0;
+
+    text-align: center;
+}
+
+.cherished-back .signature-block img {
+    display: block;
+
+    width: 27mm;
+    height: 8mm;
+
+    max-width: none;
+    max-height: none;
+
+    margin: 0 auto -0.2mm;
+
+    object-fit: contain;
+    object-position: center;
+
+    transform: scale(1.18);
+    transform-origin: center;
+
+    filter:
+        grayscale(1)
+        contrast(4.5)
+        brightness(0.20);
+
+    opacity: 1;
+}
+
+.cherished-back .signature-block strong {
+    display: block;
+
+    margin-top: 0.15mm;
+
+    color: #102b4c;
+
+    font-size: 1.35mm;
+    line-height: 1.08;
+    font-weight: 900;
+
+    letter-spacing: 0.03mm;
+    white-space: nowrap;
+}
+
+.cherished-back .signature-block span {
+    display: block;
+
+    margin-top: 0.25mm;
+
+    color: #b51f2e;
+
+    font-size: 0.92mm;
+    line-height: 1.05;
+    font-weight: 900;
+
+    white-space: nowrap;
+}
+
+
+/* ---------------------------------------------------------
+   4. OMG LOGO
+   Keep prominent but clear of cherished statement
+   --------------------------------------------------------- */
+
+.cherished-back .back-brand {
+    position: absolute;
+    z-index: 20;
+
+    left: 4mm;
+    top: 2.7mm;
+
+    width: 29mm;
+    height: 7.8mm;
+
+    display: flex;
+    align-items: center;
+}
+
+.cherished-back .back-brand img {
+    display: block;
+
+    width: 29mm;
+    height: 7.8mm;
+
+    max-width: none;
+    max-height: none;
+
+    object-fit: contain;
+    object-position: left center;
+}
+
+
+/* ---------------------------------------------------------
+   5. MEMBER PRIVILEGES PANEL
+   Slightly narrower so it does NOT cover the face.
+   --------------------------------------------------------- */
+
+.cherished-back .privileges {
+    position: absolute;
+    z-index: 30;
+
+    left: 37mm;
+    top: 9mm;
+
+    width: 27mm;
+    height: 31mm;
+    min-height: 31mm;
+
+    box-sizing: border-box;
+
+    padding:
+        6.4mm
+        2mm
+        2.2mm
+        2mm;
+
+    background: rgba(255,255,255,0.96);
+
+    border: 0.4mm solid #e0ae2f;
+    border-radius: 2.5mm;
+
+    box-shadow:
+        0 0.8mm 2mm rgba(8,43,82,0.10);
+
+    overflow: visible;
+}
+
+
+/* ---------------------------------------------------------
+   6. PRIVILEGES HEADING
+   Fix clipping / heading moving outside the pill
+   --------------------------------------------------------- */
+
+.cherished-back .privileges h3 {
+    position: absolute;
+
+    z-index: 35;
+
+    left: 1.3mm;
+    right: 1.3mm;
+
+    top: -3.2mm;
+
+    height: 6.3mm;
+
+    margin: 0;
+    padding: 0 1mm;
+
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #102b4c;
+
+    border-radius: 3.2mm;
+
+    color: #ffffff;
+
+    font-size: 1.55mm;
+    line-height: 1;
+
+    font-weight: 900;
+    letter-spacing: 0.02mm;
+
+    text-align: center;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+}
+
+
+/* ---------------------------------------------------------
+   7. DISTRIBUTE PRIVILEGES THROUGH THE PANEL
+   Removes crowding at top and unused bottom space
+   --------------------------------------------------------- */
+
+.cherished-back .privileges ul {
+    width: 100%;
+    height: 21.5mm;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.cherished-back .privileges li {
+    display: grid;
+
+    grid-template-columns:
+        2.8mm
+        minmax(0, 1fr);
+
+    align-items: center;
+
+    column-gap: 0.7mm;
+
+    margin: 0;
+    padding: 0;
+
+    color: #173454;
+
+    font-size: 1.16mm;
+    line-height: 1.13;
+
+    font-weight: 750;
+}
+
+.cherished-back .privileges li span {
+    min-width: 0;
+
+    display: block;
+
+    white-space: normal;
+
+    overflow-wrap: normal;
+    word-break: normal;
+}
+
+.cherished-back .privileges li i {
+    width: 2.55mm;
+    height: 2.55mm;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: #ffffff;
+
+    font-size: 0.9mm;
+    font-style: normal;
+    line-height: 1;
+
+    flex: 0 0 2.55mm;
+}
+
+
+/* ---------------------------------------------------------
+   8. PORTRAIT / WATERMARK
+   Show more of the head and face.
+   Keep BOTH EYES clear of privileges panel.
+   --------------------------------------------------------- */
+
+.cherished-back .back-watermark {
+    position: absolute;
+
+    z-index: 8;
+
+    right: 0;
+    top: 0;
+
+    width: 31mm;
+    height: 53.98mm;
+
+    max-width: none;
+    max-height: none;
+
+    object-fit: cover;
+
+    /*
+       Important:
+       Bias image toward the face/head rather than suit.
+    */
+    object-position: 62% center;
+
+    opacity: 1;
+}
+
+
+/* Give the portrait a protected visual area */
+
+.cherished-back::after {
+    content: "";
+
+    position: absolute;
+
+    z-index: 9;
+
+    right: 0;
+    top: 0;
+
+    width: 23mm;
+    height: 29mm;
+
+    pointer-events: none;
+
+    background: transparent;
+}
+
+
+/* ---------------------------------------------------------
+   9. KEEP PRIVILEGES AWAY FROM FACE
+   --------------------------------------------------------- */
+
+.cherished-back .privileges {
+    max-width: 27mm;
+}
+
+
+/* ---------------------------------------------------------
+   10. WAVES
+   Keep below signature/name area
+   --------------------------------------------------------- */
+
+.cherished-back .swoosh {
+    z-index: 10;
+}
+
+.cherished-back .signature-block {
+    z-index: 40;
+}
+
+
+/* ---------------------------------------------------------
+   11. PRINT SAFETY
+   Do not allow responsive screen transforms to alter
+   physical card printing.
+   --------------------------------------------------------- */
+
+@media print {
+
+    .cherished-back {
+        width: 85.6mm !important;
+        height: 53.98mm !important;
+
+        transform: none !important;
+        zoom: 1 !important;
+
+        overflow: hidden !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .cherished-back .back-left-content,
+    .cherished-back .privileges,
+    .cherished-back .back-watermark,
+    .cherished-back .back-brand,
+    .cherished-back .signature-block {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
