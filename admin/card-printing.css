@@ -520,7 +520,7 @@
   background: var(--navy);
   color: #fff;
 
-  font-size: 1.65mm;
+  font-size: 1.35mm;
   font-weight: 800;
 }
 
@@ -629,16 +629,16 @@
    13. BACK LEFT CONTENT - PROTECTED ZONE
    ========================================================= */
 .back-left-content{position:absolute;z-index:10;left:4mm;top:12.5mm;width:29mm}
-.back-message{width:100%;margin:0;color:#102b4c;font-size:1.45mm;line-height:1.28;font-weight:500;text-align:left;overflow-wrap:normal;word-break:normal}
-.back-slogan{width:100%;margin-top:1.8mm;color:var(--navy);text-align:center;font-size:2.00mm;line-height:1.16;font-weight:900;font-style:italic;overflow-wrap:normal;word-break:normal}
+.back-message{width:100%;margin:0;color:#102b4c;font-size:1.35mm;line-height:1.28;font-weight:500;text-align:left;overflow-wrap:normal;word-break:normal}
+.back-slogan{width:100%;margin-top:1.6mm;color:var(--navy);text-align:center;font-size:2.00mm;line-height:1.16;font-weight:900;font-style:italic;overflow-wrap:normal;word-break:normal}
 
 /* =========================================================
    14. SIGNATURE
    ========================================================= */
 .signature-block{position:relative;z-index:12;width:100%;margin-top:.65mm;text-align:center}
 .signature-block img{display:block;width:29mm;height:8.5mm;max-width:29mm;max-height:8.5mm;margin:-.4mm auto -.45mm;object-fit:contain;transform:scale(1.08);transform-origin:center center;filter:grayscale(1) contrast(3.6) brightness(.28)}
-.signature-block strong{display:block;margin-top:0;color:var(--navy);font-size:1.6mm;line-height:1.1;font-weight:900}
-.signature-block span{display:block;margin-top:.25mm;color:var(--red);font-size:1.4mm;line-height:1.05;font-weight:900}
+.signature-block strong{display:block;margin-top:0;color:var(--navy);font-size:1.4mm;line-height:1.1;font-weight:900}
+.signature-block span{display:block;margin-top:.25mm;color:var(--red);font-size:1.2mm;line-height:1.05;font-weight:900}
 
 /* =========================================================
    15. MEMBER PRIVILEGES - PROTECTED CENTRE ZONE
