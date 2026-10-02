@@ -891,12 +891,12 @@
 }
 
 /* =========================================================
-   V7 TYPOGRAPHY + ALIGNMENT TUNE
-   Larger front member details and more readable cherished back.
-   Physical CR80 size / print scale remain unchanged.
+   22. FINAL CONSOLIDATED CARD REFINEMENTS
+   Front typography + cherished back layout
+   Keeps the proven 120mm x 120mm tray and CR80 print geometry.
    ========================================================= */
 
-/* Front: larger field labels and values */
+/* ---------- FRONT CARD: stronger, more readable details ---------- */
 .membership-number-box span,
 .member-name-block span,
 .member-detail span {
@@ -906,31 +906,36 @@
   font-weight: 900;
 }
 
-.member-detail strong {
-  margin-top: .30mm;
-  font-size: 1.92mm;
-  line-height: 1.10;
-  font-weight: 800;
+.member-name-block strong {
+  display: block;
+  color: var(--navy);
+  font-size: 3.05mm;
+  line-height: 1.08;
+  font-weight: 900;
 }
 
-/* Keep the compact 2 x 2 detail layout:
-   Gender | LGA
-   Ward   | Polling Unit */
 .member-details-grid {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.14fr);
   column-gap: 2.2mm;
-  row-gap: .85mm;
+  row-gap: .82mm;
 }
 
-.member-detail {
-  min-width: 0;
-}
+.member-detail { min-width: 0; }
 
 .member-detail strong {
+  display: block;
+  margin-top: .28mm;
+  color: var(--ink);
+  font-size: 1.92mm;
+  line-height: 1.08;
+  font-weight: 850;
+  white-space: normal;
   overflow-wrap: anywhere;
   word-break: normal;
 }
 
+/* Gender | LGA / Ward | Polling Unit */
 .membership-id-card .member-detail-wide {
   grid-column: 2 !important;
   grid-row: 2 !important;
@@ -938,668 +943,278 @@
 }
 
 .membership-id-card .member-detail-wide strong {
+  line-height: 1.06;
+}
+
+/* ---------- CHERISHED SIDE: logo ---------- */
+.cherished-back .back-brand {
+  position: absolute;
+  z-index: 24;
+  left: 4mm;
+  top: 2.6mm;
+  width: 30mm;
+  height: 8.2mm;
+  display: flex;
+  align-items: center;
+}
+
+.cherished-back .back-brand img {
   display: block;
-  white-space: normal;
-  overflow-wrap: anywhere;
-  line-height: 1.08;
+  width: 30mm;
+  height: 8.2mm;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+  object-position: left center;
+  filter: contrast(1.16) saturate(1.08);
 }
 
-/* Cherished side: give the statement more width and larger readable type */
-.back-left-content {
-  left: 3.8mm;
-  top: 11.8mm;
-  width: 30.5mm;
+/* ---------- CHERISHED SIDE: statement ---------- */
+.cherished-back .back-left-content {
+  position: absolute;
+  z-index: 20;
+  left: 3.7mm;
+  top: 11.5mm;
+  width: 31.8mm;
+  text-align: center;
 }
 
-.back-message {
-  font-size: 1.43mm;
-  line-height: 1.23;
-  font-weight: 600;
-}
-
-.back-slogan {
-  margin-top: 1.25mm;
-  font-size: 2.28mm;
-  line-height: 1.12;
-  font-weight: 900;
-}
-
-.signature-block {
-  margin-top: .45mm;
-}
-
-.signature-block img {
-  width: 29.5mm;
-  height: 7.8mm;
-  max-width: 29.5mm;
-  max-height: 7.8mm;
-  margin: -.35mm auto -.35mm;
-}
-
-.signature-block strong {
-  font-size: 1.32mm;
-  line-height: 1.08;
-}
-
-.signature-block span {
-  margin-top: .18mm;
-  font-size: 1.02mm;
-  line-height: 1.05;
-}
-
-/* Privileges: larger without allowing the box to collide with portrait */
-.privileges {
-  left: 35.2mm;
-  top: 7.8mm;
-  width: 30.3mm;
-  height: 32.2mm;
-  min-height: 32.2mm;
-  padding: 5.35mm 2mm 1.55mm;
-}
-
-.privileges h3 {
-  left: 1.8mm;
-  right: 1.8mm;
-  height: 6.2mm;
-  font-size: 1.70mm;
-  letter-spacing: .015mm;
-}
-
-.privileges li {
-  grid-template-columns: 2.65mm minmax(0, 1fr);
-  gap: .55mm;
-  margin-bottom: .58mm;
-  font-size: 1.20mm;
-  line-height: 1.10;
-  font-weight: 800;
-}
-
-.privileges li i {
-  width: 2.45mm;
-  height: 2.45mm;
-  font-size: .88mm;
-}
-
-/* Print lock: typography changes only. Never change physical card scaling. */
-@media print {
-  #printPortal .membership-id-card .member-detail-wide {
-    grid-column: 2 !important;
-    grid-row: 2 !important;
-  }
-
-  #printPortal .member-detail strong,
-  #printPortal .back-message,
-  #printPortal .back-slogan,
-  #printPortal .privileges li {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-}
-
-/* =========================================================
-   V8 CHERISHED BACK REFINEMENT
-   Protect face/eyes, balance cherished copy, spread privileges,
-   and make the signature a dominant visual element.
-   Print geometry and front-card calibration are untouched.
-   ========================================================= */
-
-/* Give the cherished statement a clean, consistent text column. */
-.back-left-content {
-  left: 3.8mm;
-  top: 11.7mm;
-  width: 30.8mm;
-}
-
-.back-message {
+.cherished-back .back-message {
   width: 100%;
-  margin: 0;
-  font-size: 1.48mm;
-  line-height: 1.25;
-  font-weight: 600;
-  text-align: left;
-  text-wrap: pretty;
+  margin: 0 auto;
+  color: #102b4c;
+  font-size: 1.43mm;
+  line-height: 1.26;
+  font-weight: 650;
+  text-align: center;
+  white-space: normal;
   overflow-wrap: normal;
   word-break: normal;
 }
 
-.back-slogan {
-  width: 100%;
-  margin-top: 1.35mm;
-  font-size: 2.25mm;
-  line-height: 1.12;
+/* Two-line slogan. The <br> already present in the template remains the break. */
+.cherished-back .back-slogan {
+  width: 34mm;
+  margin: 1.55mm -1.1mm 0;
+  color: var(--navy);
+  text-align: center;
+  font-size: 2.12mm;
+  line-height: 1.14;
+  font-weight: 900;
+  font-style: italic;
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+/* ---------- SIGNATURE: bold, dominant, safely above waves ---------- */
+.cherished-back .signature-block {
+  position: relative;
+  z-index: 45;
+  width: 34mm;
+  margin: .75mm -1.1mm 0;
   text-align: center;
 }
 
-/* Signature: larger, darker and visually dominant. */
-.signature-block {
-  width: 100%;
-  margin-top: .45mm;
-  text-align: center;
-}
-
-.signature-block img {
+.cherished-back .signature-block img {
   display: block;
-  width: 32mm;
-  height: 9.8mm;
-  max-width: 32mm;
-  max-height: 9.8mm;
-  margin: -1.1mm auto -1.05mm;
+  width: 31mm;
+  height: 8.4mm;
+  max-width: none;
+  max-height: none;
+  margin: -.35mm auto -.55mm;
   object-fit: contain;
-  transform: scale(1.16);
-  transform-origin: center center;
-  filter: grayscale(1) contrast(5.2) brightness(.18);
+  object-position: center;
+  transform: scale(1.18);
+  transform-origin: center;
+  filter: grayscale(1) contrast(5.2) brightness(.16);
   opacity: 1;
 }
 
-.signature-block strong {
+.cherished-back .signature-block strong {
   display: block;
   margin-top: 0;
-  font-size: 1.42mm;
-  line-height: 1.05;
-  font-weight: 900;
-}
-
-.signature-block span {
-  display: block;
-  margin-top: .20mm;
-  font-size: 1.03mm;
+  color: #102b4c;
+  font-size: 1.38mm;
   line-height: 1.04;
   font-weight: 900;
-}
-
-/* Keep the privileges panel away from the portrait's eyes.
-   Use the full panel height instead of crowding items at the top. */
-.privileges {
-  left: 35.1mm;
-  top: 8mm;
-  width: 27.7mm;
-  height: 31.5mm;
-  min-height: 31.5mm;
-  padding: 5.4mm 1.65mm 1.55mm;
-  overflow: hidden;
-}
-
-.privileges h3 {
-  left: 1.45mm;
-  right: 1.45mm;
-  top: -3.05mm;
-  height: 6.15mm;
-  font-size: 1.62mm;
+  letter-spacing: .025mm;
   white-space: nowrap;
 }
 
-.privileges ul {
-  height: 24.2mm;
+.cherished-back .signature-block span {
+  display: block;
+  margin-top: .18mm;
+  color: #b51f2e;
+  font-size: .92mm;
+  line-height: 1.04;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* ---------- PORTRAIT: full height and face biased to the right ---------- */
+.cherished-back .back-watermark {
+  position: absolute;
+  z-index: 8;
+  right: -1mm;
+  top: 0;
+  width: 33mm;
+  height: 53.98mm;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: 72% center;
+  opacity: 1;
+  filter: none;
+  border: 0;
+  border-radius: 0;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,.72) 12%, #000 27%, #000 100%);
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,.72) 12%, #000 27%, #000 100%);
+  pointer-events: none;
+}
+
+/* Remove the old white veil that could obscure the portrait. */
+.cherished-back::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* ---------- PRIVILEGES: translucent, evenly distributed ---------- */
+.cherished-back .privileges {
+  position: absolute;
+  z-index: 30;
+  left: 36.2mm;
+  top: 8.7mm;
+  width: 28.2mm;
+  height: 31.6mm;
+  min-height: 31.6mm;
+  max-width: 28.2mm;
+  box-sizing: border-box;
+  padding: 5.8mm 1.7mm 1.55mm;
+  background: rgba(255,255,255,.82);
+  border: .4mm solid rgba(224,174,47,.86);
+  border-radius: 2.5mm;
+  box-shadow: 0 .8mm 2mm rgba(8,43,82,.10);
+  overflow: visible;
+  backdrop-filter: none;
+}
+
+.cherished-back .privileges h3 {
+  position: absolute;
+  z-index: 35;
+  left: 1.15mm;
+  right: 1.15mm;
+  top: -3.05mm;
+  height: 6.1mm;
+  margin: 0;
+  padding: 0 .7mm;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8,43,82,.94);
+  border-radius: 3.1mm;
+  color: #fff;
+  text-align: center;
+  font-size: 1.56mm;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: .015mm;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.cherished-back .privileges ul {
+  width: 100%;
+  height: 24mm;
   margin: 0;
   padding: 0;
+  list-style: none;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.privileges li {
+.cherished-back .privileges li {
   display: grid;
-  grid-template-columns: 2.55mm minmax(0, 1fr);
+  grid-template-columns: 2.65mm minmax(0, 1fr);
   align-items: center;
-  gap: .55mm;
+  column-gap: .6mm;
   margin: 0;
-  min-height: 3.7mm;
-  font-size: 1.17mm;
+  padding: 0;
+  min-height: 3.65mm;
+  color: #173454;
+  font-size: 1.18mm;
   line-height: 1.10;
   font-weight: 800;
 }
 
-.privileges li span {
+.cherished-back .privileges li span {
   min-width: 0;
+  display: block;
+  white-space: normal;
   overflow-wrap: normal;
   word-break: normal;
 }
 
-.privileges li i {
+.cherished-back .privileges li i {
   width: 2.45mm;
   height: 2.45mm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+  font-size: .88mm;
+  font-style: normal;
+  line-height: 1;
   flex: 0 0 2.45mm;
 }
 
-/* Portrait remains full-size but sits farther right so both eyes remain clear. */
-.back-watermark {
-  right: -1.2mm;
-  object-position: right center;
-}
+/* Waves remain below the signature/name block. */
+.cherished-back .swoosh { z-index: 10; }
+.cherished-back .signature-block { z-index: 45; }
 
+/* ---------- PRINT SAFETY ---------- */
 @media print {
+  .cherished-back {
+    width: 85.60mm !important;
+    height: 53.98mm !important;
+    zoom: 1 !important;
+    overflow: hidden !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #printPortal .membership-id-card .member-detail-wide {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+  }
+
   #printPortal .back-watermark {
-    right: -1.2mm !important;
-    object-position: right center !important;
+    right: -1mm !important;
+    top: 0 !important;
+    width: 33mm !important;
+    height: 53.98mm !important;
+    object-position: 72% center !important;
+    opacity: 1 !important;
+  }
+
+  #printPortal .privileges {
+    background: rgba(255,255,255,.82) !important;
   }
 
   #printPortal .signature-block img {
-    filter: grayscale(1) contrast(5.2) brightness(.18) !important;
+    filter: grayscale(1) contrast(5.2) brightness(.16) !important;
     opacity: 1 !important;
   }
-}
-/* =========================================================
-   OMG ID CARD - CHERISHED BACK FINAL REFINEMENT
-   Paste at END of existing card-printing.css
-   ========================================================= */
 
-
-/* ---------------------------------------------------------
-   1. CHERISHED STATEMENT
-   Center the statement and balance it with the slogan
-   --------------------------------------------------------- */
-
-.cherished-back .back-left-content {
-    position: absolute;
-    z-index: 15;
-    left: 4mm;
-    top: 12mm;
-    width: 31mm;
-    text-align: center;
-}
-
-.cherished-back .back-message {
-    width: 100%;
-    margin: 0 auto;
-
-    color: #102b4c;
-
-    font-size: 1.45mm;
-    line-height: 1.28;
-    font-weight: 600;
-
-    text-align: center;
-
-    white-space: normal;
-    overflow-wrap: normal;
-    word-break: normal;
-}
-
-
-/* ---------------------------------------------------------
-   2. SLOGAN
-   Force into TWO lines
-   --------------------------------------------------------- */
-
-.cherished-back .back-slogan {
-    width: 34mm;
-    margin: 2.1mm -1.5mm 0;
-
-    color: #12345b;
-
-    text-align: center;
-    font-size: 2.35mm;
-    line-height: 1.18;
-    font-weight: 900;
-    font-style: italic;
-
-    white-space: normal;
-    overflow-wrap: normal;
-    word-break: normal;
-}
-
-
-/* ---------------------------------------------------------
-   3. SIGNATURE AREA
-   Larger, darker and dominant.
-   Keep everything safely ABOVE the waves.
-   --------------------------------------------------------- */
-
-.cherished-back .signature-block {
-    position: relative;
-    z-index: 25;
-
-    width: 34mm;
-    margin: 1.3mm -1.5mm 0;
-
-    text-align: center;
-}
-
-.cherished-back .signature-block img {
-    display: block;
-
-    width: 27mm;
-    height: 8mm;
-
-    max-width: none;
-    max-height: none;
-
-    margin: 0 auto -0.2mm;
-
-    object-fit: contain;
-    object-position: center;
-
-    transform: scale(1.18);
-    transform-origin: center;
-
-    filter:
-        grayscale(1)
-        contrast(4.5)
-        brightness(0.20);
-
-    opacity: 1;
-}
-
-.cherished-back .signature-block strong {
-    display: block;
-
-    margin-top: 0.15mm;
-
-    color: #102b4c;
-
-    font-size: 1.35mm;
-    line-height: 1.08;
-    font-weight: 900;
-
-    letter-spacing: 0.03mm;
-    white-space: nowrap;
-}
-
-.cherished-back .signature-block span {
-    display: block;
-
-    margin-top: 0.25mm;
-
-    color: #b51f2e;
-
-    font-size: 0.92mm;
-    line-height: 1.05;
-    font-weight: 900;
-
-    white-space: nowrap;
-}
-
-
-/* ---------------------------------------------------------
-   4. OMG LOGO
-   Keep prominent but clear of cherished statement
-   --------------------------------------------------------- */
-
-.cherished-back .back-brand {
-    position: absolute;
-    z-index: 20;
-
-    left: 4mm;
-    top: 2.7mm;
-
-    width: 29mm;
-    height: 7.8mm;
-
-    display: flex;
-    align-items: center;
-}
-
-.cherished-back .back-brand img {
-    display: block;
-
-    width: 29mm;
-    height: 7.8mm;
-
-    max-width: none;
-    max-height: none;
-
-    object-fit: contain;
-    object-position: left center;
-}
-
-
-/* ---------------------------------------------------------
-   5. MEMBER PRIVILEGES PANEL
-   Slightly narrower so it does NOT cover the face.
-   --------------------------------------------------------- */
-
-.cherished-back .privileges {
-    position: absolute;
-    z-index: 30;
-
-    left: 37mm;
-    top: 9mm;
-
-    width: 27mm;
-    height: 31mm;
-    min-height: 31mm;
-
-    box-sizing: border-box;
-
-    padding:
-        6.4mm
-        2mm
-        2.2mm
-        2mm;
-
-    background: rgba(255,255,255,0.96);
-
-    border: 0.4mm solid #e0ae2f;
-    border-radius: 2.5mm;
-
-    box-shadow:
-        0 0.8mm 2mm rgba(8,43,82,0.10);
-
-    overflow: visible;
-}
-
-
-/* ---------------------------------------------------------
-   6. PRIVILEGES HEADING
-   Fix clipping / heading moving outside the pill
-   --------------------------------------------------------- */
-
-.cherished-back .privileges h3 {
-    position: absolute;
-
-    z-index: 35;
-
-    left: 1.3mm;
-    right: 1.3mm;
-
-    top: -3.2mm;
-
-    height: 6.3mm;
-
-    margin: 0;
-    padding: 0 1mm;
-
-    box-sizing: border-box;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: #102b4c;
-
-    border-radius: 3.2mm;
-
-    color: #ffffff;
-
-    font-size: 1.55mm;
-    line-height: 1;
-
-    font-weight: 900;
-    letter-spacing: 0.02mm;
-
-    text-align: center;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-}
-
-
-/* ---------------------------------------------------------
-   7. DISTRIBUTE PRIVILEGES THROUGH THE PANEL
-   Removes crowding at top and unused bottom space
-   --------------------------------------------------------- */
-
-.cherished-back .privileges ul {
-    width: 100%;
-    height: 21.5mm;
-
-    margin: 0;
-    padding: 0;
-
-    list-style: none;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.cherished-back .privileges li {
-    display: grid;
-
-    grid-template-columns:
-        2.8mm
-        minmax(0, 1fr);
-
-    align-items: center;
-
-    column-gap: 0.7mm;
-
-    margin: 0;
-    padding: 0;
-
-    color: #173454;
-
-    font-size: 1.16mm;
-    line-height: 1.13;
-
-    font-weight: 750;
-}
-
-.cherished-back .privileges li span {
-    min-width: 0;
-
-    display: block;
-
-    white-space: normal;
-
-    overflow-wrap: normal;
-    word-break: normal;
-}
-
-.cherished-back .privileges li i {
-    width: 2.55mm;
-    height: 2.55mm;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    color: #ffffff;
-
-    font-size: 0.9mm;
-    font-style: normal;
-    line-height: 1;
-
-    flex: 0 0 2.55mm;
-}
-
-
-/* ---------------------------------------------------------
-   8. PORTRAIT / WATERMARK
-   Show more of the head and face.
-   Keep BOTH EYES clear of privileges panel.
-   --------------------------------------------------------- */
-
-.cherished-back .back-watermark {
-    position: absolute;
-
-    z-index: 8;
-
-    right: 0;
-    top: 0;
-
-    width: 31mm;
-    height: 53.98mm;
-
-    max-width: none;
-    max-height: none;
-
-    object-fit: cover;
-
-    /*
-       Important:
-       Bias image toward the face/head rather than suit.
-    */
-    object-position: 62% center;
-
-    opacity: 1;
-}
-
-
-/* Give the portrait a protected visual area */
-
-.cherished-back::after {
-    content: "";
-
-    position: absolute;
-
-    z-index: 9;
-
-    right: 0;
-    top: 0;
-
-    width: 23mm;
-    height: 29mm;
-
-    pointer-events: none;
-
-    background: transparent;
-}
-
-
-/* ---------------------------------------------------------
-   9. KEEP PRIVILEGES AWAY FROM FACE
-   --------------------------------------------------------- */
-
-.cherished-back .privileges {
-    max-width: 27mm;
-}
-
-
-/* ---------------------------------------------------------
-   10. WAVES
-   Keep below signature/name area
-   --------------------------------------------------------- */
-
-.cherished-back .swoosh {
-    z-index: 10;
-}
-
-.cherished-back .signature-block {
-    z-index: 40;
-}
-
-
-/* ---------------------------------------------------------
-   11. PRINT SAFETY
-   Do not allow responsive screen transforms to alter
-   physical card printing.
-   --------------------------------------------------------- */
-
-@media print {
-
-    .cherished-back {
-        width: 85.6mm !important;
-        height: 53.98mm !important;
-
-        transform: none !important;
-        zoom: 1 !important;
-
-        overflow: hidden !important;
-
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
-
-    .cherished-back .back-left-content,
-    .cherished-back .privileges,
-    .cherished-back .back-watermark,
-    .cherished-back .back-brand,
-    .cherished-back .signature-block {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
+  #printPortal .back-left-content,
+  #printPortal .privileges,
+  #printPortal .back-watermark,
+  #printPortal .back-brand,
+  #printPortal .signature-block {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 }
