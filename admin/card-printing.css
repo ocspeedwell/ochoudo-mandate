@@ -1218,3 +1218,7 @@
     print-color-adjust: exact !important;
   }
 }
+
+/* CARD PRINT REGISTER UI ONLY. Does not alter TS704 print geometry. */
+.card-register-bar{margin-top:18px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:16px;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 25px rgba(8,43,82,.05)}
+.card-register-bar span{display:block;margin-top:4px;color:var(--muted);font-size:12px}.register-actions{display:flex;gap:8px;flex-wrap:wrap}.confirm-print-button{min-height:42px;padding:10px 16px;border:0;border-radius:8px;background:#176b35;color:#fff;font-weight:900;cursor:pointer}.confirm-print-button:disabled{opacity:.45;cursor:not-allowed}.card-status{display:inline-block;padding:5px 8px;border-radius:999px;font-size:9px;font-weight:900;white-space:nowrap}.card-status-never{background:#eef1f5;color:#586474}.card-status-historical{background:#fff3cd;color:#7a5700}.card-status-printed{background:#e4f5e9;color:#176b35}.card-status-reprint{background:#fde7e9;color:#a31320}

@@ -28,7 +28,16 @@
 <div class="toolbar-meta"><span id="directoryCount">Loading approved members...</span><strong id="selectedCount">0 SELECTED</strong></div>
 </section>
 
-<section class="member-picker no-print"><table><thead><tr><th></th><th>MEMBERSHIP ID</th><th>MEMBER</th><th>LGA</th><th>WARD</th><th>STATUS</th></tr></thead><tbody id="membersTableBody"></tbody></table><div id="emptyState" class="empty-state" hidden>No approved members match your search.</div></section>
+<section class="member-picker no-print"><table><thead><tr><th></th><th>MEMBERSHIP ID</th><th>MEMBER</th><th>LGA</th><th>WARD</th><th>STATUS</th><th>CARD STATUS</th></tr></thead><tbody id="membersTableBody"></tbody></table><div id="emptyState" class="empty-state" hidden>No approved members match your search.</div></section>
+
+<section class="card-register-bar no-print">
+  <div><strong>CARD PRINT REGISTER</strong><span id="registerSummary">Loading card print status...</span></div>
+  <div class="register-actions">
+    <button id="markHistorical" type="button" class="secondary-button" disabled>MARK PREVIOUSLY PRINTED</button>
+    <button id="undoHistorical" type="button" class="secondary-button" disabled>UNDO PREVIOUSLY PRINTED</button>
+    <button id="markReprint" type="button" class="secondary-button" disabled>MARK REPRINT / DAMAGED</button>
+  </div>
+</section>
 
 <section class="queue-bar no-print"><div><strong>PRINT QUEUE</strong><span id="queueSummary">Select exactly two members for the current tray.</span></div><div class="queue-actions"><button id="clearSelection" type="button" class="secondary-button">CLEAR</button><button id="prepareTray" type="button" class="primary-button" disabled>PREPARE 2-CARD TRAY</button></div></section>
 
@@ -47,7 +56,7 @@
 <div id="calibrationHelp" class="calibration-help no-print" hidden><strong>100% CR80 MODE</strong><span>Each artwork is locked to 85.60 × 53.98 mm. Card 1 and Card 2 can be moved independently without changing card size. Use the saved Canon OMG PVC ID CARD driver profile with Normal-size printing, not Fit-to-Page or Scaled.</span></div>
 
 <div id="printSheet" class="print-sheet front-mode"><div id="cardSlot1" class="card-slot"></div><div id="cardSlot2" class="card-slot"></div></div>
-<div class="print-actions no-print"><button id="printFront" type="button" class="primary-button">PRINT FRONT</button><button id="printBack" type="button" class="back-button">PRINT FIXED BACK</button></div>
+<div class="print-actions no-print"><button id="printFront" type="button" class="primary-button">PRINT FRONT</button><button id="printBack" type="button" class="back-button">PRINT FIXED BACK</button><button id="confirmPrinted" type="button" class="confirm-print-button" disabled>CONFIRM 2 CARDS PRINTED</button></div>
 </section>
 </main>
 
