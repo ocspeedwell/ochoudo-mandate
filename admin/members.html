@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="admin.css">
     <style>
         .directory-toolbar { margin-top: 28px; padding: 22px; background:#fff; border:1px solid var(--border); border-radius:12px; box-shadow:0 8px 25px rgba(8,43,82,.05); }
-        .directory-filters { display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto; gap:12px; align-items:end; }
+        .directory-filters { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:12px; align-items:end; }
         .directory-field label { display:block; margin:0 0 7px; color:var(--navy); font-size:11px; font-weight:800; letter-spacing:1px; }
         .directory-field input,.directory-field select { width:100%; min-height:42px; padding:10px 12px; border:1px solid #c8d3e1; border-radius:8px; background:#fff; color:var(--ink); outline:none; }
         .directory-field input:focus,.directory-field select:focus { border-color:var(--navy); box-shadow:0 0 0 3px rgba(8,43,82,.08); }
@@ -102,6 +102,10 @@
                 <label for="genderFilter">GENDER</label>
                 <select id="genderFilter"><option value="">ALL GENDERS</option><option value="Male">MALE</option><option value="Female">FEMALE</option><option value="Other">OTHER</option></select>
             </div>
+            <div class="directory-field"><label for="lgaFilter">LGA</label><select id="lgaFilter"><option value="">ALL LGAs</option></select></div>
+            <div class="directory-field"><label for="wardFilter">WARD</label><select id="wardFilter"><option value="">ALL WARDS</option></select></div>
+            <div class="directory-field"><label for="sortFilter">SORT BY</label><select id="sortFilter"><option value="created_at:desc">NEWEST FIRST</option><option value="full_name:asc">NAME A TO Z</option><option value="full_name:desc">NAME Z TO A</option><option value="lga:asc">LGA A TO Z</option><option value="ward:asc">WARD A TO Z</option></select></div>
+            <button type="button" id="printDirectory" class="directory-reset">PRINT DIRECTORY</button>
             <button type="button" id="resetFilters" class="directory-reset">RESET</button>
         </div>
         <div class="directory-meta"><span id="directoryCount">Loading members...</span><span id="pageInfo"></span></div>
