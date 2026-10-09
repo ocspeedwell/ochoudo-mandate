@@ -30,6 +30,33 @@
             : String(value).toUpperCase();
 
 
+    // Normalize the actual declaration value. Do not infer membership from card numbers.
+    function ndcStatus(value) {
+        if (value === true || value === 1) return true;
+        if (value === false || value === 0) return false;
+        const normalized = String(value ?? "").trim().toLowerCase();
+        if (["true", "yes", "1", "y"].includes(normalized)) return true;
+        if (["false", "no", "0", "n"].includes(normalized)) return false;
+        return null;
+    }
+
+    function matchesNdcFilter(member) {
+        const selected = $("ndcFilter").value;
+        return !selected || ndcStatus(member.ndc_member) === (selected === "true");
+    }
+
+    async function allMatchingRecords() {
+        const records = [];
+        // Apply other filters in Supabase, then normalize the NDC field locally.
+        for (let offset = 0; ; offset += 1000) {
+            const { data, error } = await filteredQuery().range(offset, offset + 999);
+            if (error) throw error;
+            records.push(...(data || []).filter(matchesNdcFilter));
+            if (!data || data.length < 1000) break;
+        }
+        return records;
+    }
+
     async function requireAdmin() {
 
         const { data: sessionData, error: sessionError } =
@@ -111,18 +138,12 @@
         button.disabled = true;
         setMessage("Preparing the complete filtered directory for printing...");
         try {
-            const records = [];
-            for (let offset=0; ; offset+=1000) {
-                const {data,error} = await filteredQuery().range(offset,offset+999);
-                if (error) throw error;
-                records.push(...(data||[]));
-                if (!data || data.length<1000) break;
-            }
+            const records = await allMatchingRecords();
             const selectedLga = $("lgaFilter").value || "All LGAs";
             const selectedWard = $("wardFilter").value || "All Wards";
             const approved = records.filter(x=>String(x.membership_status).toLowerCase()==="approved").length;
-            const ndc = records.filter(x=>x.ndc_member===true).length;
-            const rows = records.map((m,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(m.member_id||"")}</td><td>${escapeHtml(m.full_name||"")}</td><td>${escapeHtml(m.phone||"")}</td><td>${escapeHtml(m.lga||"")}</td><td>${escapeHtml(m.ward||"")}</td><td>${escapeHtml(m.membership_status||"Pending")}</td><td>${m.ndc_member===true?"Yes":"No"}</td></tr>`).join("");
+            const ndc = records.filter(x=>ndcStatus(x.ndc_member) === true).length;
+            const rows = records.map((m,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(m.member_id||"")}</td><td>${escapeHtml(m.full_name||"")}</td><td>${escapeHtml(m.phone||"")}</td><td>${escapeHtml(m.lga||"")}</td><td>${escapeHtml(m.ward||"")}</td><td>${escapeHtml(m.membership_status||"Pending")}</td><td>${ndcStatus(m.ndc_member) === true ? "Yes" : ndcStatus(m.ndc_member) === false ? "No" : "Not recorded"}</td></tr>`).join("");
             const w = window.open("", "_blank");
             if (!w) throw new Error("Please allow pop-ups to print the directory.");
             w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>OMG Membership Directory</title><style>body{font:11px Arial,sans-serif;color:#152334;margin:20px}h1{font-size:20px;margin:0}h2{font-size:14px;margin:5px 0 12px}p{margin:6px 0}table{width:100%;border-collapse:collapse;margin-top:15px}th,td{border:1px solid #bfc9d3;padding:5px;text-align:left;overflow-wrap:anywhere}th{background:#edf1f6}thead{display:table-header-group}tr{break-inside:avoid}@page{size:A4 landscape;margin:12mm}@media print{button{display:none}}</style></head><body><h1>OCHOUDO MANDATE GROUP (OMG)</h1><h2>Official Membership Directory</h2><p><strong>LGA:</strong> ${escapeHtml(selectedLga)} &nbsp; <strong>Ward:</strong> ${escapeHtml(selectedWard)} &nbsp; <strong>Generated:</strong> ${new Date().toLocaleString()}</p><p><strong>Total:</strong> ${records.length} &nbsp; <strong>Approved:</strong> ${approved} &nbsp; <strong>Pending:</strong> ${records.filter(x=>String(x.membership_status||"Pending").toLowerCase()==="pending").length} &nbsp; <strong>NDC members:</strong> ${ndc}</p><p>Confidential administrative document. Handle members' personal information responsibly.</p><button onclick="window.print()">PRINT</button><table><thead><tr><th>S/N</th><th>MEMBER ID</th><th>NAME</th><th>PHONE</th><th>LGA</th><th>WARD</th><th>STATUS</th><th>NDC</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
@@ -163,14 +184,8 @@
         }
 
 
-        if (ndc !== "") {
-            query =
-                query.eq(
-                    "ndc_member",
-                    ndc === "true"
-                );
-        }
-
+        // NDC filtering is done after retrieval so boolean and text declarations
+        // are handled identically, without relying on database column coercion.
 
         if (gender) {
             query =
@@ -213,16 +228,17 @@
 
         $("emptyState").hidden = true;
 
-        const {
-            data,
-            error,
-            count
-        } = await buildQuery();
-
-        if (error) throw error;
-
-        totalCount =
-            Number(count || 0);
+        let data;
+        if ($("ndcFilter").value) {
+            const matching = await allMatchingRecords();
+            totalCount = matching.length;
+            data = matching.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+        } else {
+            const result = await buildQuery();
+            if (result.error) throw result.error;
+            data = result.data;
+            totalCount = Number(result.count || 0);
+        }
 
 
         if (!data || data.length === 0) {
@@ -471,9 +487,9 @@
 
             [
                 "NDC MEMBER",
-                data.ndc_member
+                ndcStatus(data.ndc_member) === true
                     ? "YES"
-                    : "NO"
+                    : ndcStatus(data.ndc_member) === false ? "NO" : "NOT RECORDED"
             ],
 
             [
