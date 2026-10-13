@@ -1,0 +1,31 @@
+name: Update Newsroom social previews
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: newsroom-previews
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generate static article pages with Open Graph metadata
+        run: python scripts/build-news.py
+      - name: Commit article previews
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add news/
+          if ! git diff --cached --quiet; then
+            git commit -m "Update published Newsroom social previews"
+            git push
+          fi
