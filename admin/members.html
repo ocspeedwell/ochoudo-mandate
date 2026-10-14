@@ -139,6 +139,22 @@
               <h3 style="margin:0 0 12px;color:#082b52">Member Referral Profile</h3>
               <div id="referralProfileContent">Select a member to view referral details.</div>
             </section>
+            <section id="memberEditSection" class="directory-toolbar" style="margin-top:20px">
+              <button type="button" id="toggleMemberEdit" class="view-member-button">EDIT MEMBER PROFILE</button>
+              <form id="memberEditForm" hidden style="margin-top:14px;display:none;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px">
+                <label>Full name<input name="full_name" required maxlength="150"></label>
+                <label>Phone<input name="phone" required maxlength="32"></label>
+                <label>Email<input name="email" type="email" maxlength="200"></label>
+                <label>LGA<input name="lga" maxlength="120"></label>
+                <label>Ward<input name="ward" maxlength="120"></label>
+                <label>Polling unit<input name="polling_unit" maxlength="200"></label>
+                <label>NDC membership declaration<select name="ndc_member"><option value="true">Yes</option><option value="false">No</option></select></label>
+                <label>NDC party card number<input name="ndc_card_number" maxlength="100"></label>
+                <label style="grid-column:1/-1">Reason for correction (required)<textarea name="reason" required minlength="8" maxlength="500" rows="2"></textarea></label>
+                <div style="grid-column:1/-1"><button type="submit" id="saveMemberEdit" class="approve-button" style="padding:12px;border:0;border-radius:7px;color:white">SAVE VERIFIED CHANGES</button> <button type="button" id="cancelMemberEdit" class="view-member-button">CANCEL</button></div>
+                <p id="memberEditMessage" role="status" style="grid-column:1/-1"></p>
+              </form>
+            </section>
             <div class="member-actions">
                 <div id="modalMessage" class="modal-message"></div>
                 <button type="button" id="approveMember" class="approve-button">APPROVE MEMBERSHIP</button>
@@ -153,5 +169,6 @@
 <script src="admin.js"></script>
 <script src="members.js"></script>
 <script src="member-referral-profile.js"></script>
+<script src="member-profile-edit.js"></script>
 </body>
 </html>
