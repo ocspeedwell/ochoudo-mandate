@@ -1795,6 +1795,28 @@ function setPreview(id, value) {
                         "Your membership number";
 
 
+                    // Referral recording is separate from membership creation.
+                    // A referral error must never cause a duplicate registration attempt.
+                    const referralCode = (document.getElementById("referral_code")?.value || "").trim();
+                    const referralName = (document.getElementById("referral_name")?.value || "").trim();
+                    if (referralCode || referralName) {
+                        try {
+                            const referralResult = await db.rpc("omg_record_referral", {
+                                p_member_id: String(memberId),
+                                p_phone: memberRecord.phone,
+                                p_referral_code: referralCode || null,
+                                p_referral_name: referralName || null
+                            });
+                            if (referralResult.error) throw referralResult.error;
+                            if (referralResult.data !== "RECORDED") {
+                                alert("Your membership registration succeeded. Referral attribution was not confirmed (" + referralResult.data + "). Please contact an OMG administrator if necessary.");
+                            }
+                        } catch (referralError) {
+                            console.warn("Referral recording unsuccessful:", referralError);
+                            alert("Your membership registration succeeded, but referral tracking could not be completed. Please contact an OMG administrator.");
+                        }
+                    }
+
                     /* =================================================
                        HIDE PREVIEW
                     ================================================= */
