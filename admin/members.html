@@ -135,6 +135,10 @@
                 <div class="member-profile-title"><div class="admin-kicker">MEMBERSHIP RECORD</div><h3 id="modalMemberName">MEMBER NAME</h3><p id="modalMemberId">OMG-2026-000000</p><p id="modalMemberStatus">PENDING</p></div>
             </div>
             <div id="memberDetailGrid" class="member-detail-grid"></div>
+            <section id="referralProfile" class="directory-toolbar" style="margin-top:20px" aria-live="polite">
+              <h3 style="margin:0 0 12px;color:#082b52">Member Referral Profile</h3>
+              <div id="referralProfileContent">Select a member to view referral details.</div>
+            </section>
             <div class="member-actions">
                 <div id="modalMessage" class="modal-message"></div>
                 <button type="button" id="approveMember" class="approve-button">APPROVE MEMBERSHIP</button>
@@ -148,5 +152,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="admin.js"></script>
 <script src="members.js"></script>
+<script src="member-referral-profile.js"></script>
 </body>
 </html>
