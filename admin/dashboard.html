@@ -6,6 +6,9 @@
     <title>OMG Admin Dashboard</title>
     <link rel="icon" href="../assets/ochoudo-favicon.png">
     <link rel="stylesheet" href="admin.css">
+<link rel="stylesheet" href="mobile-upgrade.css">
+<link rel="manifest" href="/admin/manifest.json">
+<meta name="theme-color" content="#082b52">
 
     <style>
         /* =========================================================
@@ -742,6 +745,7 @@
     </header>
 
     <main class="admin-dashboard">
+<section id="superAdminPanel" class="dashboard-panel" hidden style="margin-bottom:18px;padding:20px"><strong>ADMINISTRATOR MANAGEMENT</strong><p>Manage authorised administrator accounts and access levels.</p><a href="admin-users.html" class="admin-secondary-button" style="text-decoration:none">OPEN ADMINISTRATOR MANAGEMENT</a></section>
 <section class="dashboard-panel" style="margin-bottom:18px;padding:20px"><strong>MEMBERSHIP REFERRALS</strong><p>Review and verify who referred each member.</p><a href="referrals.html" class="admin-secondary-button" style="text-decoration:none">OPEN REFERRAL INTELLIGENCE</a></section>
 <section class="dashboard-panel" style="margin-bottom:18px;padding:20px"><strong>OCHOUDO NEWSROOM</strong><p>Publish and manage articles, stories and official updates.</p><a href="newsroom.html" class="admin-secondary-button" style="text-decoration:none">OPEN NEWSROOM MANAGEMENT</a></section>
         <section class="dashboard-heading">
@@ -1053,5 +1057,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="admin.js"></script>
+<script src="platform-upgrade.js"></script>
 </body>
 </html>
