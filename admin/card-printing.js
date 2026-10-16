@@ -7,13 +7,33 @@ const esc=v=>String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const text=v=>String(v??"").trim(),upper=v=>text(v)?text(v).toUpperCase():"NOT PROVIDED";
 async function requireAdmin(){const{data:s,error:e}=await db.auth.getSession();if(e)throw e;if(!s.session){location.href="login.html";return null}const{data,error}=await db.rpc("is_omg_admin");if(error)throw error;if(data!==true){await db.auth.signOut();location.href="login.html";return null}$("adminUserEmail").textContent=s.session.user.email||"";return s.session}
 function message(m){$("pageMessage").textContent=m||""}
-async function loadMembers(){const{data,error}=await db.from("members").select("id,member_id,full_name,gender,phone,lga,ward,polling_unit,membership_status,created_at").eq("membership_status","Approved").order("created_at",{ascending:false}).limit(1000);if(error)throw error;members=data||[];await loadPrintRegister();populateFilters();renderMembers()}
+async function loadMembers(){const{data,error}=await db.from("members").select("id,member_id,full_name,gender,phone,lga,ward,polling_unit,membership_status,created_at").eq("membership_status","Approved").order("created_at",{ascending:false}).limit(1000);if(error)throw error;members=data||[];const registerLoaded=await loadPrintRegister();populateFilters();renderMembers();if(!registerLoaded)console.warn("Card history controls disabled until register can be loaded")}
 
 async function loadPrintRegister(){
-  const ids=members.map(m=>m.id);printRegister=new Map();if(!ids.length)return;
-  const{data,error}=await db.from("omg_card_print_register").select("member_id,status,historical_print_date,first_system_printed_at,last_printed_at,print_count,recorded_at").in("member_id",ids);
-  if(error){console.warn("Card print register unavailable",error);message("Card register is not available yet. Run card-print-register.sql in Supabase.");return}
-  (data||[]).forEach(r=>printRegister.set(String(r.member_id),r));updateRegisterSummary();
+  const ids=members.map(m=>m.id);
+  const nextRegister=new Map();
+  if(!ids.length){printRegister=nextRegister;updateRegisterSummary();return true}
+  // Keep PostgREST URLs short. A single request with hundreds of UUIDs can fail.
+  const batchSize=40;
+  for(let offset=0;offset<ids.length;offset+=batchSize){
+    const batch=ids.slice(offset,offset+batchSize);
+    const {data,error}=await db.from("omg_card_print_register")
+      .select("member_id,status,historical_print_date,first_system_printed_at,last_printed_at,print_count,recorded_at")
+      .in("member_id",batch);
+    if(error){
+      console.error("Card print register batch failed",{offset,batchSize:batch.length,code:error.code,message:error.message,details:error.details,hint:error.hint});
+      message(`Unable to load card print history: ${error.message||"Unknown Supabase error"}. Printing history is not verified. Please contact the administrator.`);
+      // Never present a partial register as complete, or permit history edits.
+      printRegister=new Map();
+      ["markHistorical","undoHistorical","markReprint","confirmPrinted"].forEach(id=>{const el=$(id);if(el)el.disabled=true});
+      return false;
+    }
+    (data||[]).forEach(r=>nextRegister.set(String(r.member_id),r));
+  }
+  printRegister=nextRegister;
+  ["markHistorical","undoHistorical","markReprint"].forEach(id=>{const el=$(id);if(el)el.disabled=false});
+  updateRegisterSummary();
+  return true;
 }
 function registerFor(m){return printRegister.get(String(m.id))||{member_id:m.id,status:"never_printed",print_count:0}}
 function statusLabel(r){return r.status==="previously_printed"?"PREVIOUSLY PRINTED":r.status==="printed"?"PRINTED":r.status==="reprint_damaged"?"REPRINT / DAMAGED":"NOT PRINTED"}
