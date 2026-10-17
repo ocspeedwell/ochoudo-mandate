@@ -1841,6 +1841,8 @@ function setPreview(id, value) {
                         "successMemberId",
                         memberId
                     );
+                    sessionStorage.setItem('omg_welcome_letter_member',JSON.stringify({full_name:document.getElementById('fullname').value,member_id:memberId,lga:lgaSelect?lgaSelect.value:'',registration_date:document.getElementById('registration_date').value}));
+                    document.getElementById('openWelcomeLetter')?.addEventListener('click',()=>window.open('welcome-letter.html','_blank'));
 
 
                     setPreview(
