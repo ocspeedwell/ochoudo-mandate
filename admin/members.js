@@ -380,6 +380,8 @@
 
 
         currentMember = data;
+        const letterButton=document.getElementById('openMemberWelcomeLetter');
+        if(letterButton)letterButton.onclick=()=>{sessionStorage.setItem('omg_welcome_letter_member',JSON.stringify({full_name:currentMember.full_name,member_id:currentMember.member_id,lga:currentMember.lga,registration_date:currentMember.registration_date||currentMember.created_at}));window.open('../welcome-letter.html','_blank')};
 
 
         $("modalMemberName").textContent =
