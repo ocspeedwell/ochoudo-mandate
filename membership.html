@@ -380,6 +380,19 @@
                                 </div>
 
                                 <div class="selected-photo-name" id="selectedPhotoName" aria-live="polite"></div>
+                                <div class="omg-photo-studio" style="margin-top:12px">
+                                  <button type="button" id="enhancePhotoButton" hidden style="padding:10px;border-radius:8px">✨ Create light grey background</button>
+                                  <button type="button" id="restorePhotoButton" hidden style="padding:10px;border-radius:8px">Use original</button>
+                                  <p id="photoStudioStatus" role="status" aria-live="polite" style="font-size:13px"></p>
+                                  <div id="photoStudioComparison" hidden style="padding:12px;background:#f4f4f4;border-radius:10px">
+                                    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+                                      <div><small>Original</small><img data-original alt="Original portrait" style="display:block;width:130px;max-height:170px;object-fit:contain"></div>
+                                      <div><small>Light grey background</small><img data-enhanced alt="Enhanced portrait" style="display:block;width:130px;max-height:170px;object-fit:contain"></div>
+                                    </div>
+                                    <button type="button" id="approveEnhancedPhoto">Use enhanced photo</button>
+                                    <button type="button" id="rejectEnhancedPhoto">Keep original</button>
+                                  </div>
+                                </div>
 
                             </div>
 

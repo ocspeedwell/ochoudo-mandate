@@ -544,7 +544,19 @@ uppercaseFieldIds.forEach(function (fieldId) {
 
     const MAX_PHOTO_SIZE = 900 * 1024; // Keep uploads comfortably below 1 MB
     const MAX_PHOTO_DIMENSION = 1200;
-    const JPEG_QUALITY_START = 0.78;
+    const JPEG_QUALITY_START = 0.82;
+    // Conservative, identity-preserving enhancement. This is NOT generative AI
+    // or background removal. Preserve original facial features and skin tones.
+    const PHOTO_ENHANCEMENT_ENABLED = true;
+
+    function drawPreparedPhoto(context, image, width, height) {
+        context.save();
+        context.filter = PHOTO_ENHANCEMENT_ENABLED
+            ? "brightness(1.035) contrast(1.055) saturate(1.045)"
+            : "none";
+        context.drawImage(image, 0, 0, width, height);
+        context.restore();
+    }
 
     function setPhotoInputFile(file) {
         if (!photoInput || !file) return;
@@ -653,7 +665,7 @@ uppercaseFieldIds.forEach(function (fieldId) {
 
         context.fillStyle = "#ffffff";
         context.fillRect(0, 0, width, height);
-        context.drawImage(image, 0, 0, width, height);
+        drawPreparedPhoto(context, image, width, height);
 
         let quality = JPEG_QUALITY_START;
         let blob = await canvasToBlob(canvas, quality);
@@ -674,22 +686,139 @@ uppercaseFieldIds.forEach(function (fieldId) {
 
             context.fillStyle = "#ffffff";
             context.fillRect(0, 0, width, height);
-            context.drawImage(image, 0, 0, width, height);
+            drawPreparedPhoto(context, image, width, height);
 
             quality = 0.60;
             blob = await canvasToBlob(canvas, quality);
         }
 
         if (blob.size > MAX_PHOTO_SIZE) {
-            throw new Error("The photograph could not be reduced below 2MB.");
+            throw new Error("The photograph could not be reduced below the 900KB upload limit.");
         }
 
         return createPhotoFile(blob, file);
     }
 
+    // Optional, on-device person segmentation. No portrait is sent to an AI API.
+    // Model files are fetched from jsDelivr on first use; if unavailable, the
+    // original normalized photograph remains usable.
+    let selfieSegmentationLoader = null;
+    function loadSegmentationLibrary() {
+        if (window.SelfieSegmentation) return Promise.resolve();
+        if (selfieSegmentationLoader) return selfieSegmentationLoader;
+        selfieSegmentationLoader = new Promise(function (resolve, reject) {
+            const script = document.createElement("script");
+            script.src = "https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1/selfie_segmentation.js";
+            script.onload = resolve;
+            script.onerror = function () { reject(new Error("Photo background service is unavailable. Please try again when connected to the internet.")); };
+            document.head.appendChild(script);
+        });
+        return selfieSegmentationLoader;
+    }
+
+    async function createGreyBackgroundPortrait(file) {
+        await loadSegmentationLibrary();
+        const image = await loadImageFromFile(file);
+        const width = image.naturalWidth, height = image.naturalHeight;
+        const segmenter = new window.SelfieSegmentation({
+            locateFile: function (name) {
+                return "https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1/" + name;
+            }
+        });
+        segmenter.setOptions({ modelSelection: 1 });
+        try {
+            const result = await new Promise(function (resolve, reject) {
+                const timer = setTimeout(function () { reject(new Error("Background processing timed out.")); }, 25000);
+                segmenter.onResults(function (value) { clearTimeout(timer); resolve(value); });
+                segmenter.send({ image: image }).catch(function (error) { clearTimeout(timer); reject(error); });
+            });
+            if (!result.segmentationMask) throw new Error("No person could be detected in this photograph.");
+            const canvas = document.createElement("canvas");
+            canvas.width = width; canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(result.segmentationMask, 0, 0, width, height);
+            ctx.globalCompositeOperation = "source-in";
+            drawPreparedPhoto(ctx, image, width, height);
+            ctx.globalCompositeOperation = "destination-over";
+            ctx.fillStyle = "#E5E5E5";
+            ctx.fillRect(0, 0, width, height);
+            ctx.globalCompositeOperation = "source-over";
+            let blob = await canvasToBlob(canvas, 0.82);
+            let quality = 0.75;
+            while (blob.size > MAX_PHOTO_SIZE && quality > 0.45) {
+                blob = await canvasToBlob(canvas, quality);
+                quality -= 0.08;
+            }
+            if (blob.size > MAX_PHOTO_SIZE) throw new Error("Enhanced photograph exceeds the upload limit.");
+            return createPhotoFile(blob, file);
+        } finally {
+            if (typeof segmenter.close === "function") segmenter.close();
+        }
+    }
+
+    let originalPreparedPhoto = null;
+    let photoProcessingSequence = 0;
+    const enhanceButton = document.getElementById("enhancePhotoButton");
+    const restoreButton = document.getElementById("restorePhotoButton");
+    const photoStudioStatus = document.getElementById("photoStudioStatus");
+    function photoStatus(message) {
+        if (photoStudioStatus) photoStudioStatus.textContent = message;
+    }
+    function useProcessedPhoto(file) {
+        selectedPhoto = file;
+        setPhotoInputFile(file);
+        showPhotoPreview(file);
+        const label = document.getElementById("selectedPhotoName");
+        if (label) label.textContent = file.name + " • " + formatFileSize(file.size);
+    }
+    if (enhanceButton) enhanceButton.addEventListener("click", async function () {
+        if (!originalPreparedPhoto) return;
+        const sequence = ++photoProcessingSequence;
+        enhanceButton.disabled = true;
+        photoStatus("Preparing light grey background. This may take a moment...");
+        try {
+            const enhanced = await createGreyBackgroundPortrait(originalPreparedPhoto);
+            if (sequence !== photoProcessingSequence) return;
+            // Review by user before replacing the original photo.
+            const originalURL = URL.createObjectURL(originalPreparedPhoto);
+            const enhancedURL = URL.createObjectURL(enhanced);
+            const preview = document.getElementById("photoStudioComparison");
+            if (preview) {
+                preview.hidden = false;
+                preview.querySelector("[data-original]").src = originalURL;
+                preview.querySelector("[data-enhanced]").src = enhancedURL;
+            }
+            const approve = document.getElementById("approveEnhancedPhoto");
+            if (approve) approve.onclick = function () {
+                useProcessedPhoto(enhanced);
+                photoStatus("Enhanced photograph accepted for your membership ID card.");
+                if (preview) preview.hidden = true;
+                URL.revokeObjectURL(originalURL); URL.revokeObjectURL(enhancedURL);
+            };
+            const cancel = document.getElementById("rejectEnhancedPhoto");
+            if (cancel) cancel.onclick = function () {
+                useProcessedPhoto(originalPreparedPhoto);
+                photoStatus("Original photograph retained.");
+                if (preview) preview.hidden = true;
+                URL.revokeObjectURL(originalURL); URL.revokeObjectURL(enhancedURL);
+            };
+            photoStatus("Compare the photographs and choose which to use.");
+        } catch (error) {
+            console.warn("Background enhancement unavailable:", error);
+            photoStatus("Could not replace the background. Your original photograph is safe. " + (error.message || ""));
+        } finally { enhanceButton.disabled = false; }
+    });
+    if (restoreButton) restoreButton.addEventListener("click", function () {
+        if (originalPreparedPhoto) useProcessedPhoto(originalPreparedPhoto);
+        photoStatus("Original photograph restored.");
+        const preview = document.getElementById("photoStudioComparison");
+        if (preview) preview.hidden = true;
+    });
+
     async function processSelectedPhoto(file) {
         if (!file) return;
 
+        const sequence = ++photoProcessingSequence;
         try {
             if (photoUpload) {
                 photoUpload.classList.add("photo-processing");
@@ -697,10 +826,12 @@ uppercaseFieldIds.forEach(function (fieldId) {
 
             const processedFile = await compressPhoto(file);
 
-            selectedPhoto = processedFile;
-            setPhotoInputFile(processedFile);
-
-            showPhotoPreview(processedFile);
+            if (sequence !== photoProcessingSequence) return;
+            originalPreparedPhoto = processedFile;
+            useProcessedPhoto(processedFile);
+            if (enhanceButton) enhanceButton.hidden = false;
+            if (restoreButton) restoreButton.hidden = false;
+            photoStatus("Photo ready. You can optionally create a light grey background.");
 
             const selectedName =
                 document.getElementById("selectedPhotoName");
