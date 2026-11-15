@@ -111,6 +111,16 @@
         <div class="directory-meta"><span id="directoryCount">Loading members...</span><span id="pageInfo"></span></div>
     </section>
 
+    <section class="directory-toolbar" style="margin:20px 0" aria-label="NDC number follow-up and bulk approval">
+      <h2 style="margin:0 0 10px">NDC Number Follow-Up and Bulk Approval</h2>
+      <p>Members declaring NDC membership without a party card number are automatically identified. Follow-up flags are independent of OMG approval.</p>
+      <p><strong>Missing NDC numbers: <span id="ndcMissingCount">...</span></strong> &nbsp; | &nbsp; Marked for follow-up: <strong id="ndcFlaggedCount">...</strong></p>
+      <label for="ndcNumberFilter">NDC NUMBER STATUS</label>
+      <select id="ndcNumberFilter"><option value="missing">MISSING NDC NUMBER</option><option value="flagged">MARKED FOR FOLLOW-UP</option><option value="submitted">NUMBER SUBMITTED</option><option value="">ALL MEMBERS</option></select>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0"><button type="button" class="directory-reset" id="ndcSelectVisible">SELECT ALL MATCHING</button><button type="button" class="directory-reset" id="ndcClearSelected">CLEAR SELECTION</button><button type="button" class="directory-reset" id="ndcBulkApprove">BULK APPROVE PENDING</button><button type="button" class="directory-reset" id="ndcPrint">PRINT FOLLOW-UP LIST</button><button type="button" class="directory-reset" id="ndcRefresh">REFRESH</button></div>
+      <p><span id="ndcRegisterCount"></span> | <span id="ndcSelectedCount">0 selected</span></p><p id="ndcActionMessage" role="status"></p>
+      <div style="overflow:auto;max-height:450px"><table class="directory-table"><thead><tr><th>SELECT</th><th>MEMBER</th><th>PHONE</th><th>LGA / WARD</th><th>OMG STATUS</th><th>NDC NUMBER</th><th>FOLLOW-UP</th></tr></thead><tbody id="ndcRegisterBody"></tbody></table></div>
+    </section>
     <section class="directory-table-wrap">
         <table class="directory-table">
             <thead><tr><th>MEMBERSHIP ID</th><th>MEMBER</th><th>PHONE</th><th>LGA</th><th>WARD</th><th>STATUS</th><th>ACTION</th></tr></thead>
@@ -171,5 +181,6 @@
 <script src="members.js"></script>
 <script src="member-referral-profile.js"></script>
 <script src="member-profile-edit.js"></script>
+<script src="ndc-followup.js"></script>
 </body>
 </html>
